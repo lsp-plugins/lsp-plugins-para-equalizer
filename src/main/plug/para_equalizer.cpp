@@ -1218,6 +1218,10 @@ namespace lsp
             return true;
         }
 
+        void para_equalizer::dump(dspu::IStateDumper *v) const
+        {
+            // TODO
+        }
 
     } // namespace plugins
 } // namespace lsp

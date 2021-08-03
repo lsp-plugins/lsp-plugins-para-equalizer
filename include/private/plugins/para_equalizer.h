@@ -157,6 +157,8 @@ namespace lsp
 
                 virtual void        process(size_t samples);
                 virtual bool        inline_display(plug::ICanvas *cv, size_t width, size_t height);
+
+                virtual void        dump(dspu::IStateDumper *v) const;
         };
 
     } // namespace plugins
