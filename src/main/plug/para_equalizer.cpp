@@ -35,6 +35,7 @@ namespace lsp
 {
     namespace plugins
     {
+        //-------------------------------------------------------------------------
         typedef struct para_equalizer_settings_t
         {
             const meta::plugin_t   *metadata;
@@ -1218,9 +1219,100 @@ namespace lsp
             return true;
         }
 
+        void para_equalizer::dump_filter(dspu::IStateDumper *v, const eq_filter_t *f)
+        {
+            v->begin_object(f, sizeof(eq_filter_t));
+            {
+                v->write("vTrRe", f->vTrRe);
+                v->write("vTrIm", f->vTrIm);
+                v->write("nSync", f->nSync);
+                v->write("bSolo", f->bSolo);
+
+                v->write("pType", f->pType);
+                v->write("pMode", f->pMode);
+                v->write("pFreq", f->pFreq);
+                v->write("pSlope", f->pSlope);
+                v->write("pSolo", f->pSolo);
+                v->write("pMute", f->pMute);
+                v->write("pGain", f->pGain);
+                v->write("pQuality", f->pQuality);
+                v->write("pActivity", f->pActivity);
+                v->write("pTrAmp", f->pTrAmp);
+            }
+            v->end_object();
+        }
+
+        void para_equalizer::dump_channel(dspu::IStateDumper *v, const eq_channel_t *c) const
+        {
+            v->begin_object(c, sizeof(eq_channel_t));
+            {
+                v->write_object("sEqualizer", &c->sEqualizer);
+                v->write_object("sBypass", &c->sBypass);
+                v->write_object("sDryDelay", &c->sDryDelay);
+
+                v->write("nLatency", c->nLatency);
+                v->write("fInGain", c->fInGain);
+                v->write("fOutGain", c->fOutGain);
+                v->write("fPitch", c->fPitch);
+                v->begin_array("vFilters", c->vFilters, nFilters);
+                {
+                    for (size_t i=0; i<nFilters; ++i)
+                        dump_filter(v, &c->vFilters[i]);
+                }
+                v->end_array();
+                v->write("vDryBuf", c->vDryBuf);
+                v->write("vBuffer", c->vBuffer);
+                v->write("vIn", c->vIn);
+                v->write("vOut", c->vOut);
+                v->write("nSync", c->nSync);
+
+                v->write("vTrRe", c->vTrRe);
+                v->write("vTrIm", c->vTrIm);
+
+                v->write("pIn", c->pIn);
+                v->write("pOut", c->pOut);
+                v->write("pInGain", c->pInGain);
+                v->write("pTrAmp", c->pTrAmp);
+                v->write("pPitch", c->pPitch);
+                v->write("pFft", c->pFft);
+                v->write("pVisible", c->pVisible);
+                v->write("pInMeter", c->pInMeter);
+                v->write("pOutMeter", c->pOutMeter);
+            }
+            v->end_object();
+        }
+
         void para_equalizer::dump(dspu::IStateDumper *v) const
         {
-            // TODO
+            size_t channels     = (nMode == EQ_MONO) ? 1 : 2;
+
+            v->write_object("sAnalyzer", &sAnalyzer);
+            v->write("nFilters", nFilters);
+            v->write("nMode", nMode);
+            v->begin_array("vChannels", vChannels, channels);
+            {
+                for (size_t i=0; i<channels; ++i)
+                    dump_channel(v, &vChannels[i]);
+            }
+            v->end_array();
+            v->write("vFreqs", vFreqs);
+            v->write("vIndexes", vIndexes);
+            v->write("fGainIn", fGainIn);
+            v->write("fZoom", fZoom);
+            v->write("bListen", bListen);
+            v->write("nFftPosition", nFftPosition);
+            v->write_object("pIDisplay", pIDisplay);
+
+            v->write("pBypass", pBypass);
+            v->write("pGainIn", pGainIn);
+            v->write("pGainOut", pGainOut);
+            v->write("pFftMode", pFftMode);
+            v->write("pReactivity", pReactivity);
+            v->write("pListen", pListen);
+            v->write("pShiftGain", pShiftGain);
+            v->write("pZoom", pZoom);
+            v->write("pEqMode", pEqMode);
+            v->write("pBalance", pBalance);
         }
 
     } // namespace plugins

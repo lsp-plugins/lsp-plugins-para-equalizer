@@ -143,6 +143,9 @@ namespace lsp
                 inline bool         adjust_gain(size_t filter_type);
                 inline dspu::equalizer_mode_t get_eq_mode();
 
+                void                dump_channel(dspu::IStateDumper *v, const eq_channel_t *c) const;
+                static void         dump_filter(dspu::IStateDumper *v, const eq_filter_t *f);
+
             public:
                 explicit para_equalizer(const meta::plugin_t *metadata, size_t filters, size_t mode);
                 virtual ~para_equalizer();
