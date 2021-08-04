@@ -36,12 +36,13 @@ namespace lsp
     namespace plugins
     {
         //-------------------------------------------------------------------------
-        typedef struct para_equalizer_settings_t
+        // Plugin factory
+        typedef struct plugin_settings_t
         {
             const meta::plugin_t   *metadata;
             uint8_t                 channels;
             uint8_t                 mode;
-        } para_equalizer_settings_t;
+        } plugin_settings_t;
 
         static const meta::plugin_t *plugins[] =
         {
@@ -55,7 +56,7 @@ namespace lsp
             &meta::para_equalizer_x32_ms
         };
 
-        static const para_equalizer_settings_t trigger_settings[] =
+        static const plugin_settings_t plugin_settings[] =
         {
             { &meta::para_equalizer_x16_mono,   16, para_equalizer::EQ_MONO         },
             { &meta::para_equalizer_x16_stereo, 16, para_equalizer::EQ_STEREO       },
@@ -69,15 +70,15 @@ namespace lsp
             { NULL, 0, false }
         };
 
-        static plug::Module *para_equalizer_factory(const meta::plugin_t *meta)
+        static plug::Module *plugin_factory(const meta::plugin_t *meta)
         {
-            for (const para_equalizer_settings_t *s = trigger_settings; s->metadata != NULL; ++s)
+            for (const plugin_settings_t *s = plugin_settings; s->metadata != NULL; ++s)
                 if (s->metadata == meta)
                     return new para_equalizer(s->metadata, s->channels, s->mode);
             return NULL;
         }
 
-        static plug::Factory factory(para_equalizer_factory, plugins, 8);
+        static plug::Factory factory(plugin_factory, plugins, 8);
 
         //-------------------------------------------------------------------------
         para_equalizer::para_equalizer(const meta::plugin_t *metadata, size_t filters, size_t mode): plug::Module(metadata)
