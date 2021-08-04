@@ -1284,6 +1284,8 @@ namespace lsp
 
         void para_equalizer::dump(dspu::IStateDumper *v) const
         {
+            plug::Module::dump(v);
+
             size_t channels     = (nMode == EQ_MONO) ? 1 : 2;
 
             v->write_object("sAnalyzer", &sAnalyzer);
