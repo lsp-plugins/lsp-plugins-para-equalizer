@@ -43,7 +43,12 @@ namespace lsp
             &meta::para_equalizer_x32_ms
         };
 
-        static ui::Factory factory(plugin_uis, 8);
+        static ui::Module *ui_factory(const meta::plugin_t *meta)
+        {
+            return new para_equalizer_ui(meta);
+        }
+
+        static ui::Factory factory(ui_factory, plugin_uis, 8);
 
         //---------------------------------------------------------------------
         static const char *fmt_strings[] =
