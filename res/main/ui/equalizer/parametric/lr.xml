@@ -1,6 +1,6 @@
 <plugin resizable="true">
-	<ui:set id="num_filters" value="(ex :ft16) ? 32 : 16" />
-	<ui:set id="num_blocks" value="(ex :ft16) ? 8 : 4" />
+	<ui:eval id="num_filters" value="(ex :ftl_16) ? 32 : 16" />
+	<ui:eval id="num_blocks" value="(ex :ftl_16) ? 8 : 4" />
 
 	<grid rows="2" cols="3" spacing="4">
 		<vbox spacing="4" expand="true">
@@ -61,13 +61,13 @@
 				<marker value="-24 db" color="g_yellow" basis="1" parallel="0" /> <!-- -24 dB -->
 
 				<!-- Meshes -->
-				<ui:for id="i" first="0" last="${num_filters - 1}">
+				<ui:for id="i" first="0" last=":num_filters - 1">
 					<marker id="fl_${i}" basis="0" parallel="1" color="eq_base" hue_id="huel_${i}" visibility_id="fvl_${i}" />
 					<marker id="fr_${i}" basis="0" parallel="1" color="eq_base" hue_id="huer_${i}" visibility_id="fvr_${i}" />
 					<marker id="gl_${i}" basis="1" parallel="0" color="eq_base" hue_id="huel_${i}" visibility_id="fvl_${i}" />
 					<marker id="gr_${i}" basis="1" parallel="0" color="eq_base" hue_id="huer_${i}" visibility_id="fvr_${i}" />
 				</ui:for>
-				<ui:for id="i" first="0" last="${num_filters - 1}">
+				<ui:for id="i" first="0" last=":num_filters - 1">
 					<mesh id="agfl_${i}" color="eq_base" width="2" hue_id="huel_${i}" visibility_id="fvl_${i}" fill="0.8" smooth="true" />
 					<mesh id="agfr_${i}" color="eq_base" width="2" hue_id="huer_${i}" visibility_id="fvr_${i}" fill="0.8" smooth="true" />
 				</ui:for>
@@ -75,7 +75,7 @@
 				<mesh id="fftg_r" width="2" color="right_channel" visibility_id="fftv_r" />
 				<mesh id="ag_l" width="3" color="left_channel" smooth="true" visibility_id="fftv_l" />
 				<mesh id="ag_r" width="3" color="right_channel" smooth="true" visibility_id="fftv_r" />
-				<ui:for id="i" first="0" last="${num_filters - 1}">
+				<ui:for id="i" first="0" last=":num_filters - 1">
 					<dot hpos_id="fl_${i}" vpos_id="gl_${i}" scroll_id="ql_${i}"
 						editable="true" color="eq_base"
 						hue_id="huel_${i}" visibility_id="fvl_${i}"
@@ -198,10 +198,10 @@
 		<cell cols="3">
 			<cgroup id="fsel">
 				<!-- N blocks of filters -->
-				<ui:for id="blk" first="0" last="${num_blocks - 1}">
-					<ui:set id="chn" value="${(:blk mod 2) ? 'labels.chan.id_R_ight' : 'labels.chan.id_L_eft'}" />
-					<ui:set id="chp" value="${(:blk mod 2) ? 'r' : 'l'}" />
-					<ui:set id="f" value="${:blk idiv 2}" />
+				<ui:for id="blk" first="0" last=":num_blocks - 1">
+					<ui:eval id="chn" value="(:blk mod 2) ? 'labels.chan.id_R_ight' : 'labels.chan.id_L_eft'" />
+					<ui:eval id="chp" value="(:blk mod 2) ? 'r' : 'l'" />
+					<ui:eval id="f" value=":blk idiv 2" />
 				
 					<grid transpose="true" rows="8" cols="17" hspacing="2">
 						<label text="labels.specials.num" fill="true" halign="0" />
@@ -212,7 +212,7 @@
 						<cell rows="2"><label text="labels.q_hue" halign="0" /></cell>
 						
 						<!-- Filters -->
-						<ui:for id="i" first="${:f*8}" last="${:f*8+7}">
+						<ui:for id="i" first=":f*8" last=":f*8+7">
 							<ui:set id="ch" value="${chp}_${i}" />
 							<cell cols="2" ><label text="${chn}" text:id="${i}" /></cell>
 							<cell cols="2" fill="true" pad_bottom="1"><combo id="ft${ch}" fill="true"  /></cell>

@@ -1,6 +1,6 @@
 <plugin resizable="true">
-	<ui:set id="num_filters" value="(ex :ft16) ? 32 : 16" />
-	<ui:set id="num_blocks" value="(ex :ft16) ? 4 : 2" />
+	<ui:eval id="num_filters" value="(ex :ft_16) ? 32 : 16" />
+	<ui:eval id="num_blocks" value="(ex :ft_16) ? 4 : 2" />
 	
 	<grid rows="2" cols="3" spacing="4">
 		<vbox spacing="4" expand="true">
@@ -59,16 +59,16 @@
 				<marker value="-24 db" color="g_yellow" basis="1" parallel="0" /> <!-- -24 dB -->
 
 				<!-- Meshes -->
-				<ui:for id="i" first="0" last="${num_filters - 1}">
+				<ui:for id="i" first="0" last=":num_filters - 1">
 					<marker id="f_${i}" basis="0" parallel="1" color="eq_base" hue_id="hue_${i}" visibility_id="fv_${i}" />
 					<marker id="g_${i}" basis="1" parallel="0" color="eq_base" hue_id="hue_${i}" visibility_id="fv_${i}" />
 				</ui:for>
-				<ui:for id="i" first="0" last="${num_filters - 1}">
+				<ui:for id="i" first="0" last=":num_filters - 1">
 					<mesh id="agf_${i}" color="eq_base" width="2" hue_id="hue_${i}" visibility_id="fv_${i}" fill="0.8" smooth="true" />
 				</ui:for>
 				<mesh id="fftg" width="2" color="middle_channel" />
 				<mesh id="ag" width="3" color="middle_channel" smooth="true" />
-				<ui:for id="i" first="0" last="${num_filters - 1}">
+				<ui:for id="i" first="0" last=":num_filters - 1">
 					<dot hpos_id="f_${i}" vpos_id="g_${i}" scroll_id="q_${i}"
 						editable="true" color="eq_base"
 						hue_id="hue_${i}" visibility_id="fv_${i}"
@@ -168,7 +168,7 @@
 		<cell cols="3">
 			<cgroup id="fsel">
 				<!-- N blocks of filters -->
-				<ui:for id="f" first="0" last="${num_blocks - 1}">
+				<ui:for id="f" first="0" last=":num_blocks - 1">
 					<grid transpose="true" rows="8" cols="17" hspacing="2">
 						<label text="labels.specials.num" fill="true" halign="0" />
 						<label text="labels.filter" fill="true" halign="0" />
@@ -178,7 +178,7 @@
 						<cell rows="2"><label text="labels.q_hue" halign="0" /></cell>
 						
 						<!-- Filters -->
-						<ui:for id="i" first="${:f*8}" last="${:f*8+7}">
+						<ui:for id="i" first=":f*8" last=":f*8+7">
 							<ui:set id="ch" value="_${i}" />
 							<cell cols="2"><label text="${i}" /></cell>
 							<cell cols="2" fill="true" pad_bottom="1"><combo id="ft${ch}"  fill="true" /></cell>
