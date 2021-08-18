@@ -9,10 +9,10 @@
 				<ledmeter hexpand="true" angle="0">
 					<ledchannel id="iml" min="-36 db" max="+6 db" log="true" type="rms_peak"
 						peak.visibility="true" 
-						value.color="(:lstn ieq 0) ? '#ff4444' : '#44ff44'" />
+						value.color="(:lstn ieq 1) ? 'mid_channel' : 'left_channel'" />
 					<ledchannel id="imr" min="-36 db" max="+6 db" log="true" type="rms_peak"
 						peak.visibility="true" 
-						value.color="(:lstn ieq 0) ? '#4444ff' : '#44ff44'" />
+						value.color="(:lstn ieq 1) ? 'side_channel' : 'right_channel'" />
 				</ledmeter>
 				<label text="labels.input:db" />
 				<void min_width="64" />
@@ -20,15 +20,15 @@
 				<ledmeter hexpand="true" angle="0">
 					<ledchannel id="sml" min="-36 db" max="+6 db" log="true" type="rms_peak"
 						peak.visibility="true" 
-						value.color="(:lstn ieq 0) ? '#ff4444' : '#44ff44'" />
+						value.color="(:lstn ieq 1) ? 'mid_channel' : 'left_channel'" />
 					<ledchannel id="smr" min="-36 db" max="+6 db" log="true" type="rms_peak"
 						peak.visibility="true" 
-						value.color="(:lstn ieq 0) ? '#4444ff' : '#44ff44'" />
+						value.color="(:lstn ieq 1) ? 'side_channel' : 'right_channel'" />
 				</ledmeter>
 			</hbox>
 			
 			<!-- Graph -->
-			<graph width="640" height="340" expand="true" fill="true">
+			<graph width.min="640" height.min="340" expand="true" fill="true">
 				<origin hpos="-1" vpos="-1" visible="false" />
 				
 				<!-- Gray grid -->
