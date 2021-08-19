@@ -83,14 +83,15 @@
 				<mesh id="ag_m" width="3" color="middle_channel" smooth="true" visibility=":fftv_m" />
 				<mesh id="ag_s" width="3" color="side_channel" smooth="true" visibility=":fftv_s" />
 				<ui:for id="i" first="0" last=":num_filters - 1">
-					<dot hpos_id="fm_${i}" vpos_id="gm_${i}" scroll_id="qm_${i}"
-						editable="true" color="eq_base"
-						hue_id="huem_${i}" visibility_id="fvm_${i}"
+					<dot x.id="fm_${i}" y.id="gm_${i}" z.id="qm_${i}"
+						x.editable="true" y.editable="true" z.editable="true"
+						color="eq_base" color.hue=":huem_${i}"
+						visibility=":fvm_${i}"
 					/>
-					<dot hpos_id="fs_${i}" vpos_id="gs_${i}" scroll_id="qs_${i}"
+					<!-- dot hpos_id="fs_${i}" vpos_id="gs_${i}" scroll_id="qs_${i}"
 						editable="true" color="eq_base"
 						hue_id="hues_${i}" visibility_id="fvs_${i}"
-					/>
+					/-->
 				</ui:for>
 				
 				<!-- Boundaries -->
