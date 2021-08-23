@@ -74,8 +74,14 @@
 					<marker id="gs_${i}" ox="1" oy="0" color="mesh_graph" color.hue=":hues_${i}" visibility=":fvs_${i}" />
 				</ui:for>
 				<ui:for id="i" first="0" last=":num_filters - 1">
-					<mesh id="agfm_${i}" width="2" color="mesh_graph" color.hue=":huem_${i}" visibility=":fvm_${i}" fill="0.8" smooth="true" />
-					<mesh id="agfs_${i}" width="2" color="mesh_graph" color.hue=":hues_${i}" visibility=":fvs_${i}" fill="0.8" smooth="true" />
+					<mesh id="agfm_${i}" width="2" 
+						color="mesh_graph" color.hue=":huem_${i}" fill="true"
+						fcolor="mesh_graph" fcolor.hue=":huem_${i}" fcolor.a="0.8"
+						visibility=":fvm_${i}" smooth="true" />
+					<mesh id="agfs_${i}" width="2"
+						color="mesh_graph" color.hue=":hues_${i}" fill="true"
+						fcolor="mesh_graph" fcolor.hue=":hues_${i}" fcolor.a="0.8"
+						visibility=":fvs_${i}" smooth="true" />
 				</ui:for>
 
 				<mesh id="fftg_m" width="2" color="middle_channel" visibility=":fftv_m" />
@@ -85,13 +91,20 @@
 				<ui:for id="i" first="0" last=":num_filters - 1">
 					<dot x.id="fm_${i}" y.id="gm_${i}" z.id="qm_${i}"
 						x.editable="true" y.editable="true" z.editable="true"
-						color="eq_base" color.hue=":huem_${i}"
+						color="eq_base"
+						color.hue=":huem_${i}" hover.color.hue=":huem_${i}"
+						bcolor.hue=":huem_${i}" hover.bcolor.hue=":huem_${i}"
 						visibility=":fvm_${i}"
+						pointer="drag"
 					/>
-					<!-- dot hpos_id="fs_${i}" vpos_id="gs_${i}" scroll_id="qs_${i}"
-						editable="true" color="eq_base"
-						hue_id="hues_${i}" visibility_id="fvs_${i}"
-					/-->
+					<dot x.id="fs_${i}" y.id="gs_${i}" z.id="qs_${i}"
+						x.editable="true" y.editable="true" z.editable="true"
+						color="eq_base"
+						color.hue=":hues_${i}" hover.color.hue=":hues_${i}"
+						bcolor.hue=":hues_${i}" hover.bcolor.hue=":hues_${i}"
+						visibility=":fvs_${i}"
+						pointer="drag"
+					/>
 				</ui:for>
 				
 				<!-- Boundaries -->
