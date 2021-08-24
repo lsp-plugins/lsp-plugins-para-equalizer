@@ -131,7 +131,7 @@
 					<text y="-12 db" text="-12" valign="1" />
 					<text y="-24 db" text="-24" valign="1" />
 					<text y="-36 db" text="-36" valign="1" />
-					<text ox="0" oy="2" y="1" text="graph.units.db" valign="-1" />
+					<text y="1" ox="0" oy="2" text="graph.units.db" valign="-1" />
 				</ui:attributes>
 				<ui:attributes x="10" halign="1" visibility=":zoom le -18 db">
 					<text y="18 db" text="+18" valign="-1" />
@@ -175,9 +175,9 @@
 			</hbox>
 		</vbox>
 		<vbox>
-			<label text="labels.zoom" />
-			<fader id="zoom" angle="1" expand="true" />
-			<value id="zoom" />
+			<label font.name="lsp-icons" font.size="12" font.antialias="true" text="E" color="text_icon" padding.bottom="4" padding.top="4"/>
+			<fader id="zoom" angle="1" vexpand="true" />
+			<value id="zoom" width="40"/>
 		</vbox>
 		<vbox spacing="4">
 			<group text="groups.signal" expand="true">
