@@ -68,43 +68,42 @@
 
 				<!-- Meshes -->
 				<ui:for id="i" first="0" last=":num_filters - 1">
-					<marker id="fm_${i}" ox="0" oy="1" color="mesh_graph" color.hue=":huem_${i}" visibility=":fvm_${i}" />
-					<marker id="fs_${i}" ox="0" oy="1" color="mesh_graph" color.hue=":hues_${i}" visibility=":fvs_${i}" />
-					<marker id="gm_${i}" ox="1" oy="0" color="mesh_graph" color.hue=":huem_${i}" visibility=":fvm_${i}" />
-					<marker id="gs_${i}" ox="1" oy="0" color="mesh_graph" color.hue=":hues_${i}" visibility=":fvs_${i}" />
+					<marker id="fm_${i}" ox="0" oy="1" color="eq_base" color.hue=":huem_${i}" visibility=":fvm_${i}" />
+					<marker id="fs_${i}" ox="0" oy="1" color="eq_base" color.hue=":hues_${i}" visibility=":fvs_${i}" />
+					<marker id="gm_${i}" ox="1" oy="0" color="eq_base" color.hue=":huem_${i}" visibility=":fvm_${i}" />
+					<marker id="gs_${i}" ox="1" oy="0" color="eq_base" color.hue=":hues_${i}" visibility=":fvs_${i}" />
 				</ui:for>
 				<ui:for id="i" first="0" last=":num_filters - 1">
 					<mesh id="agfm_${i}" width="2" 
-						color="mesh_graph" color.hue=":huem_${i}" fill="true"
-						fcolor="mesh_graph" fcolor.hue=":huem_${i}" fcolor.a="0.8"
+						color="eq_base" color.hue=":huem_${i}" fill="true"
+						fcolor="eq_base" fcolor.hue=":huem_${i}" fcolor.a="0.8"
 						visibility=":fvm_${i}" smooth="true" />
 					<mesh id="agfs_${i}" width="2"
-						color="mesh_graph" color.hue=":hues_${i}" fill="true"
-						fcolor="mesh_graph" fcolor.hue=":hues_${i}" fcolor.a="0.8"
+						color="eq_base" color.hue=":hues_${i}" fill="true"
+						fcolor="eq_base" fcolor.hue=":hues_${i}" fcolor.a="0.8"
 						visibility=":fvs_${i}" smooth="true" />
 				</ui:for>
 
-				<mesh id="fftg_m" width="2" color="middle_channel" visibility=":fftv_m" />
+				<mesh id="fftg_m" width="2" color="mid_channel" visibility=":fftv_m" />
 				<mesh id="fftg_s" width="2" color="side_channel" visibility=":fftv_s" />
-				<mesh id="ag_m" width="3" color="middle_channel" smooth="true" visibility=":fftv_m" />
+				<mesh id="ag_m" width="3" color="mid_channel" smooth="true" visibility=":fftv_m" />
 				<mesh id="ag_s" width="3" color="side_channel" smooth="true" visibility=":fftv_s" />
 				<ui:for id="i" first="0" last=":num_filters - 1">
-					<dot x.id="fm_${i}" y.id="gm_${i}" z.id="qm_${i}"
-						x.editable="true" y.editable="true" z.editable="true"
-						color="eq_base"
-						color.hue=":huem_${i}" hover.color.hue=":huem_${i}"
-						bcolor.hue=":huem_${i}" hover.bcolor.hue=":huem_${i}"
-						visibility=":fvm_${i}"
-						pointer="drag"
-					/>
-					<dot x.id="fs_${i}" y.id="gs_${i}" z.id="qs_${i}"
-						x.editable="true" y.editable="true" z.editable="true"
-						color="eq_base"
-						color.hue=":hues_${i}" hover.color.hue=":hues_${i}"
-						bcolor.hue=":hues_${i}" hover.bcolor.hue=":hues_${i}"
-						visibility=":fvs_${i}"
-						pointer="drag"
-					/>
+					<ui:attributes pointer="drag"
+						color="eq_base" hover.color="eq_base"
+						bcolor="eq_base" hover.bcolor="eq_base"
+						x.editable="true" y.editable="true" z.editable="true">
+						<dot x.id="fm_${i}" y.id="gm_${i}" z.id="qm_${i}"
+							color.hue=":huem_${i}" hover.color.hue=":huem_${i}"
+							bcolor.hue=":huem_${i}" hover.bcolor.hue=":huem_${i}"
+							visibility=":fvm_${i}"
+						/>
+						<dot x.id="fs_${i}" y.id="gs_${i}" z.id="qs_${i}"
+							color.hue=":hues_${i}" hover.color.hue=":hues_${i}"
+							bcolor.hue=":hues_${i}" hover.bcolor.hue=":hues_${i}"
+							visibility=":fvs_${i}"
+						/>
+					</ui:attributes>
 				</ui:for>
 				
 				<!-- Boundaries -->
@@ -153,12 +152,12 @@
 					<hbox spacing="4">
 						<vbox>
 							<hbox>
-								<button id="fftv_m" size="16" color="middle_channel" led="true" />
+								<button id="fftv_m" size="16" color="mid_channel" led="true" />
 								<label text="labels.chan.middle" />
 							</hbox>
 							<value id="gain_m" same_line="true" fill="true" halign="1" />
 						</vbox>
-						<knob id="gain_m" size="16" scale_color="middle_channel" />
+						<knob id="gain_m" size="16" scale_color="mid_channel" />
 						<vbox>
 							<hbox>
 								<button id="fftv_s" size="16" color="side_channel" led="true" />
@@ -200,7 +199,7 @@
 						<value id="bal" same_line="true" halign="0" />
 					</vbox>
 					
-					<knob id="frqs_m" scale_color="middle_channel" />
+					<knob id="frqs_m" scale_color="mid_channel" />
 					<vbox vfill="false">
 						<label text="labels.chan.pitch_mid" halign="0" />
 						<value id="frqs_m" same_line="true" halign="0" />
