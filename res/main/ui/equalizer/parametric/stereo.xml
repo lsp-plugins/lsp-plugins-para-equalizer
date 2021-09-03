@@ -33,35 +33,35 @@
 				<origin hpos="-1" vpos="-1" visible="false" />
 				
 				<!-- Gray grid -->
-				<ui:attributes ox="0" oy="1" color="graph_alt_4">
+				<ui:attributes ox="0" oy="1">
 					<ui:for id="f" first="20" last="90" step="10">
-						<marker v="${f}" />
+						<marker v="${f}" color="graph_alt_1" />
 					</ui:for>
 					<ui:for id="f" first="200" last="900" step="100">
-						<marker v="${f}" />
+						<marker v="${f}" color="graph_alt_1" />
 					</ui:for>
 					<ui:for id="f" first="2000" last="9000" step="1000">
-						<marker v="${f}" />
+						<marker v="${f}" color="graph_alt_1" />
 					</ui:for>
-					<marker value="20000" />
+					<marker value="20000" color="graph_alt_1" />
 				</ui:attributes>
 				<ui:for id="g" first="-36" last="36" step="24">
-					<marker v="${g} db" ox="1" oy="0" color="graph_alt_4" />
+					<marker v="${g} db" ox="1" oy="0" color="graph_alt_1" />
 				</ui:for>
 				<ui:for id="g" first="-18" last="18" step="12">
-					<marker v="${g} db" ox="1" oy="0" color="graph_alt_4" visibility=":zoom le -18 db" />
+					<marker v="${g} db" ox="1" oy="0" color="graph_alt_1" visibility=":zoom le -18 db" />
 				</ui:for>
 				<ui:for id="g" first="-9" last="9" step="6">
-					<marker v="${g} db" ox="1" oy="0" color="graph_alt_4" visibility=":zoom le -33 db" />
+					<marker v="${g} db" ox="1" oy="0" color="graph_alt_1" visibility=":zoom le -33 db" />
 				</ui:for>
 				
 				<!-- Yellow grid -->
-				<ui:attributes ox="0" oy="1" color="graph_alt_2">
+				<ui:attributes ox="0" oy="1" color="graph_sec">
 					<marker v="100" />
 					<marker v="1000" />
 					<marker v="10000" />
 				</ui:attributes>
-				<ui:attributes ox="1" oy="0" color="graph_alt_2">
+				<ui:attributes ox="1" oy="0" color="graph_sec">
 					<marker v="+24 db" />
 					<marker v="0 db" />
 					<marker v="-24 db" />
