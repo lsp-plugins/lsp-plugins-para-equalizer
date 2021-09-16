@@ -259,7 +259,9 @@
 								<value id="f${ch}" detailed="false" precision="1" pad.t="3"/>
 							</ui:with>
 							<cell rows="2" bg.color="bg_schema">
-								<align halign="1" valign="1" bg.color="bg_schema"><bevel size="30" color="bg_schema"/></align>
+								<align halign="1" valign="1">
+									<bevel size="48" bg.color="bg_schema" color="bg" dir.deg="225" />
+								</align>
 							</cell>
 						</ui:for>
 					</grid>
