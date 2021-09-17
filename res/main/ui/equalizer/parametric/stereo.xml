@@ -5,10 +5,11 @@
 	<grid rows="2" cols="3" spacing="4">
 		<vbox spacing="4" expand="true">
 			<!-- Signal meters -->
-			<hbox spacing="6" bg.color="bg_schema">
+			<!-- Old -->
+			<!-- <hbox spacing="6" bg.color="bg_schema">
 				<ledmeter hexpand="true" angle="0">
-					<ledchannel id="iml" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left"/>
-					<ledchannel id="imr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right"/>
+					<ledchannel id="iml" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left_in"/>
+					<ledchannel id="imr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right_in"/>
 				</ledmeter>
 				<label text="labels.input:db"/>
 				<void width.min="64"/>
@@ -17,7 +18,47 @@
 					<ledchannel id="sml" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left"/>
 					<ledchannel id="smr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right"/>
 				</ledmeter>
-			</hbox>
+			</hbox> -->
+
+			<!-- <hbox spacing="6" bg.color="bg_schema">
+				<label text="labels.input:db" pad.l="6"/>
+				<ledmeter hexpand="true" angle="0">
+					<ledchannel id="iml" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left_in"/>
+					<ledchannel id="imr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right_in"/>
+				</ledmeter>
+
+				<void width.min="64"/>
+				<label text="labels.output:db"/>
+				<ledmeter hexpand="true" angle="0">
+					<ledchannel id="sml" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left"/>
+					<ledchannel id="smr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right"/>
+				</ledmeter>
+			</hbox> -->
+
+			<!-- <hbox spacing="6" bg.color="bg_schema">
+
+				<grid rows="2" cols="5">
+
+					<label text="labels.mode"/>
+					<combo id="mode" pad.r="12"/>
+					<void width.min="200"/>
+				<label text="labels.input:db" pad.l="6"/>
+
+				<ledmeter hexpand="true" angle="0">
+					<ledchannel id="iml" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left_in"/>
+					<ledchannel id="imr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right_in"/>
+				</ledmeter>
+
+				<button id="fftv_l" height="22" pad.l="6" width="45" text="labels.chan.left" ui:inject="Button_left"/>
+				<button id="fftv_r" height="22" width="45" text="labels.chan.right" ui:inject="Button_right"/>
+<void width.min="200"/>
+				<label text="labels.output:db" pad.l="6"/>
+				<ledmeter hexpand="true" angle="0">
+					<ledchannel id="sml" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left"/>
+					<ledchannel id="smr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right"/>
+				</ledmeter>
+			</grid>
+			</hbox> -->
 
 			<!-- Graph -->
 			<group ui:inject="GraphGroup" ipadding="0" expand="true" fill="true" text="labels.graphs.spectrum">
@@ -130,13 +171,38 @@
 			</align>
 		</vbox>
 
+		<!-- Zoom Fader -->
+		<!-- <vbox visibility=":mode ilt 4" vexpand="true" bg.color="bg_schema">
+			<label font.name="lsp-icons" font.size="12" font.antialias="true" text="E" color="text_icon" pad.b="4" pad.t="4"/>
+			<fader id="zoom" angle="1" vexpand="true" bg.inherit="true" flat="true"/>
+			<value id="zoom" width="40"/>
+		</vbox> -->
+
 
 		<!-- Zoom Fader -->
-		<vbox visibility=":mode ilt 4" vexpand="true" bg.color="bg_schema">
+		<hbox spacing="4" bg.color="bg">
+		<vbox vexpand="true" bg.color="bg_schema">
 			<label font.name="lsp-icons" font.size="12" font.antialias="true" text="E" color="text_icon" pad.b="4" pad.t="4"/>
 			<fader id="zoom" angle="1" vexpand="true" bg.inherit="true" flat="true"/>
 			<value id="zoom" width="40"/>
 		</vbox>
+
+		<vbox vexpand="true" bg.color="bg_schema">
+			<label text="labels.chan.in" pad.b="3" pad.t="3"/>
+			<ledmeter vexpand="true" angle="1">
+				<ledchannel id="iml" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left_in"/>
+				<ledchannel id="imr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right_in"/>
+			</ledmeter>
+		</vbox>
+
+		<vbox vexpand="true" bg.color="bg_schema">
+			<label text="labels.chan.out" pad.b="3" pad.t="3"/>
+			<ledmeter vexpand="true" angle="1">
+				<ledchannel id="sml" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left"/>
+				<ledchannel id="smr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right"/>
+			</ledmeter>
+		</vbox>
+		</hbox>
 
 		<vbox spacing="4">
 			<group text="groups.signal" expand="true">
@@ -205,8 +271,8 @@
 
 						<!-- Filters -->
 						<ui:for id="i" first=":f*8" last=":f*8+7">
-							<cell rows="8" bg.color="bg" pad.r="4" expand="false">
-								<vsep/>
+							<cell rows="8" bg.color="bg" pad.r="4" expand="false" pad.t="6" pad.b="6">
+								<vsep />
 							</cell>
 							<ui:set id="ch" value="_${i}"/>
 							<ui:with expand="true">
@@ -260,7 +326,7 @@
 							</ui:with>
 							<cell rows="2" bg.color="bg_schema">
 								<align halign="1" valign="1">
-									<bevel size="48" bg.color="bg_schema" color="bg" dir.deg="225" />
+									<bevel size="34" bg.color="bg_schema" color="bg" dir.deg="225" />
 								</align>
 							</cell>
 						</ui:for>
