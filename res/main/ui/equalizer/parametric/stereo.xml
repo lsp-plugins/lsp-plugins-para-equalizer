@@ -4,61 +4,6 @@
 
 	<grid rows="2" cols="3" spacing="4">
 		<vbox spacing="4" expand="true">
-			<!-- Signal meters -->
-			<!-- Old -->
-			<!-- <hbox spacing="6" bg.color="bg_schema">
-				<ledmeter hexpand="true" angle="0">
-					<ledchannel id="iml" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left_in"/>
-					<ledchannel id="imr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right_in"/>
-				</ledmeter>
-				<label text="labels.input:db"/>
-				<void width.min="64"/>
-				<label text="labels.output:db"/>
-				<ledmeter hexpand="true" angle="0">
-					<ledchannel id="sml" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left"/>
-					<ledchannel id="smr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right"/>
-				</ledmeter>
-			</hbox> -->
-
-			<!-- <hbox spacing="6" bg.color="bg_schema">
-				<label text="labels.input:db" pad.l="6"/>
-				<ledmeter hexpand="true" angle="0">
-					<ledchannel id="iml" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left_in"/>
-					<ledchannel id="imr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right_in"/>
-				</ledmeter>
-
-				<void width.min="64"/>
-				<label text="labels.output:db"/>
-				<ledmeter hexpand="true" angle="0">
-					<ledchannel id="sml" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left"/>
-					<ledchannel id="smr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right"/>
-				</ledmeter>
-			</hbox> -->
-
-			<!-- <hbox spacing="6" bg.color="bg_schema">
-
-				<grid rows="2" cols="5">
-
-					<label text="labels.mode"/>
-					<combo id="mode" pad.r="12"/>
-					<void width.min="200"/>
-				<label text="labels.input:db" pad.l="6"/>
-
-				<ledmeter hexpand="true" angle="0">
-					<ledchannel id="iml" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left_in"/>
-					<ledchannel id="imr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right_in"/>
-				</ledmeter>
-
-				<button id="fftv_l" height="22" pad.l="6" width="45" text="labels.chan.left" ui:inject="Button_left"/>
-				<button id="fftv_r" height="22" width="45" text="labels.chan.right" ui:inject="Button_right"/>
-<void width.min="200"/>
-				<label text="labels.output:db" pad.l="6"/>
-				<ledmeter hexpand="true" angle="0">
-					<ledchannel id="sml" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left"/>
-					<ledchannel id="smr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right"/>
-				</ledmeter>
-			</grid>
-			</hbox> -->
 
 			<!-- Graph -->
 			<group ui:inject="GraphGroup" ipadding="0" expand="true" fill="true" text="labels.graphs.spectrum">
@@ -66,7 +11,7 @@
 					<origin hpos="-1" vpos="-1" visible="false"/>
 
 					<!-- Gray grid -->
-					<ui:attributes ox="0" oy="1">
+					<ui:with ox="0" oy="1">
 						<ui:for id="f" first="20" last="90" step="10">
 							<marker v="${f}" color="graph_alt_1"/>
 						</ui:for>
@@ -77,7 +22,7 @@
 							<marker v="${f}" color="graph_alt_1"/>
 						</ui:for>
 						<marker value="20000" color="graph_alt_1"/>
-					</ui:attributes>
+					</ui:with>
 					<ui:for id="g" first="-36" last="36" step="24">
 						<marker v="${g} db" ox="1" oy="0" color="graph_alt_1"/>
 					</ui:for>
@@ -89,33 +34,33 @@
 					</ui:for>
 
 					<!-- Yellow grid -->
-					<ui:attributes ox="0" oy="1" color="graph_sec">
+					<ui:with ox="0" oy="1" color="graph_sec">
 						<marker v="100"/>
 						<marker v="1000"/>
 						<marker v="10000"/>
-					</ui:attributes>
-					<ui:attributes ox="1" oy="0" color="graph_sec">
+					</ui:with>
+					<ui:with ox="1" oy="0" color="graph_sec">
 						<marker v="+24 db"/>
 						<marker v="0 db"/>
 						<marker v="-24 db"/>
-					</ui:attributes>
+					</ui:with>
 
 					<!-- Meshes -->
 					<ui:for id="i" first="0" last=":num_filters - 1">
-						<marker id="f_${i}" ox="0" oy="1" color="eq_base" color.hue=":hue_${i}" visibility=":fv_${i}"/>
-						<marker id="g_${i}" ox="1" oy="0" color="eq_base" color.hue=":hue_${i}" visibility=":fv_${i}"/>
+						<marker id="f_${i}" ox="0" oy="1" color="graph_marker" color.hue=":hue_${i}" visibility=":fv_${i}"/>
+						<marker id="g_${i}" ox="1" oy="0" color="graph_marker" color.hue=":hue_${i}" visibility=":fv_${i}"/>
 					</ui:for>
 					<ui:for id="i" first="0" last=":num_filters - 1">
-						<mesh id="agf_${i}" width="2" color="eq_base" color.hue=":hue_${i}" fill="true" fcolor="eq_base" fcolor.hue=":hue_${i}" fcolor.a="0.8" visibility=":fv_${i}" smooth="true"/>
+						<mesh id="agf_${i}" width="2" color="graph_marker" color.hue=":hue_${i}" fill="true" fcolor="graph_marker" fcolor.hue=":hue_${i}" fcolor.a="0.8" visibility=":fv_${i}" smooth="true"/>
 					</ui:for>
 
 					<mesh id="fftg_l" width="2" color="left" visibility=":fftv_l"/>
 					<mesh id="fftg_r" width="2" color="right" visibility=":fftv_r"/>
 					<mesh id="ag" width="3" color="mid" smooth="true"/>
 					<ui:for id="i" first="0" last=":num_filters - 1">
-						<ui:attributes pointer="drag" color="eq_base" hover.color="eq_base" bcolor="eq_base" hover.bcolor="eq_base" x.editable="true" y.editable="true" z.editable="true">
+						<ui:with pointer="drag" color="graph_marker" hover.color="graph_marker" bcolor="graph_marker" hover.bcolor="graph_marker" x.editable="true" y.editable="true" z.editable="true">
 							<dot x.id="f_${i}" y.id="g_${i}" z.id="q_${i}" color.hue=":hue_${i}" hover.color.hue=":hue_${i}" bcolor.hue=":hue_${i}" hover.bcolor.hue=":hue_${i}" visibility=":fv_${i}"/>
-						</ui:attributes>
+						</ui:with>
 					</ui:for>
 
 					<!-- Boundaries -->
@@ -130,13 +75,13 @@
 					<axis min="-1" max="1" visible="false" angle="0.5"/>
 
 					<!-- Text -->
-					<ui:attributes ox="0" oy="2" y="0" halign="1" valign="1">
+					<ui:with ox="0" oy="2" y="0" halign="1" valign="1">
 						<text x="10" text="graph.units.hz"/>
 						<text x="100" text="100"/>
 						<text x="1000" text="graph.values.x_k" text:value="1"/>
 						<text x="10000" text="graph.values.x_k" text:value="10"/>
-					</ui:attributes>
-					<ui:attributes x="10" halign="1">
+					</ui:with>
+					<ui:with x="10" halign="1">
 						<text y="36 db" text="+36" valign="-1"/>
 						<text y="24 db" text="+24" valign="-1"/>
 						<text y="12 db" text="+12" valign="-1"/>
@@ -145,19 +90,19 @@
 						<text y="-24 db" text="-24" valign="1"/>
 						<text y="-36 db" text="-36" valign="1"/>
 						<text y="1" ox="0" oy="2" text="graph.units.db" valign="-1"/>
-					</ui:attributes>
-					<ui:attributes x="10" halign="1" visibility=":zoom le -18 db">
+					</ui:with>
+					<ui:with x="10" halign="1" visibility=":zoom le -18 db">
 						<text y="18 db" text="+18" valign="-1"/>
 						<text y="6 db" text="+6" valign="-1"/>
 						<text y="-6 db" text="-6" valign="1"/>
 						<text y="-18 db" text="-18" valign="1"/>
-					</ui:attributes>
-					<ui:attributes x="10" halign="1" visibility=":zoom le -33 db">
+					</ui:with>
+					<ui:with x="10" halign="1" visibility=":zoom le -33 db">
 						<text y="9 db" text="+9" valign="-1"/>
 						<text y="3 db" text="+3" valign="-1"/>
 						<text y="-3 db" text="-3" valign="1"/>
 						<text y="-9 db" text="-9" valign="1"/>
-					</ui:attributes>
+					</ui:with>
 				</graph>
 			</group>
 
@@ -171,13 +116,6 @@
 			</align>
 		</vbox>
 
-		<!-- Zoom Fader -->
-		<!-- <vbox visibility=":mode ilt 4" vexpand="true" bg.color="bg_schema">
-			<label font.name="lsp-icons" font.size="12" font.antialias="true" text="E" color="text_icon" pad.b="4" pad.t="4"/>
-			<fader id="zoom" angle="1" vexpand="true" bg.inherit="true" flat="true"/>
-			<value id="zoom" width="40"/>
-		</vbox> -->
-
 
 		<!-- Zoom Fader -->
 		<hbox spacing="4" bg.color="bg">
@@ -186,6 +124,8 @@
 			<fader id="zoom" angle="1" vexpand="true" bg.inherit="true" flat="true"/>
 			<value id="zoom" width="40"/>
 		</vbox>
+
+		<!-- Signal meters -->
 
 		<vbox vexpand="true" bg.color="bg_schema">
 			<label text="labels.chan.in" pad.b="3" pad.t="3"/>
@@ -275,7 +215,7 @@
 								<vsep />
 							</cell>
 							<ui:set id="ch" value="_${i}"/>
-							<ui:with expand="true">
+							<ui:with expand="true" bright="(:ft${ch} igt 0) ? 1 : 0.75" bg.bright="(:ft${ch} igt 0) ? 1.0 : 0.8">
 								<cell cols="2"><label text="${i}" pad="6"/></cell>
 								<cell cols="2" fill="true"><combo id="ft${ch}" fill="true" pad.l="6" pad.r="6" pad.b="6"/></cell>
 								<cell cols="2" fill="true"><combo id="fm${ch}" fill="true" pad.l="6" pad.r="6"/></cell>
@@ -324,9 +264,9 @@
 								<knob id="f${ch}" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
 								<value id="f${ch}" detailed="false" precision="1" pad.t="3"/>
 							</ui:with>
-							<cell rows="2" bg.color="bg_schema">
+							<cell rows="2" >
 								<align halign="1" valign="1">
-									<bevel size="34" bg.color="bg_schema" color="bg" dir.deg="225" />
+									<bevel size="34" bg.color="bg_schema" color="bg" dir.deg="225" bg.bright="(:ft${ch} igt 0) ? 1.0 : 0.75"/>
 								</align>
 							</cell>
 						</ui:for>
