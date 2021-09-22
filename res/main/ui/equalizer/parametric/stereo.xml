@@ -215,7 +215,7 @@
 								<vsep />
 							</cell>
 							<ui:set id="ch" value="_${i}"/>
-							<ui:with expand="true" bright="(:ft${ch} igt 0) ? 1 : 0.75" bg.bright="(:ft${ch} igt 0) ? 1.0 : 0.8">
+							<ui:with expand="true" bright="(:ft${ch} igt 0) ? 1 : 0.75" bg.bright="(:ft${ch} igt 0) ? 1.0 : :const_bg_darken">
 								<cell cols="2"><label text="${i}" pad="6"/></cell>
 								<cell cols="2" fill="true"><combo id="ft${ch}" fill="true" pad.l="6" pad.r="6" pad.b="6"/></cell>
 								<cell cols="2" fill="true"><combo id="fm${ch}" fill="true" pad.l="6" pad.r="6"/></cell>
@@ -255,18 +255,18 @@
 
 								/>
 
-								<knob id="g${ch}" scolor="cycle" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
+								<knob id="g${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
 								<value id="g${ch}" width.min="40" detailed="false" pad.t="3"/>
 
-								<knob id="q${ch}" scolor="cycle" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
+								<knob id="q${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
 								<value id="q${ch}" width.min="40" detailed="false" pad.t="3" pad.b="6"/>
 
-								<knob id="f${ch}" scolor="cycle" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
+								<knob id="f${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
 								<value id="f${ch}" width.min="40" detailed="false" precision="1" pad.t="3"/>
 							</ui:with>
 							<cell rows="2" >
 								<align halign="1" valign="1">
-									<bevel size="34" ui:inject="Bevel_cycle" dir.deg="225" bg.bright="(:ft${ch} igt 0) ? 1.0 : 0.8"/>
+									<bevel size="34" ui:inject="Bevel_cycle" dir.deg="225" bg.bright="(:ft${ch} igt 0) ? 1.0 : :const_bg_darken"/>
 								</align>
 							</cell>
 						</ui:for>
