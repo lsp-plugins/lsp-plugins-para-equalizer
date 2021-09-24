@@ -113,7 +113,7 @@
 			</group>
 
 			<align halign="1" expand="false">
-				<hbox spacing="4" bg.color="bg_schema" pad.l="6" pad.r="6" pad.b="4" pad.t="4">
+				<hbox spacing="4" bg.color="bg_schema" pad.h="6" pad.b="4" pad.t="4">
 					<label text="labels.mode"/>
 					<combo id="mode" pad.r="12"/>
 					<button id="fftv_m" height="22" width="48" text="labels.chan.middle" ui:inject="Button_mid"/>
