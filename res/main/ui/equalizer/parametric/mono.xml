@@ -75,11 +75,22 @@
 
 					<!-- Text -->
 					<ui:with ox="0" oy="2" y="0" halign="1" valign="1">
-						<text x="10" text="graph.units.hz"/>
-						<text x="100" text="100"/>
-						<text x="1000" text="graph.values.x_k" text:value="1"/>
-						<text x="10000" text="graph.values.x_k" text:value="10"/>
+					  <text x="10" text="graph.units.hz"/>
+					  <text x="20" text="20"/>
+					  <text x="30" text="30"/>
+					  <text x="50" text="50"/>
+					  <text x="100" text="100"/>
+					  <text x="200" text="200"/>
+					  <text x="300" text="300"/>
+					  <text x="500" text="500"/>
+					  <text x="1000" text="graph.values.x_k" text:value="1"/>
+					  <text x="2000" text="graph.values.x_k" text:value="2"/>
+					  <text x="3000" text="graph.values.x_k" text:value="3"/>
+					  <text x="5000" text="graph.values.x_k" text:value="5"/>
+					  <text x="10000" text="graph.values.x_k" text:value="10"/>
+					  <text x="20000" text="graph.values.x_k" text:value="20"/>
 					</ui:with>
+
 					<ui:with x="10" halign="1">
 						<text y="36 db" text="+36" valign="-1"/>
 						<text y="24 db" text="+24" valign="-1"/>
