@@ -77,9 +77,11 @@ namespace lsp
             pRewPath    = NULL;
             fmtStrings  = fmt_strings;
 
-            if (::strstr(meta->lv2_urid, "_lr") != NULL)
+            if ((!strcmp(meta->lv2_uri, meta::para_equalizer_x16_lr.lv2_uri)) ||
+                (!strcmp(meta->lv2_uri, meta::para_equalizer_x32_lr.lv2_uri)))
                 fmtStrings      = fmt_strings_lr;
-            else if (::strstr(meta->lv2_urid, "_ms") != NULL)
+            else if ((!strcmp(meta->lv2_uri, meta::para_equalizer_x16_ms.lv2_uri)) ||
+                     (!strcmp(meta->lv2_uri, meta::para_equalizer_x32_ms.lv2_uri)))
                 fmtStrings      = fmt_strings_ms;
         }
 
