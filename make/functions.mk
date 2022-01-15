@@ -26,7 +26,7 @@ uniq                    = $(if $1,$(firstword $1) $(call uniq,$(filter-out $(fir
 # Recursively lookup directory for specific file pattern
 # $(call rwildcard, <path>, <file-name-pattern>)
 # $(call rwildcard, main, *.cpp)
-rwildcard               = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
+rwildcard               = $(foreach d,$(wildcard $1/*),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 
 # Fetch different flags from symbolic dependencies
 # $(call query, <field>, <list>)

@@ -18,13 +18,6 @@
 # along with lsp-plugins-para-equalizer.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-# Package version
-ARTIFACT_ID                 = LSP_PLUGINS_PARA_EQUALIZER
-ARTIFACT_NAME               = lsp-plugins-para-equalizer
-ARTIFACT_TYPE               = plug
-ARTIFACT_DESC               = LSP Parametric Equalizer Plugin Series
-ARTIFACT_HEADERS            = lsp-plug.in
-ARTIFACT_VERSION            = 1.0.5-devel
-
-
-
+# Variables that describe dependencies
+PLUGIN_DEPENDENCIES     = LSP_PLUGINS_PARA_EQUALIZER
+PLUGIN_PACKAGE_NAME     = lsp-plugins

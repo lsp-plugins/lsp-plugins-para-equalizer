@@ -23,18 +23,23 @@ ifneq ($(VERBOSE),1)
 .SILENT:
 endif
 
-BASEDIR                 = $(CURDIR)
-CONFIG                 := $(BASEDIR)/../.config.mk
-PROJECT                := $(BASEDIR)/../project.mk
+MODDIR                  = $(CURDIR)/..
+ROOTDIR                := $(MODDIR)
+CONFIG                 := $(MODDIR)/.config.mk
 
+# Project configuration
 include $(CONFIG)
-include $(PROJECT)
-include $(BASEDIR)/../make/functions.mk
+include $(MODDIR)/project.mk
+include $(MODDIR)/make/functions.mk
+
+# Injected lugin dependencies
+include $(ROOTDIR)/dependencies.mk
+include $(ROOTDIR)/plugins.mk
 
 ifeq ($(TEST),1)
-  UNIQ_DEPENDENCIES      := $(call uniq, $(DEPENDENCIES) LSP_PLUGIN_FW $(ARTIFACT_ID) $(TEST_DEPENDENCIES))
+  UNIQ_DEPENDENCIES      := $(call uniq, $(DEPENDENCIES) $(ARTIFACT_ID) $(TEST_DEPENDENCIES))
 else
-  UNIQ_DEPENDENCIES      := $(call uniq, $(DEPENDENCIES) LSP_PLUGIN_FW $(ARTIFACT_ID))
+  UNIQ_DEPENDENCIES      := $(call uniq, $(DEPENDENCIES) $(ARTIFACT_ID))
 endif
 DEPENDENCIES            = $(UNIQ_DEPENDENCIES)
 
