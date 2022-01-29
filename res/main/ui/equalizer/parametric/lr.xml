@@ -280,14 +280,14 @@
 
 									/>
 
-									<knob id="g${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
-									<value id="g${ch}" width.min="40" detailed="false" pad.t="3"/>
+									<knob id="f${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
+									<value id="f${ch}" width.min="40" detailed="false" precision="1" pad.t="3"/>
 
 									<knob id="q${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
 									<value id="q${ch}" width.min="40" detailed="false" pad.t="3" pad.b="6"/>
 
-									<knob id="f${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
-									<value id="f${ch}" width.min="40" detailed="false" precision="1" pad.t="3"/>
+									<knob id="g${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
+									<value id="g${ch}" width.min="40" detailed="false" pad.t="3"/>
 								</ui:with>
 								<cell rows="2" >
 									<align halign="1" valign="1">
