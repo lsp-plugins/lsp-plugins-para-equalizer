@@ -509,6 +509,15 @@ namespace lsp
             PORTS_END
         };
 
+        const meta::bundle_t para_equalizer_bundle =
+        {
+            "para_equalizer",
+            "Parametric Equalizer",
+            B_EQUALIZERS,
+            "TfpJPsiouuU",
+            "This plugin allows to perform parametric equalization of inpu tsignal.\nUp to 16 or 32 different filters are simultaneously available for processing."
+        };
+
         const meta::plugin_t para_equalizer_x16_mono =
         {
             "Parametrischer Entzerrer x16 Mono",
@@ -527,7 +536,8 @@ namespace lsp
             para_equalizer_x16_mono_ports,
             "equalizer/parametric/mono.xml",
             NULL,
-            mono_plugin_port_groups
+            mono_plugin_port_groups,
+            &para_equalizer_bundle
         };
 
         const meta::plugin_t para_equalizer_x32_mono =
@@ -548,7 +558,8 @@ namespace lsp
             para_equalizer_x32_mono_ports,
             "equalizer/parametric/mono.xml",
             NULL,
-            mono_plugin_port_groups
+            mono_plugin_port_groups,
+            &para_equalizer_bundle
         };
 
         const meta::plugin_t para_equalizer_x16_stereo =
@@ -569,7 +580,8 @@ namespace lsp
             para_equalizer_x16_stereo_ports,
             "equalizer/parametric/stereo.xml",
             NULL,
-            stereo_plugin_port_groups
+            stereo_plugin_port_groups,
+            &para_equalizer_bundle
         };
 
         const meta::plugin_t para_equalizer_x32_stereo =
@@ -590,7 +602,8 @@ namespace lsp
             para_equalizer_x32_stereo_ports,
             "equalizer/parametric/stereo.xml",
             NULL,
-            stereo_plugin_port_groups
+            stereo_plugin_port_groups,
+            &para_equalizer_bundle
         };
 
         const meta::plugin_t para_equalizer_x16_lr =
@@ -611,7 +624,8 @@ namespace lsp
             para_equalizer_x16_lr_ports,
             "equalizer/parametric/lr.xml",
             NULL,
-            stereo_plugin_port_groups
+            stereo_plugin_port_groups,
+            &para_equalizer_bundle
         };
 
         const meta::plugin_t para_equalizer_x32_lr =
@@ -632,7 +646,8 @@ namespace lsp
             para_equalizer_x32_lr_ports,
             "equalizer/parametric/lr.xml",
             NULL,
-            stereo_plugin_port_groups
+            stereo_plugin_port_groups,
+            &para_equalizer_bundle
         };
 
         const meta::plugin_t para_equalizer_x16_ms =
@@ -653,7 +668,8 @@ namespace lsp
             para_equalizer_x16_ms_ports,
             "equalizer/parametric/ms.xml",
             NULL,
-            stereo_plugin_port_groups
+            stereo_plugin_port_groups,
+            &para_equalizer_bundle
         };
 
         const meta::plugin_t para_equalizer_x32_ms =
@@ -674,7 +690,8 @@ namespace lsp
             para_equalizer_x32_ms_ports,
             "equalizer/parametric/ms.xml",
             NULL,
-            stereo_plugin_port_groups
+            stereo_plugin_port_groups,
+            &para_equalizer_bundle
         };
     } // namespace meta
 } // namespace lsp
