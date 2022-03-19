@@ -24,6 +24,6 @@ PLUGIN_PACKAGE_NAME     = lsp-plugins
 PLUGIN_SHARED = \
   LSP_PLUGINS_SHARED
 
-PLUGIN_DEPENDENCIES = LSP Parametric Equalizer Plugin Series
+PLUGIN_DEPENDENCIES = lsp-plugins-para-equalizer
   LSP_PLUGINS_PLUGIN_TEMPLATE
 
