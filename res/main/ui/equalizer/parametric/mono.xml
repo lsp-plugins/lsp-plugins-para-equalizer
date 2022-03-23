@@ -1,0 +1,277 @@
+<plugin resizable="true">
+	<ui:eval id="num_filters" value="(ex :ft_16) ? 32 : 16"/>
+	<ui:eval id="num_blocks" value="(ex :ft_16) ? 4 : 2"/>
+
+	<grid rows="2" cols="3" spacing="4">
+		<vbox spacing="4" expand="true">
+
+			<!-- Graph -->
+			<group ui:inject="GraphGroup" ipadding="0" expand="true" fill="true" text="labels.graphs.spectrum">
+				<graph width.min="640" height.min="340" expand="true">
+					<origin hpos="-1" vpos="-1" visible="false"/>
+
+					<!-- Gray grid -->
+					<ui:with ox="0" oy="1">
+						<ui:for id="f" first="20" last="90" step="10">
+							<marker v="${f}" color="graph_alt_1"/>
+						</ui:for>
+						<ui:for id="f" first="200" last="900" step="100">
+							<marker v="${f}" color="graph_alt_1"/>
+						</ui:for>
+						<ui:for id="f" first="2000" last="9000" step="1000">
+							<marker v="${f}" color="graph_alt_1"/>
+						</ui:for>
+						<marker value="20000" color="graph_alt_1"/>
+					</ui:with>
+					<ui:for id="g" first="-36" last="36" step="24">
+						<marker v="${g} db" ox="1" oy="0" color="graph_alt_1"/>
+					</ui:for>
+					<ui:for id="g" first="-18" last="18" step="12">
+						<marker v="${g} db" ox="1" oy="0" color="graph_alt_1" visibility=":zoom le -18 db"/>
+					</ui:for>
+					<ui:for id="g" first="-9" last="9" step="6">
+						<marker v="${g} db" ox="1" oy="0" color="graph_alt_1" visibility=":zoom le -33 db"/>
+					</ui:for>
+
+					<!-- Yellow grid -->
+					<ui:with ox="0" oy="1" color="graph_sec">
+						<marker v="100"/>
+						<marker v="1000"/>
+						<marker v="10000"/>
+					</ui:with>
+					<ui:with ox="1" oy="0" color="graph_sec">
+						<marker v="+24 db"/>
+						<marker v="0 db"/>
+						<marker v="-24 db"/>
+					</ui:with>
+
+					<!-- Meshes -->
+					<ui:for id="i" first="0" last=":num_filters - 1">
+						<marker id="f_${i}" ox="0" oy="1" color="graph_marker_cycle" color.hue=":hue_${i}" visibility=":fv_${i}"/>
+						<marker id="g_${i}" ox="1" oy="0" color="graph_marker_cycle" color.hue=":hue_${i}" visibility=":fv_${i}"/>
+					</ui:for>
+					<ui:for id="i" first="0" last=":num_filters - 1">
+						<mesh id="agf_${i}" width="2" color="graph_mesh_cycle" color.hue=":hue_${i}" fill="true" fcolor="graph_mesh_cycle" fcolor.hue=":hue_${i}" fcolor.a="0.8" visibility=":fv_${i}" smooth="true"/>
+					</ui:for>
+
+					<mesh id="fftg" width="2" color="mono" visibility=":fft"/>
+					<mesh id="ag" width="3" color="bright_cyan" smooth="true"/>
+					<ui:for id="i" first="0" last=":num_filters - 1">
+						<ui:with pointer="drag" color="graph_marker_cycle" hover.color="graph_marker_cycle" bcolor="graph_marker_cycle" hover.bcolor="graph_marker_cycle" x.editable="true" y.editable="true" z.editable="true">
+							<dot x.id="f_${i}" y.id="g_${i}" z.id="q_${i}" color.hue=":hue_${i}" hover.color.hue=":hue_${i}" bcolor.hue=":hue_${i}" hover.bcolor.hue=":hue_${i}" visibility=":fv_${i}"/>
+						</ui:with>
+					</ui:for>
+
+					<!-- Boundaries -->
+					<marker ox="2" oy="0" v="1" color="graph_prim" visibility="false"/>
+					<!-- +48 dB -->
+					<marker ox="0" oy="1" v="24000" color="graph_prim" visibility="false"/>
+
+					<!-- Axis -->
+					<axis min="10" max="24000" color="graph_prim" angle="0.0" log="true" visibility="false"/>
+					<axis min="-48 db / :zoom" max="48 db * :zoom" color="graph_prim" angle="0.5" log="true" visibility="false"/>
+					<!-- -48..+48 dB -->
+					<axis min="-1" max="1" visible="false" angle="0.5"/>
+
+					<!-- Text -->
+					<ui:with ox="0" oy="2" y="0" halign="1" valign="1">
+					  <text x="10" text="graph.units.hz"/>
+					  <text x="20" text="20"/>
+					  <text x="30" text="30"/>
+					  <text x="50" text="50"/>
+					  <text x="100" text="100"/>
+					  <text x="200" text="200"/>
+					  <text x="300" text="300"/>
+					  <text x="500" text="500"/>
+					  <text x="1000" text="graph.values.x_k" text:value="1"/>
+					  <text x="2000" text="graph.values.x_k" text:value="2"/>
+					  <text x="3000" text="graph.values.x_k" text:value="3"/>
+					  <text x="5000" text="graph.values.x_k" text:value="5"/>
+					  <text x="10000" text="graph.values.x_k" text:value="10"/>
+					  <text x="20000" text="graph.values.x_k" text:value="20"/>
+					</ui:with>
+
+					<ui:with x="10" halign="1">
+						<text y="36 db" text="+36" valign="-1"/>
+						<text y="24 db" text="+24" valign="-1"/>
+						<text y="12 db" text="+12" valign="-1"/>
+						<text y="0 db" text="0" valign="1"/>
+						<text y="-12 db" text="-12" valign="1"/>
+						<text y="-24 db" text="-24" valign="1"/>
+						<text y="-36 db" text="-36" valign="1"/>
+						<text y="1" ox="0" oy="2" text="graph.units.db" valign="-1"/>
+					</ui:with>
+					<ui:with x="10" halign="1" visibility=":zoom le -18 db">
+						<text y="18 db" text="+18" valign="-1"/>
+						<text y="6 db" text="+6" valign="-1"/>
+						<text y="-6 db" text="-6" valign="1"/>
+						<text y="-18 db" text="-18" valign="1"/>
+					</ui:with>
+					<ui:with x="10" halign="1" visibility=":zoom le -33 db">
+						<text y="9 db" text="+9" valign="-1"/>
+						<text y="3 db" text="+3" valign="-1"/>
+						<text y="-3 db" text="-3" valign="1"/>
+						<text y="-9 db" text="-9" valign="1"/>
+					</ui:with>
+				</graph>
+			</group>
+
+			<align halign="1" expand="false">
+				<hbox spacing="4" bg.color="bg_schema" pad.l="6" pad.r="6" pad.b="4" pad.t="4">
+					<label text="labels.mode"/>
+					<combo id="mode"/>
+				</hbox>
+			</align>
+		</vbox>
+
+		<!-- Zoom Fader -->
+		<hbox spacing="4" bg.color="bg">
+			<vbox vexpand="true" bg.color="bg_schema">
+				<label font.name="lsp-icons" font.size="12" font.antialias="true" text="E" color="text_icon" pad.b="4" pad.t="4"/>
+				<fader id="zoom" angle="1" vexpand="true" bg.inherit="true" flat="true"/>
+				<value id="zoom" width="40"/>
+			</vbox>
+
+			<!-- Signal meters -->
+
+			<vbox vexpand="true" bg.color="bg_schema">
+				<label text="labels.chan.in" pad.b="3" pad.t="3"/>
+				<ledmeter vexpand="true" angle="1">
+					<ledchannel id="im" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="mono_in"/>
+				</ledmeter>
+			</vbox>
+
+			<vbox vexpand="true" bg.color="bg_schema">
+				<label text="labels.chan.out" pad.b="3" pad.t="3"/>
+				<ledmeter vexpand="true" angle="1">
+					<ledchannel id="sm" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="mono"/>
+				</ledmeter>
+			</vbox>
+		</hbox>
+
+		<vbox spacing="4">
+			<group text="groups.signal" expand="true">
+				<grid rows="3" cols="2" hspacing="4">
+					<knob id="g_in" pad.r="4"/>
+					<vbox vfill="false">
+						<label text="labels.input" halign="0"/>
+						<value id="g_in" sline="true" halign="0"/>
+					</vbox>
+
+					<knob id="g_out" pad.r="4"/>
+					<vbox vfill="false">
+						<label text="labels.output" expand="true" halign="0"/>
+						<value id="g_out" width.min="50" sline="true" halign="0"/>
+					</vbox>
+
+					<knob id="frqs" scolor="mid" pad.r="4"/>
+					<vbox vfill="false">
+						<label text="labels.chan.pitch" halign="0"/>
+						<value id="frqs" width.min="50" sline="true" halign="0"/>
+					</vbox>
+				</grid>
+			</group>
+			<group text="groups.analysis" expand="true">
+				<vbox>
+					<label text="labels.fft.fft" halign="0"/>
+					<combo id="fft" fill="true"/>
+
+					<grid rows="2" cols="2" transpose="false" expand="true" hspacing="4">
+						<knob id="react" size="20" pad.r="4"/>
+						<vbox vfill="false">
+							<label text="labels.metering.reactivity" halign="0"/>
+							<value id="react" width.min="50" sline="true" halign="0"/>
+						</vbox>
+
+						<knob id="shift" size="20" pad.r="4"/>
+						<vbox vfill="false">
+							<label text="labels.metering.shift" halign="0"/>
+							<value id="shift" width.min="50" sline="true" halign="0"/>
+						</vbox>
+					</grid>
+				</vbox>
+			</group>
+		</vbox>
+
+		<cell cols="3">
+			<cgroup id="fsel">
+				<!-- 4 blocks of filters -->
+				<ui:for id="f" first="0" last=":num_blocks - 1">
+					<grid transpose="true" rows="8" cols="25" spacing="0">
+						<ui:with expand="false">
+							<label text="labels.specials.num" fill="true" halign="0"/>
+							<label text="labels.filter" fill="true" halign="0"/>
+							<label text="labels.mode" fill="true" halign="0"/>
+							<label text="labels.slope" fill="true" halign="0"/>
+							<label text="labels.freq_gain" halign="0" pad.r="6" pad.l="6"/>
+							<label text="labels.hz_db" halign="0"/>
+							<cell rows="2"><label text="labels.q" halign="0"/></cell>
+						</ui:with>
+
+						<!-- Filters -->
+						<ui:for id="i" first=":f*8" last=":f*8+7">
+							<cell rows="8" bg.color="bg" pad.r="2" pad.l="2" expand="false" pad.t="6" pad.b="6">
+								<vsep/>
+							</cell>
+							<ui:set id="ch" value="_${i}"/>
+							<ui:with expand="true" bright="(:ft${ch} igt 0) ? 1 : 0.75" bg.bright="(:ft${ch} igt 0) ? 1.0 : :const_bg_darken">
+								<cell cols="2"><label text="${i}" pad="6"/></cell>
+								<cell cols="2" fill="true"><combo id="ft${ch}" fill="true" pad.l="6" pad.r="6" pad.b="6"/></cell>
+								<cell cols="2" fill="true"><combo id="fm${ch}" fill="true" pad.l="6" pad.r="6"/></cell>
+								<cell cols="2" fill="true">
+									<grid rows="1" cols="3">
+										<combo id="s${ch}" fill="true" pad="6" expand="true"/>
+										<button
+											id="xs${ch}"
+											text="labels.chan.S_olo"
+											ui:inject="Button_Cycle"
+											size="22"
+											font.size="10"
+											down.color.hue=":hue_${i}"
+											down.hover.color.hue=":hue_${i}"
+											text.down.color.hue=":hue_${i}"
+											text.down.hover.color.hue=":hue_${i}"
+											border.down.color.hue=":hue_${i}"
+											border.down.hover.color.hue=":hue_${i}"
+											pad.r="6"
+											expand="false"/>
+										<button
+											id="xm${ch}"
+											text="labels.chan.M_ute"
+											ui:inject="Button_Cycle"
+											size="22"
+											font.size="10"
+											down.color.hue=":hue_${i}"
+											down.hover.color.hue=":hue_${i}"
+											text.down.color.hue=":hue_${i}"
+											text.down.hover.color.hue=":hue_${i}"
+											border.down.color.hue=":hue_${i}"
+											border.down.hover.color.hue=":hue_${i}"
+											pad.r="6"
+											expand="false"/>
+									</grid>
+								</cell>
+
+								/>
+
+								<knob id="f${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
+								<value id="f${ch}" width.min="40" detailed="false" precision="1" pad.t="3"/>
+
+								<knob id="q${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
+								<value id="q${ch}" width.min="40" detailed="false" pad.t="3" pad.b="6"/>
+
+								<knob id="g${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
+								<value id="g${ch}" width.min="40" detailed="false" pad.t="3"/>
+							</ui:with>
+							<cell rows="2">
+								<align halign="1" valign="1">
+									<bevel size="34" ui:inject="Bevel_cycle" dir.deg="225" bg.bright="(:ft${ch} igt 0) ? 1.0 : :const_bg_darken"/>
+								</align>
+							</cell>
+						</ui:for>
+					</grid>
+				</ui:for>
+			</cgroup>
+		</cell>
+	</grid>
+</plugin>
