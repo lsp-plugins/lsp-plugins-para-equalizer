@@ -515,7 +515,7 @@ namespace lsp
             "Parametric Equalizer",
             B_EQUALIZERS,
             "TfpJPsiouuU",
-            "This plugin allows to perform parametric equalization of inpu tsignal.\nUp to 16 or 32 different filters are simultaneously available for processing."
+            "This plugin allows one to perform parametric equalization of inpu tsignal.\nUp to 16 or 32 different filters are simultaneously available for processing."
         };
 
         const meta::plugin_t para_equalizer_x16_mono =
