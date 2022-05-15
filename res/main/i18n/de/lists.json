@@ -1,0 +1,29 @@
+{
+	"para_eq": {
+		"flt_0:7": "Filter 0-7",
+		"flt_16:23": "Filter 16-23",
+		"flt_24:31": "Filter 24-31",
+		"flt_8:15": "Filter 8-15",
+		
+		"flt_l_0:7": "Filter Links 0-7",
+		"flt_l_16:23": "Filter Links 16-23",
+		"flt_l_24:31": "Filter Links 24-31",
+		"flt_l_8:15": "Filter Links 8-15",
+		
+		"flt_m_0:7": "Filter Mitte 0-7",
+		"flt_m_16:23": "Filter Mitte 16-23",
+		"flt_m_24:31": "Filter Mitte 24-31",
+		"flt_m_8:15": "Filter Mitte 8-15",
+		
+		"flt_r_0:7": "Filter Rechts 0-7",
+		"flt_r_16:23": "Filter Rechts 16-23",
+		"flt_r_24:31": "Filter Rechts 24-31",
+		"flt_r_8:15": "Filter Rechts 8-15",
+		
+		"flt_s_0:7": "Filter Seite 0-7",
+		"flt_s_16:23": "Filter Seite 16-23",
+		"flt_s_24:31": "Filter Seite 24-31",
+		"flt_s_8:15": "Filter Seite 8-15"
+	}
+}
+
