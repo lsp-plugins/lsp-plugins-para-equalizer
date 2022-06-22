@@ -2,6 +2,10 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.7 ===
+* Added german translations (contributed by Johannes Guenther).
+* Updated build scripts and dependencies.
+
 === 1.0.6 ===
 * Updated plugin metadata (contributed by Dennis Braun).
 * Updated dependencies and build scripts.

@@ -799,7 +799,7 @@ namespace lsp
                 c->fOutGain         = bal[i];
                 if (c->pInGain != NULL)
                     c->fInGain          = c->pInGain->value();
-                c->fPitch           = expf((M_LN2 * c->pPitch->value()) / 12.0f);
+                c->fPitch           = dspu::semitones_to_frequency_shift(c->pPitch->value());
 
                 // Update each filter configuration (step 1)
                 for (size_t j=0; j<nFilters; ++j)
@@ -838,7 +838,6 @@ namespace lsp
                     // Update filter parameters
                     if (update)
                     {
-    //                    modified            = true;
                         fp.nType            = ft;
                         fp.fFreq            = freq;
                         #ifdef LSP_NO_EXPERIMENTAL
