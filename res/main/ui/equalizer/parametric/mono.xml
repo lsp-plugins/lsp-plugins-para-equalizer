@@ -252,8 +252,6 @@
 									</grid>
 								</cell>
 
-								/>
-
 								<knob id="f${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
 								<value id="f${ch}" width.min="40" detailed="false" precision="1" pad.t="3"/>
 
