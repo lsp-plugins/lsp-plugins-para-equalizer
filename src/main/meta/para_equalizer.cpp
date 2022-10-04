@@ -535,7 +535,7 @@ namespace lsp
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x16_mono_ports,
             "equalizer/parametric/mono.xml",
-            NULL,
+            "equalizer/parametric/mono",
             mono_plugin_port_groups,
             &para_equalizer_bundle
         };
@@ -557,7 +557,7 @@ namespace lsp
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x32_mono_ports,
             "equalizer/parametric/mono.xml",
-            NULL,
+            "equalizer/parametric/mono",
             mono_plugin_port_groups,
             &para_equalizer_bundle
         };
@@ -579,7 +579,7 @@ namespace lsp
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x16_stereo_ports,
             "equalizer/parametric/stereo.xml",
-            NULL,
+            "equalizer/parametric/stereo",
             stereo_plugin_port_groups,
             &para_equalizer_bundle
         };
@@ -601,7 +601,7 @@ namespace lsp
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x32_stereo_ports,
             "equalizer/parametric/stereo.xml",
-            NULL,
+            "equalizer/parametric/stereo",
             stereo_plugin_port_groups,
             &para_equalizer_bundle
         };
@@ -623,7 +623,7 @@ namespace lsp
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x16_lr_ports,
             "equalizer/parametric/lr.xml",
-            NULL,
+            "equalizer/parametric/lr",
             stereo_plugin_port_groups,
             &para_equalizer_bundle
         };
@@ -645,7 +645,7 @@ namespace lsp
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x32_lr_ports,
             "equalizer/parametric/lr.xml",
-            NULL,
+            "equalizer/parametric/lr",
             stereo_plugin_port_groups,
             &para_equalizer_bundle
         };
@@ -667,7 +667,7 @@ namespace lsp
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x16_ms_ports,
             "equalizer/parametric/ms.xml",
-            NULL,
+            "equalizer/parametric/ms",
             stereo_plugin_port_groups,
             &para_equalizer_bundle
         };
@@ -689,7 +689,7 @@ namespace lsp
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x32_ms_ports,
             "equalizer/parametric/ms.xml",
-            NULL,
+            "equalizer/parametric/ms",
             stereo_plugin_port_groups,
             &para_equalizer_bundle
         };

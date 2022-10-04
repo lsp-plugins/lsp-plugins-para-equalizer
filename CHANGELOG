@@ -3,6 +3,7 @@
 *******************************************************************************
 
 === 1.0.9 ===
+* Added built-in presets for some music genres (contributed by Largos @ linuxmusicians).
 * Updated build scripts and dependencies.
 
 === 1.0.8 ===
