@@ -125,3 +125,14 @@
 	<li><b>Q</b> - the quality factor of the filter.</li>
 	<li><b>Hue</b> - the color of the frequency chart of the filter on the graph.</li>
 </ul>
+<p>
+	Additionally, mouse double-click on the graph area allows to add a filter with desired frequency and gain
+	settings depending on the actual frequency value at the position of the mouse click:
+</p>
+<ul>
+	<li>100 Hz and below: Hi-pass RLC BT filter with Q=0.5;</li>
+	<li>100 Hz - 300 Hz: Lo-shelf RLC BT filter with Q=0.5;</li>
+	<li>300 Hz - 7 kHz: Bell RLC BT filter with Q=2;</li>
+	<li>7 kHz - 15 kHz: Hi-shelf RLC BT filter with Q=0.5;</li>
+	<li>15 kHz and above: Lo-pass RLC BT filter with Q=0.5.</li>
+</ul>

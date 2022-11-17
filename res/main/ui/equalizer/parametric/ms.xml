@@ -7,7 +7,7 @@
 
 			<!-- Graph -->
 			<group ui:inject="GraphGroup" ipadding="0" expand="true" fill="true" text="labels.graphs.spectrum">
-				<graph width.min="640" height.min="400" expand="true">
+				<graph ui:id="para_eq_graph" width.min="640" height.min="400" expand="true">
 					<origin hpos="-1" vpos="-1" visible="false"/>
 
 					<!-- Gray grid -->
@@ -75,8 +75,8 @@
 					<marker ox="0" oy="1" v="24000" color="graph_prim" visibility="false"/>
 
 					<!-- Axis -->
-					<axis min="10" max="24000" color="graph_prim" angle="0.0" log="true" visibility="false"/>
-					<axis min="-48 db / :zoom" max="48 db * :zoom" color="graph_prim" angle="0.5" log="true" visibility="false"/>
+					<axis ui:id="para_eq_ox" min="10" max="24000" color="graph_prim" angle="0.0" log="true" visibility="false"/>
+					<axis ui:id="para_eq_oy" min="-48 db / :zoom" max="48 db * :zoom" color="graph_prim" angle="0.5" log="true" visibility="false"/>
 					<!-- -48..+48 dB -->
 					<axis min="-1" max="1" visible="false" angle="0.5"/>
 
