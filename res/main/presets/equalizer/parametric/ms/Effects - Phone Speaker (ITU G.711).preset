@@ -1,0 +1,38 @@
+zoom = -36.00 db
+gain_s = 0
+
+ftm_0 = 2
+fmm_0 = 0
+sm_0 = 0
+xsm_0 = false
+xmm_0 = false
+fm_0 = 300.00000
+gm_0 = 0.00 db
+qm_0 = 0.42500
+
+fts_0 = 2
+fms_0 = 0
+ss_0 = 0
+xss_0 = false
+xms_0 = false
+fs_0 = 300.00000
+gs_0 = 0.00 db
+qs_0 = 0.42500
+
+ftm_1 = 4
+fmm_1 = 4
+sm_1 = 3
+xsm_1 = false
+xmm_1 = false
+fm_1 = 3400.00000
+gm_1 = 0.00 db
+qm_1 = 1.25000
+
+fts_1 = 4
+fms_1 = 4
+ss_1 = 3
+xss_1 = false
+xms_1 = false
+fs_1 = 3400.00000
+gs_1 = 0.00 db
+qs_1 = 1.25000
