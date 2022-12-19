@@ -1,0 +1,73 @@
+zoom = -36.00 db
+
+ftm_0 = 1
+fmm_0 = 0
+sm_0 = 0
+xsm_0 = false
+xmm_0 = false
+fm_0 = 51.16787
+gm_0 = 0.90 db
+qm_0 = 0.40000
+
+fts_0 = 1
+fms_0 = 0
+ss_0 = 0
+xss_0 = false
+xms_0 = false
+fs_0 = 51.16787
+gs_0 = 0.90 db
+qs_0 = 0.40000
+
+ftm_1 = 1
+fmm_1 = 0
+sm_1 = 0
+xsm_1 = false
+xmm_1 = false
+fm_1 = 4447.53174
+gm_1 = 1.87 db
+qm_1 = 0.20000
+
+fts_1 = 1
+fms_1 = 0
+ss_1 = 0
+xss_1 = false
+xms_1 = false
+fs_1 = 4447.53174
+gs_1 = 1.87 db
+qs_1 = 0.20000
+
+ftm_2 = 1
+fmm_2 = 0
+sm_2 = 0
+xsm_2 = false
+xmm_2 = false
+fm_2 = 210.36971
+gm_2 = -0.88 db
+qm_2 = 0.00000
+
+fts_2 = 1
+fms_2 = 0
+ss_2 = 0
+xss_2 = false
+xms_2 = false
+fs_2 = 210.36971
+gs_2 = -0.88 db
+qs_2 = 0.00000
+
+ftm_3 = 3
+fmm_3 = 0
+sm_3 = 0
+xsm_3 = false
+xmm_3 = false
+fm_3 = 14437.11426
+gm_3 = 2.21 db
+qm_3 = 0.00000
+
+fts_3 = 3
+fms_3 = 0
+ss_3 = 0
+xss_3 = false
+xms_3 = false
+fs_3 = 14437.11426
+gs_3 = 2.21 db
+qs_3 = 0.00000

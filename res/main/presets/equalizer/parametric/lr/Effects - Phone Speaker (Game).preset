@@ -1,0 +1,91 @@
+zoom = -36.00 db
+
+ftl_0 = 2
+fml_0 = 4
+sl_0 = 0
+xsl_0 = false
+xml_0 = false
+fl_0 = 605.35852
+gl_0 = 0.27 db
+ql_0 = 0.00000
+
+ftr_0 = 2
+fmr_0 = 4
+sr_0 = 0
+xsr_0 = false
+xmr_0 = false
+fr_0 = 605.35852
+gr_0 = 0.27 db
+qr_0 = 0.00000
+
+ftl_1 = 1
+fml_1 = 0
+sl_1 = 0
+xsl_1 = false
+xml_1 = false
+fl_1 = 910.50134
+gl_1 = 4.84 db
+ql_1 = 6.20000
+
+ftr_1 = 1
+fmr_1 = 0
+sr_1 = 0
+xsr_1 = false
+xmr_1 = false
+fr_1 = 910.50134
+gr_1 = 4.84 db
+qr_1 = 6.20000
+
+ftl_2 = 1
+fml_2 = 0
+sl_2 = 2
+xsl_2 = false
+xml_2 = false
+fl_2 = 1586.67468
+gl_2 = 5.85 db
+ql_2 = 6.60000
+
+ftr_2 = 1
+fmr_2 = 0
+sr_2 = 2
+xsr_2 = false
+xmr_2 = false
+fr_2 = 1586.67468
+gr_2 = 5.85 db
+qr_2 = 6.60000
+
+ftl_3 = 1
+fml_3 = 1
+sl_3 = 1
+xsl_3 = false
+xml_3 = false
+fl_3 = 2696.67676
+gl_3 = 4.32 db
+ql_3 = 9.00000
+
+ftr_3 = 1
+fmr_3 = 1
+sr_3 = 1
+xsr_3 = false
+xmr_3 = false
+fr_3 = 2696.67676
+gr_3 = 4.32 db
+qr_3 = 9.00000
+
+ftl_4 = 4
+fml_4 = 4
+sl_4 = 1
+xsl_4 = false
+xml_4 = false
+fl_4 = 3877.14233
+gl_4 = 0.00 db
+ql_4 = 0.00000
+
+ftr_4 = 4
+fmr_4 = 4
+sr_4 = 1
+xsr_4 = false
+xmr_4 = false
+fr_4 = 3877.14233
+gr_4 = 0.00 db
+qr_4 = 0.00000

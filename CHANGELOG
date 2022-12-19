@@ -2,6 +2,11 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.9 ===
+* Added built-in presets for some music genres (contributed by Largos @ linuxmusicians).
+* Added possibility to add several filters by performing mouse double click on the graph area.
+* Updated build scripts and dependencies.
+
 === 1.0.8 ===
 * Updated build scripts and dependencies.
 
