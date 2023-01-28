@@ -24,7 +24,8 @@ ARTIFACT_NAME               = lsp-plugins-para-equalizer
 ARTIFACT_TYPE               = plug
 ARTIFACT_DESC               = LSP Parametric Equalizer Plugin Series
 ARTIFACT_HEADERS            = lsp-plug.in
-ARTIFACT_VERSION            = 1.0.9
+ARTIFACT_EXPORT_HEADERS     = 0
+ARTIFACT_VERSION            = 1.0.10
 
 
 

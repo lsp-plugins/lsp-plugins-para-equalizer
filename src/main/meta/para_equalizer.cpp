@@ -25,7 +25,7 @@
 
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MAJOR         1
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MINOR         0
-#define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MICRO         9
+#define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MICRO         110
 
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION  \
     LSP_MODULE_VERSION( \
@@ -40,7 +40,9 @@ namespace lsp
     {
         //-------------------------------------------------------------------------
         // Parametric Equalizer
-        static const int para_equalizer_classes[] = { C_PARA_EQ, -1 };
+        static const int plugin_classes[]           = { C_PARA_EQ, -1 };
+        static const int clap_features_mono[]       = { CF_AUDIO_EFFECT, CF_EQUALIZER, CF_MONO, -1 };
+        static const int clap_features_stereo[]     = { CF_AUDIO_EFFECT, CF_EQUALIZER, CF_STEREO, -1 };
 
         static const port_item_t filter_slopes[] =
         {
@@ -530,8 +532,10 @@ namespace lsp
             "dh3y",
             LSP_LADSPA_PARA_EQUALIZER_BASE + 0,
             LSP_LADSPA_URI("para_equalizer_x16_mono"),
+            LSP_CLAP_URI("para_equalizer_x16_mono"),
             LSP_PLUGINS_PARA_EQUALIZER_VERSION,
-            para_equalizer_classes,
+            plugin_classes,
+            clap_features_mono,
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x16_mono_ports,
             "equalizer/parametric/mono.xml",
@@ -552,8 +556,10 @@ namespace lsp
             "i0px",
             LSP_LADSPA_PARA_EQUALIZER_BASE + 1,
             LSP_LADSPA_URI("para_equalizer_x32_mono"),
+            LSP_CLAP_URI("para_equalizer_x32_mono"),
             LSP_PLUGINS_PARA_EQUALIZER_VERSION,
-            para_equalizer_classes,
+            plugin_classes,
+            clap_features_mono,
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x32_mono_ports,
             "equalizer/parametric/mono.xml",
@@ -574,8 +580,10 @@ namespace lsp
             "a5er",
             LSP_LADSPA_PARA_EQUALIZER_BASE + 2,
             LSP_LADSPA_URI("para_equalizer_x16_stereo"),
+            LSP_CLAP_URI("para_equalizer_x16_stereo"),
             LSP_PLUGINS_PARA_EQUALIZER_VERSION,
-            para_equalizer_classes,
+            plugin_classes,
+            clap_features_stereo,
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x16_stereo_ports,
             "equalizer/parametric/stereo.xml",
@@ -596,8 +604,10 @@ namespace lsp
             "s2nz",
             LSP_LADSPA_PARA_EQUALIZER_BASE + 3,
             LSP_LADSPA_URI("para_equalizer_x32_stereo"),
+            LSP_CLAP_URI("para_equalizer_x32_stereo"),
             LSP_PLUGINS_PARA_EQUALIZER_VERSION,
-            para_equalizer_classes,
+            plugin_classes,
+            clap_features_stereo,
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x32_stereo_ports,
             "equalizer/parametric/stereo.xml",
@@ -618,8 +628,10 @@ namespace lsp
             "4kef",
             LSP_LADSPA_PARA_EQUALIZER_BASE + 4,
             LSP_LADSPA_URI("para_equalizer_x16_lr"),
+            LSP_CLAP_URI("para_equalizer_x16_lr"),
             LSP_PLUGINS_PARA_EQUALIZER_VERSION,
-            para_equalizer_classes,
+            plugin_classes,
+            clap_features_stereo,
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x16_lr_ports,
             "equalizer/parametric/lr.xml",
@@ -640,8 +652,10 @@ namespace lsp
             "ilqj",
             LSP_LADSPA_PARA_EQUALIZER_BASE + 5,
             LSP_LADSPA_URI("para_equalizer_x32_lr"),
+            LSP_CLAP_URI("para_equalizer_x32_lr"),
             LSP_PLUGINS_PARA_EQUALIZER_VERSION,
-            para_equalizer_classes,
+            plugin_classes,
+            clap_features_stereo,
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x32_lr_ports,
             "equalizer/parametric/lr.xml",
@@ -662,8 +676,10 @@ namespace lsp
             "opjs",
             LSP_LADSPA_PARA_EQUALIZER_BASE + 6,
             LSP_LADSPA_URI("para_equalizer_x16_ms"),
+            LSP_CLAP_URI("para_equalizer_x16_ms"),
             LSP_PLUGINS_PARA_EQUALIZER_VERSION,
-            para_equalizer_classes,
+            plugin_classes,
+            clap_features_stereo,
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x16_ms_ports,
             "equalizer/parametric/ms.xml",
@@ -684,8 +700,10 @@ namespace lsp
             "lgz9",
             LSP_LADSPA_PARA_EQUALIZER_BASE + 7,
             LSP_LADSPA_URI("para_equalizer_x32_ms"),
+            LSP_CLAP_URI("para_equalizer_x32_ms"),
             LSP_PLUGINS_PARA_EQUALIZER_VERSION,
-            para_equalizer_classes,
+            plugin_classes,
+            clap_features_stereo,
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x32_ms_ports,
             "equalizer/parametric/ms.xml",
@@ -693,7 +711,7 @@ namespace lsp
             stereo_plugin_port_groups,
             &para_equalizer_bundle
         };
-    } // namespace meta
-} // namespace lsp
+    } /* namespace meta */
+} /* namespace lsp */
 
 
