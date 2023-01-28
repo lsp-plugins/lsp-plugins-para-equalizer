@@ -2,6 +2,9 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.12 ===
+* Fixed invalid version number in metadata.
+
 === 1.0.11 ===
 * Updated build scripts and dependencies.
 
