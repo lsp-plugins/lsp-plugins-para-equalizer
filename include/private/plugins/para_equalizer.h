@@ -84,17 +84,20 @@ namespace lsp
 
                 typedef struct eq_channel_t
                 {
-                    dspu::Equalizer     sEqualizer;     // Equalizer
+                    dspu::Equalizer     vEqualizers[2]; // Equalizers
+                    dspu::Equalizer    *pCurrEq;        // Currently used equalizer
                     dspu::Bypass        sBypass;        // Bypass
                     dspu::Delay         sDryDelay;      // Dry delay
 
                     size_t              nLatency;       // Latency of the channel
+                    bool                bXfadeEq;       // Perform cross-fade between equalizers
                     float               fInGain;        // Input gain
                     float               fOutGain;       // Output gain
                     float               fPitch;         // Frequency shift
                     eq_filter_t        *vFilters;       // List of filters
                     float              *vDryBuf;        // Dry buffer
                     float              *vBuffer;        // Buffer for temporary data
+                    float              *vXFadeBuffer;   // Buffer for equalizer cross-fade
                     float              *vIn;            // Input buffer
                     float              *vOut;           // Output buffer
                     size_t              nSync;          // Chart state
@@ -145,6 +148,7 @@ namespace lsp
 
                 void                dump_channel(dspu::IStateDumper *v, const eq_channel_t *c) const;
                 static void         dump_filter(dspu::IStateDumper *v, const eq_filter_t *f);
+                static inline dspu::Equalizer *next_equalizer(eq_channel_t *c);
 
             public:
                 explicit para_equalizer(const meta::plugin_t *metadata, size_t filters, size_t mode);
