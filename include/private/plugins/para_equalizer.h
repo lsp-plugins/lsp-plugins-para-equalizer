@@ -69,6 +69,8 @@ namespace lsp
                     float              *vTrIm;          // Transfer function (imaginary part)
                     size_t              nSync;          // Chart state
                     bool                bSolo;          // Soloing filter
+                    dspu::filter_params_t sOldFP;       // Old filter parameters
+                    dspu::filter_params_t sFP;          // Filter parameters
 
                     plug::IPort        *pType;          // Filter type
                     plug::IPort        *pMode;          // Filter mode
@@ -123,6 +125,7 @@ namespace lsp
                 float               fGainIn;                // Input gain
                 float               fZoom;                  // Zoom gain
                 bool                bListen;                // Listen mode (only for MS para_equalizer)
+                bool                bSmoothMode;            // Smooth mode for the equalizer
                 fft_position_t      nFftPosition;           // FFT position
                 core::IDBuffer     *pIDisplay;              // Inline display buffer
 
@@ -142,9 +145,11 @@ namespace lsp
                 inline void         decode_filter(size_t *ftype, size_t *slope, size_t mode);
                 inline bool         adjust_gain(size_t filter_type);
                 inline dspu::equalizer_mode_t get_eq_mode();
+                void                process_channel(eq_channel_t *c, size_t start, size_t samples);
 
                 void                dump_channel(dspu::IStateDumper *v, const eq_channel_t *c) const;
                 static void         dump_filter(dspu::IStateDumper *v, const eq_filter_t *f);
+                static void         dump_filter_params(dspu::IStateDumper *v, const char *id, const dspu::filter_params_t *fp);
 
             public:
                 explicit para_equalizer(const meta::plugin_t *metadata, size_t filters, size_t mode);
