@@ -499,6 +499,7 @@ namespace lsp
                     return;
 
                 c->sEqualizer.init(nFilters, EQ_RANK);
+                c->sEqualizer.set_smooth(true);
                 max_latency         = lsp_max(max_latency, c->sEqualizer.max_latency());
 
                 // Initialize filters
