@@ -21,7 +21,9 @@
 
 #include <lsp-plug.in/dsp-units/units.h>
 #include <lsp-plug.in/fmt/RoomEQWizard.h>
+#include <lsp-plug.in/plug-fw/meta/func.h>
 #include <lsp-plug.in/stdlib/string.h>
+#include <lsp-plug.in/tk/tk.h>
 
 #include <private/meta/para_equalizer.h>
 #include <private/ui/para_equalizer.h>
@@ -50,6 +52,14 @@ namespace lsp
         }
 
         static ui::Factory factory(ui_factory, plugin_uis, 8);
+
+        static const tk::tether_t dot_menu_tether_list[] =
+        {
+            { tk::TF_BOTTOM | tk::TF_LEFT,  1.0f, 1.0f },
+            { tk::TF_BOTTOM | tk::TF_RIGHT, -1.0f, 1.0f },
+            { tk::TF_TOP | tk::TF_LEFT,  1.0f, -1.0f },
+            { tk::TF_TOP | tk::TF_RIGHT, -1.0f, -1.0f }
+        };
 
         //---------------------------------------------------------------------
         static const char *fmt_strings[] =
@@ -82,6 +92,11 @@ namespace lsp
             nXAxisIndex     = -1;
             nYAxisIndex     = -1;
 
+            pDotCurr        = NULL;
+            wDotMenu        = NULL;
+            wFilterSolo     = NULL;
+            wFilterMute     = NULL;
+
             if ((!strcmp(meta->uid, meta::para_equalizer_x16_lr.uid)) ||
                 (!strcmp(meta->uid, meta::para_equalizer_x32_lr.uid)))
             {
@@ -94,6 +109,13 @@ namespace lsp
                 fmtStrings      = fmt_strings_ms;
                 nSplitChannels  = 2;
             }
+
+            nFilters       = 16;
+            if ((!strcmp(meta->uid, meta::para_equalizer_x32_lr.uid)) ||
+                (!strcmp(meta->uid, meta::para_equalizer_x32_mono.uid)) ||
+                (!strcmp(meta->uid, meta::para_equalizer_x32_ms.uid)) ||
+                (!strcmp(meta->uid, meta::para_equalizer_x32_stereo.uid)))
+                nFilters       = 32;
         }
 
         para_equalizer_ui::~para_equalizer_ui()
@@ -209,11 +231,199 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t para_equalizer_ui::slot_filter_menu_submit(tk::Widget *sender, void *ptr, void *data)
+        {
+            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+            if ((_this == NULL) || (_this->pDotCurr == NULL))
+                return STATUS_BAD_STATE;
+            tk::MenuItem *mi = tk::widget_cast<tk::MenuItem>(sender);
+            if (mi == NULL)
+                return STATUS_BAD_ARGUMENTS;
+
+            _this->on_filter_menu_item_submit(mi);
+
+            return STATUS_OK;
+        }
+
+        status_t para_equalizer_ui::slot_filter_dot_click(tk::Widget *sender, void *ptr, void *data)
+        {
+            // Process the right mouse click
+            ws::event_t *ev = static_cast<ws::event_t *>(data);
+            if (ev->nCode != ws::MCB_RIGHT)
+                return STATUS_OK;
+
+            // Fetch paramters
+            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+            if (_this == NULL)
+                return STATUS_BAD_STATE;
+            tk::GraphDot *dot = tk::widget_cast<tk::GraphDot>(sender);
+            if (dot == NULL)
+                return STATUS_BAD_ARGUMENTS;
+
+            // Process the event
+            _this->on_filter_dot_right_click(dot, ev->nLeft, ev->nTop);
+
+            return STATUS_OK;
+        }
+
+        para_equalizer_ui::dot_t *para_equalizer_ui::find_dot(tk::GraphDot *dot)
+        {
+            for (size_t i=0, n=vDots.size(); i<n; ++i)
+            {
+                dot_t *d = vDots.uget(i);
+                if (d->pDot == dot)
+                    return d;
+            }
+            return NULL;
+        }
+
+        void para_equalizer_ui::add_dots()
+        {
+            for (const char **fmt = fmtStrings; *fmt != NULL; ++fmt)
+            {
+                for (size_t port_id=0; port_id<nFilters; ++port_id)
+                {
+                    dot_t dot;
+                    dot.pDot        = find_dot(*fmt, "filter_dot", port_id);
+                    if (dot.pDot == NULL)
+                        continue;
+
+                    dot.pType       = find_port(*fmt, "ft", port_id);
+                    dot.pMode       = find_port(*fmt, "fm", port_id);
+                    dot.pSlope      = find_port(*fmt, "s", port_id);
+                    dot.pSolo       = find_port(*fmt, "xs", port_id);
+                    dot.pMute       = find_port(*fmt, "xm", port_id);
+
+                    if ((dot.pType == NULL) ||
+                        (dot.pMode == NULL) ||
+                        (dot.pSlope == NULL) ||
+                        (dot.pSolo == NULL) ||
+                        (dot.pMute == NULL))
+                        continue;
+
+                    dot.pDot->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_filter_dot_click, this);
+                    vDots.add(&dot);
+                }
+            }
+        }
+
+        tk::Menu *para_equalizer_ui::create_menu()
+        {
+            tk::Menu *menu = new tk::Menu(pWrapper->display());
+            if (menu == NULL)
+                return NULL;
+            if ((menu->init() != STATUS_OK) ||
+                (pWrapper->controller()->widgets()->add(menu) != STATUS_OK))
+            {
+                menu->destroy();
+                delete menu;
+                return NULL;
+            }
+            return menu;
+        }
+
+        tk::MenuItem *para_equalizer_ui::create_menu_item(tk::Menu *parent, const char *text)
+        {
+            tk::MenuItem *mi = new tk::MenuItem(pWrapper->display());
+            if (mi == NULL)
+                return NULL;
+            if ((mi->init() != STATUS_OK) ||
+                (pWrapper->controller()->widgets()->add(mi) != STATUS_OK))
+            {
+                mi->destroy();
+                delete mi;
+                return NULL;
+            }
+            if (parent != NULL)
+            {
+                if (parent->add(mi) != STATUS_OK)
+                    return NULL;
+            }
+            mi->text()->set(text);
+
+            return mi;
+        }
+
+        tk::Menu *para_equalizer_ui::create_submenu(tk::Menu *parent, const char *lc_key,
+            lltl::parray<tk::MenuItem> *items, const meta::port_t *port)
+        {
+            if (port->items == NULL)
+                return NULL;
+
+            // Create menu item for the parent menu
+            tk::MenuItem *root = create_menu_item(parent, lc_key);
+            if (root == NULL)
+                return NULL;
+
+            // Create menu and bind to root menu item
+            tk::Menu *menu = create_menu();
+            if (menu == NULL)
+                return NULL;
+            root->menu()->set(menu);
+
+            // Create menu items
+            for (const meta::port_item_t *pi = port->items; pi->text != NULL; ++pi)
+            {
+                // Create submenu item
+                LSPString key;
+                if (!key.append_ascii("lists."))
+                    return NULL;
+                if (!key.append_ascii(pi->lc_key))
+                    return NULL;
+                tk::MenuItem *mi = create_menu_item(menu, key.get_ascii());
+                if (mi == NULL)
+                    return NULL;
+                if (!items->add(mi))
+                    return NULL;
+                mi->type()->set_radio();
+                mi->slots()->bind(tk::SLOT_SUBMIT, slot_filter_menu_submit, this);
+            }
+
+            return menu;
+        }
+
+        void para_equalizer_ui::create_dot_menu()
+        {
+            dot_t *dot = vDots.get(0);
+            if (dot == NULL)
+                return;
+
+            tk::Menu *root = create_menu();
+            if (root == NULL)
+                return;
+
+            if ((create_submenu(root, "labels.filter", &vFilterTypes, dot->pType->metadata())) == NULL)
+                return;
+            if ((create_submenu(root, "labels.mode", &vFilterModes, dot->pMode->metadata())) == NULL)
+                return;
+            if ((create_submenu(root, "labels.slope", &vFilterSlopes, dot->pSlope->metadata())) == NULL)
+                return;
+
+            if ((wFilterSolo = create_menu_item(root, "labels.chan.solo")) == NULL)
+                return;
+            wFilterSolo->type()->set_check();
+            wFilterSolo->slots()->bind(tk::SLOT_SUBMIT, slot_filter_menu_submit, this);
+            ctl::inject_style(wFilterSolo, "MenuItemChecked");
+
+            if ((wFilterMute = create_menu_item(root, "labels.chan.mute")) == NULL)
+                return;
+            wFilterMute->type()->set_check();
+            wFilterMute->slots()->bind(tk::SLOT_SUBMIT, slot_filter_menu_submit, this);
+            ctl::inject_style(wFilterMute, "MenuItemChecked");
+
+            wDotMenu    = root;
+        }
+
         status_t para_equalizer_ui::post_init()
         {
             status_t res = ui::Module::post_init();
             if (res != STATUS_OK)
                 return res;
+
+            // Add dot widgets
+            add_dots();
+            if (!vDots.is_empty())
+                create_dot_menu();
 
             // Find REW port
             pRewPath            = pWrapper->port(UI_CONFIG_PORT_PREFIX UI_DLG_REW_PATH_ID);
@@ -244,6 +454,90 @@ namespace lsp
             }
 
             return STATUS_OK;
+        }
+
+        void para_equalizer_ui::set_menu_items_checked(lltl::parray<tk::MenuItem> *list, ui::IPort *port)
+        {
+            const meta::port_t *p = port->metadata();
+            float min = 0.0f, max = 1.0f, step = 1.0f;
+            meta::get_port_parameters(p, &min, &max, &step);
+
+            ssize_t index   = (port->value() - min) / step;
+            for (size_t i=0, n=list->size(); i<n; ++i)
+            {
+                tk::MenuItem *mi = list->uget(i);
+                mi->checked()->set(index == ssize_t(i));
+            }
+        }
+
+        void para_equalizer_ui::on_menu_item_selected(lltl::parray<tk::MenuItem> *list, ui::IPort *port, tk::MenuItem *mi)
+        {
+            ssize_t index = list->index_of(mi);
+            if (index < 0)
+                return;
+
+            const meta::port_t *p = port->metadata();
+            float min = 0.0f, max = 1.0f, step = 1.0f;
+            meta::get_port_parameters(p, &min, &max, &step);
+
+            port->set_value(min + index * step);
+            port->notify_all();
+        }
+
+        void para_equalizer_ui::on_filter_menu_item_submit(tk::MenuItem *mi)
+        {
+            if (pDotCurr == NULL)
+                return;
+            lsp_finally { pDotCurr = NULL; };
+
+            on_menu_item_selected(&vFilterTypes, pDotCurr->pType, mi);
+            on_menu_item_selected(&vFilterModes, pDotCurr->pMode, mi);
+            on_menu_item_selected(&vFilterSlopes, pDotCurr->pSlope, mi);
+            if (mi == wFilterMute)
+            {
+                pDotCurr->pMute->set_value((mi->checked()->get()) ? 0.0f : 1.0f);
+                pDotCurr->pMute->notify_all();
+            }
+            if (mi == wFilterSolo)
+            {
+                pDotCurr->pSolo->set_value((mi->checked()->get()) ? 0.0f : 1.0f);
+                pDotCurr->pSolo->notify_all();
+            }
+        }
+
+        void para_equalizer_ui::on_filter_dot_right_click(tk::GraphDot *dot, ssize_t x, ssize_t y)
+        {
+            // Is filter dot menu present?
+            if (wDotMenu == NULL)
+                return;
+
+            // Lookup for the dot
+            if ((pDotCurr = find_dot(dot)) == NULL)
+                return;
+
+            // Update state of menu elements
+            set_menu_items_checked(&vFilterTypes, pDotCurr->pType);
+            set_menu_items_checked(&vFilterModes, pDotCurr->pMode);
+            set_menu_items_checked(&vFilterSlopes, pDotCurr->pSlope);
+            wFilterMute->checked()->set(pDotCurr->pMute->value() >= 0.5f);
+            wFilterSolo->checked()->set(pDotCurr->pSolo->value() >= 0.5f);
+
+            // Show the dot menu
+            ws::rectangle_t r;
+            r.nLeft         = x;
+            r.nTop          = y;
+            r.nWidth        = 0;
+            r.nHeight       = 0;
+
+            tk::Window *wnd = tk::widget_cast<tk::Window>(dot->toplevel());
+            if (wnd == NULL)
+                return;
+
+            if ((wnd->get_screen_rectangle(&r, &r) != STATUS_OK))
+                return;
+
+            wDotMenu->set_tether(dot_menu_tether_list, sizeof(dot_menu_tether_list)/sizeof(dot_menu_tether_list[0]));
+            wDotMenu->show(dot->graph(), &r);
         }
 
         void para_equalizer_ui::on_graph_dbl_click(ssize_t x, ssize_t y)
@@ -334,6 +628,21 @@ namespace lsp
 
             return -1;
         }
+
+        ui::IPort *para_equalizer_ui::find_port(const char *fmt, const char *base, size_t id)
+        {
+            char port_id[32];
+            ::snprintf(port_id, sizeof(port_id)/sizeof(char), fmt, base, int(id));
+            return pWrapper->port(port_id);
+        }
+
+        tk::GraphDot *para_equalizer_ui::find_dot(const char *fmt, const char *base, size_t id)
+        {
+            char widget_id[64];
+            ::snprintf(widget_id, sizeof(widget_id)/sizeof(char), fmt, base, int(id));
+            return pWrapper->controller()->widgets()->get<tk::GraphDot>(widget_id);
+        }
+
 
         void para_equalizer_ui::set_port_value(const char *base, size_t mask, size_t id, float value)
         {
@@ -532,7 +841,8 @@ namespace lsp
 
             return STATUS_OK;
         }
-    }
-}
+
+    } /* namespace plugins */
+} /* namespace lsp */
 
 
