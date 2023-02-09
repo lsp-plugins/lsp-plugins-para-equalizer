@@ -63,8 +63,8 @@
 					<mesh id="ag_r" width="3" color="right" smooth="true" visibility=":fftv_r"/>
 					<ui:for id="i" first="0" last=":num_filters - 1">
 						<ui:with pointer="drag" color="graph_marker_cycle" hover.color="graph_marker_cycle" bcolor="graph_marker_cycle" hover.bcolor="graph_marker_cycle" x.editable="true" y.editable="true" z.editable="true">
-							<dot x.id="fl_${i}" y.id="gl_${i}" z.id="ql_${i}" color.hue=":huel_${i}" hover.color.hue=":huel_${i}" bcolor.hue=":huel_${i}" hover.bcolor.hue=":huel_${i}" visibility=":fvl_${i}"/>
-							<dot x.id="fr_${i}" y.id="gr_${i}" z.id="qr_${i}" color.hue=":huer_${i}" hover.color.hue=":huer_${i}" bcolor.hue=":huer_${i}" hover.bcolor.hue=":huer_${i}" visibility=":fvr_${i}"/>
+							<dot ui:id="filter_dotl_${i}" x.id="fl_${i}" y.id="gl_${i}" z.id="ql_${i}" color.hue=":huel_${i}" hover.color.hue=":huel_${i}" bcolor.hue=":huel_${i}" hover.bcolor.hue=":huel_${i}" visibility=":fvl_${i}"/>
+							<dot ui:id="filter_dotr_${i}" x.id="fr_${i}" y.id="gr_${i}" z.id="qr_${i}" color.hue=":huer_${i}" hover.color.hue=":huer_${i}" bcolor.hue=":huer_${i}" hover.bcolor.hue=":huer_${i}" visibility=":fvr_${i}"/>
 						</ui:with>
 					</ui:for>
 

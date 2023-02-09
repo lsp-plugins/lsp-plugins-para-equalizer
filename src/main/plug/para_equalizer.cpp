@@ -352,6 +352,8 @@ namespace lsp
         {
             switch (filter_type)
             {
+                case dspu::FLT_NONE:
+
                 case dspu::FLT_BT_RLC_LOPASS:
                 case dspu::FLT_MT_RLC_LOPASS:
                 case dspu::FLT_BT_RLC_HIPASS:
@@ -808,30 +810,28 @@ namespace lsp
                     dspu::filter_params_t *fp = &f->sFP;
                     dspu::filter_params_t *op = &f->sOldFP;
 
-                    // Check if need to update parameters
-                    bool mute   = f->pMute->value() >= 0.5f;
+                    // Compute filter params
+                    bool mute           = f->pMute->value() >= 0.5f;
                     if ((mute) || ((solo) && (!f->bSolo)))
                     {
                         fp->nType           = dspu::FLT_NONE;
                         fp->nSlope          = 1;
-                        if (f->pActivity != NULL)
-                            f->pActivity->set_value(((visible) && (fp->nType != dspu::FLT_NONE)) ? 1.0f : 0.0f);
-                        continue;
                     }
-
-                    // Compute filter params
-                    fp->nType           = f->pType->value();
-                    fp->nSlope          = f->pSlope->value() + 1;
+                    else
+                    {
+                        fp->nType     		= f->pType->value();
+                        fp->nSlope          = f->pSlope->value() + 1;
+                        decode_filter(&fp->nType, &fp->nSlope, f->pMode->value());
+                    }
                     fp->fFreq           = f->pFreq->value() * c->fPitch;
                 #ifdef LSP_NO_EXPERIMENTAL
                     fp->fFreq2          = fp->fFreq;
                 #else
                     fp->fFreq2          = 10.0f * fp->fFreq;
                 #endif /* LSP_NO_EXPERIMENTAL */
-                    fp->fGain           = f->pGain->value();
+                    fp->fGain           = (adjust_gain(fp->nType)) ? f->pGain->value() : 1.0f;
                     fp->fQuality        = f->pQuality->value();
 
-                    decode_filter(&fp->nType, &fp->nSlope, f->pMode->value());
                     c->sEqualizer.limit_params(j, fp);
                     bool type_changed   =
                         (fp->nType != op->nType) ||
