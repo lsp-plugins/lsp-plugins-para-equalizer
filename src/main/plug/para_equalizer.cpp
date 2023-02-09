@@ -26,13 +26,17 @@
 
 #include <lsp-plug.in/shared/id_colors.h>
 
-#define EQ_BUFFER_SIZE          0x1000
+#define EQ_BUFFER_SIZE          0x1000U
 #define EQ_RANK                 12
-
-#define TRACE_PORT(p) lsp_trace("  port id=%s", (p)->metadata()->id);
 
 namespace lsp
 {
+    static plug::IPort *TRACE_PORT(plug::IPort *p)
+    {
+        lsp_trace("  port id=%s", (p)->metadata()->id);
+        return p;
+    }
+
     namespace plugins
     {
         //-------------------------------------------------------------------------
@@ -83,27 +87,28 @@ namespace lsp
         //-------------------------------------------------------------------------
         para_equalizer::para_equalizer(const meta::plugin_t *metadata, size_t filters, size_t mode): plug::Module(metadata)
         {
-            nFilters    = filters;
-            nMode       = mode;
-            vChannels   = NULL;
-            vFreqs      = NULL;
-            vIndexes    = NULL;
-            fGainIn     = 1.0f;
-            fZoom       = 1.0f;
-            bListen     = false;
-            nFftPosition= FFTP_NONE;
-            pIDisplay   = NULL;
+            nFilters        = filters;
+            nMode           = mode;
+            vChannels       = NULL;
+            vFreqs          = NULL;
+            vIndexes        = NULL;
+            fGainIn         = 1.0f;
+            fZoom           = 1.0f;
+            bListen         = false;
+            bSmoothMode     = false;
+            nFftPosition    = FFTP_NONE;
+            pIDisplay       = NULL;
 
-            pBypass     = NULL;
-            pGainIn     = NULL;
-            pGainOut    = NULL;
-            pFftMode    = NULL;
-            pReactivity = NULL;
-            pListen     = NULL;
-            pShiftGain  = NULL;
-            pZoom       = NULL;
-            pEqMode     = NULL;
-            pBalance    = NULL;
+            pBypass         = NULL;
+            pGainIn         = NULL;
+            pGainOut        = NULL;
+            pFftMode        = NULL;
+            pReactivity     = NULL;
+            pListen         = NULL;
+            pShiftGain      = NULL;
+            pZoom           = NULL;
+            pEqMode         = NULL;
+            pBalance        = NULL;
         }
 
         para_equalizer::~para_equalizer()
@@ -494,6 +499,7 @@ namespace lsp
                     return;
 
                 c->sEqualizer.init(nFilters, EQ_RANK);
+                c->sEqualizer.set_smooth(true);
                 max_latency         = lsp_max(max_latency, c->sEqualizer.max_latency());
 
                 // Initialize filters
@@ -507,6 +513,21 @@ namespace lsp
                     f->vTrIm            = abuf;
                     abuf               += meta::para_equalizer_metadata::MESH_POINTS;
                     f->nSync            = CS_UPDATE;
+
+                    // Init filter parameters
+                    f->sOldFP.nType     = dspu::FLT_NONE;
+                    f->sOldFP.fFreq     = 0.0f;
+                    f->sOldFP.fFreq2    = 0.0f;
+                    f->sOldFP.fGain     = GAIN_AMP_0_DB;
+                    f->sOldFP.nSlope    = 0;
+                    f->sOldFP.fQuality  = 0.0f;
+
+                    f->sFP.nType        = dspu::FLT_NONE;
+                    f->sFP.fFreq        = 0.0f;
+                    f->sFP.fFreq2       = 0.0f;
+                    f->sFP.fGain        = GAIN_AMP_0_DB;
+                    f->sFP.nSlope       = 0;
+                    f->sFP.fQuality     = 0.0f;
 
                     // Additional parameters
                     f->pType            = NULL;
@@ -533,79 +554,52 @@ namespace lsp
             // Bind audio ports
             lsp_trace("Binding audio ports");
             for (size_t i=0; i<channels; ++i)
-            {
-                TRACE_PORT(ports[port_id]);
-                vChannels[i].pIn        =   ports[port_id++];
-            }
+                vChannels[i].pIn        =   TRACE_PORT(ports[port_id++]);
             for (size_t i=0; i<channels; ++i)
-            {
-                TRACE_PORT(ports[port_id]);
-                vChannels[i].pOut       =   ports[port_id++];
-            }
+                vChannels[i].pOut       =   TRACE_PORT(ports[port_id++]);
 
             // Bind common ports
             lsp_trace("Binding common ports");
-            TRACE_PORT(ports[port_id]);
-            pBypass                 = ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            pGainIn                 = ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            pGainOut                = ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            pEqMode                 = ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            pFftMode                = ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            pReactivity             = ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            pShiftGain              = ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            pZoom                   = ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            port_id++; // Skip filter selector
+            pBypass                 = TRACE_PORT(ports[port_id++]);
+            pGainIn                 = TRACE_PORT(ports[port_id++]);
+            pGainOut                = TRACE_PORT(ports[port_id++]);
+            pEqMode                 = TRACE_PORT(ports[port_id++]);
+            pFftMode                = TRACE_PORT(ports[port_id++]);
+            pReactivity             = TRACE_PORT(ports[port_id++]);
+            pShiftGain              = TRACE_PORT(ports[port_id++]);
+            pZoom                   = TRACE_PORT(ports[port_id++]);
+            TRACE_PORT(ports[port_id++]); // Skip filter selector
 
             // Balance
             if (channels > 1)
-            {
-                TRACE_PORT(ports[port_id]);
-                pBalance                = ports[port_id++];
-            }
+                pBalance                = TRACE_PORT(ports[port_id++]);
 
             // Listen port
             if (nMode == EQ_MID_SIDE)
             {
-                TRACE_PORT(ports[port_id]);
-                pListen                 = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                vChannels[0].pInGain    = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                vChannels[1].pInGain    = ports[port_id++];
+                pListen                 = TRACE_PORT(ports[port_id++]);
+                vChannels[0].pInGain    = TRACE_PORT(ports[port_id++]);
+                vChannels[1].pInGain    = TRACE_PORT(ports[port_id++]);
             }
 
             for (size_t i=0; i<channels; ++i)
             {
                 if ((nMode == EQ_STEREO) && (i > 0))
                 {
-                    vChannels[i].pTrAmp     =   NULL;
-                    vChannels[i].pPitch     =   vChannels[i-1].pPitch;
+                    vChannels[i].pTrAmp     = NULL;
+                    vChannels[i].pPitch     = vChannels[i-1].pPitch;
                 }
                 else
                 {
-                    TRACE_PORT(ports[port_id]);
-                    vChannels[i].pTrAmp     =   ports[port_id++];
-                    TRACE_PORT(ports[port_id]);
-                    vChannels[i].pPitch     =   ports[port_id++];
+                    vChannels[i].pTrAmp     = TRACE_PORT(ports[port_id++]);
+                    vChannels[i].pPitch     = TRACE_PORT(ports[port_id++]);
                 }
-                TRACE_PORT(ports[port_id]);
-                vChannels[i].pInMeter      =   ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                vChannels[i].pOutMeter     =   ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                vChannels[i].pFft       =   ports[port_id++];
+                vChannels[i].pInMeter   =   TRACE_PORT(ports[port_id++]);
+                vChannels[i].pOutMeter  =   TRACE_PORT(ports[port_id++]);
+                vChannels[i].pFft       =   TRACE_PORT(ports[port_id++]);
                 if (channels > 1)
                 {
-                    TRACE_PORT(ports[port_id]);
-                    vChannels[i].pVisible       =   ports[port_id++];
+                    vChannels[i].pVisible   = TRACE_PORT(ports[port_id++]);
                     if ((nMode == EQ_MONO) || (nMode == EQ_STEREO))
                         vChannels[i].pVisible       = NULL;
                 }
@@ -638,28 +632,17 @@ namespace lsp
                     else
                     {
                         // 1 port controls 1 filter
-                        TRACE_PORT(ports[port_id]);
-                        f->pType        = ports[port_id++];
-                        TRACE_PORT(ports[port_id]);
-                        f->pMode        = ports[port_id++];
-                        TRACE_PORT(ports[port_id]);
-                        f->pSlope       = ports[port_id++];
-                        TRACE_PORT(ports[port_id]);
-                        f->pSolo        = ports[port_id++];
-                        TRACE_PORT(ports[port_id]);
-                        f->pMute        = ports[port_id++];
-                        TRACE_PORT(ports[port_id]);
-                        f->pFreq        = ports[port_id++];
-                        TRACE_PORT(ports[port_id]);
-                        f->pGain        = ports[port_id++];
-                        TRACE_PORT(ports[port_id]);
-                        f->pQuality     = ports[port_id++];
-                        TRACE_PORT(ports[port_id]);
-                        port_id++; // Skip hue
-                        TRACE_PORT(ports[port_id]);
-                        f->pActivity    = ports[port_id++];
-                        TRACE_PORT(ports[port_id]);
-                        f->pTrAmp       = ports[port_id++];
+                        f->pType        = TRACE_PORT(ports[port_id++]);
+                        f->pMode        = TRACE_PORT(ports[port_id++]);
+                        f->pSlope       = TRACE_PORT(ports[port_id++]);
+                        f->pSolo        = TRACE_PORT(ports[port_id++]);
+                        f->pMute        = TRACE_PORT(ports[port_id++]);
+                        f->pFreq        = TRACE_PORT(ports[port_id++]);
+                        f->pGain        = TRACE_PORT(ports[port_id++]);
+                        f->pQuality     = TRACE_PORT(ports[port_id++]);
+                        TRACE_PORT(ports[port_id++]); // Skip hue
+                        f->pActivity    = TRACE_PORT(ports[port_id++]);
+                        f->pTrAmp       = TRACE_PORT(ports[port_id++]);
                     }
                 }
             }
@@ -783,15 +766,22 @@ namespace lsp
             // Update equalizer mode
             dspu::equalizer_mode_t eq_mode  = get_eq_mode();
             bool bypass                     = pBypass->value() >= 0.5f;
+            bool mode_changed               = false;
+            bSmoothMode                     = false;
 
             // For each channel
             for (size_t i=0; i<channels; ++i)
             {
-                dspu::filter_params_t fp;
                 eq_channel_t *c     = &vChannels[i];
                 bool solo           = false;
                 bool visible        = (c->pVisible == NULL) ?  true : (c->pVisible->value() >= 0.5f);
-                c->sEqualizer.set_mode(eq_mode);
+
+                // Change the operating mode for the equalizer
+                if (c->sEqualizer.mode() != eq_mode)
+                {
+                    c->sEqualizer.set_mode(eq_mode);
+                    mode_changed        = true;
+                }
 
                 // Update settings
                 if (c->sBypass.set_bypass(bypass))
@@ -814,50 +804,65 @@ namespace lsp
                 for (size_t j=0; j<nFilters; ++j)
                 {
                     eq_filter_t *f      = &c->vFilters[j];
+                    f->sOldFP           = f->sFP;
+                    dspu::filter_params_t *fp = &f->sFP;
+                    dspu::filter_params_t *op = &f->sOldFP;
 
                     // Check if need to update parameters
-                    size_t ft   = dspu::FLT_NONE, slope = 1;
                     bool mute   = f->pMute->value() >= 0.5f;
-                    if ((!mute) && ((solo) ^ (!f->bSolo)))
+                    if ((mute) || ((solo) && (!f->bSolo)))
                     {
-                        ft          = f->pType->value();
-                        slope       = f->pSlope->value() + 1;
-                        decode_filter(&ft, &slope, f->pMode->value());
+                        fp->nType           = dspu::FLT_NONE;
+                        fp->nSlope          = 1;
+                        if (f->pActivity != NULL)
+                            f->pActivity->set_value(((visible) && (fp->nType != dspu::FLT_NONE)) ? 1.0f : 0.0f);
+                        continue;
                     }
 
-                    // Fetch filter params
-                    c->sEqualizer.get_params(j, &fp);
-                    float freq          = f->pFreq->value() * c->fPitch;
-                    bool update         =
-                            (fp.nType != ft) ||
-                            (fp.fFreq != freq) ||
-                            (fp.fGain != f->pGain->value()) ||
-                            (fp.nSlope != slope) ||
-                            (fp.fQuality != f->pQuality->value());
+                    // Compute filter params
+                    fp->nType           = f->pType->value();
+                    fp->nSlope          = f->pSlope->value() + 1;
+                    fp->fFreq           = f->pFreq->value() * c->fPitch;
+                #ifdef LSP_NO_EXPERIMENTAL
+                    fp->fFreq2          = fp->fFreq;
+                #else
+                    fp->fFreq2          = 10.0f * fp->fFreq;
+                #endif /* LSP_NO_EXPERIMENTAL */
+                    fp->fGain           = f->pGain->value();
+                    fp->fQuality        = f->pQuality->value();
 
-                    // Update filter parameters
-                    if (update)
+                    decode_filter(&fp->nType, &fp->nSlope, f->pMode->value());
+                    c->sEqualizer.limit_params(j, fp);
+                    bool type_changed   =
+                        (fp->nType != op->nType) ||
+                        (fp->nSlope != op->nSlope);
+                    bool param_changed  =
+                        (fp->fGain != op->fGain) ||
+                        (fp->fFreq != op->fFreq) ||
+                        (fp->fFreq2 != op->fFreq2) ||
+                        (fp->fQuality != op->fQuality);
+
+                    // Apply filter params if theey have changed
+                    if ((type_changed) || (param_changed))
                     {
-                        fp.nType            = ft;
-                        fp.fFreq            = freq;
-                        #ifdef LSP_NO_EXPERIMENTAL
-                            fp.fFreq2           = fp.fFreq;
-                        #else
-                            fp.fFreq2           = 10.0f * fp.fFreq;
-                        #endif /* LSP_NO_EXPERIMENTAL */
-                        fp.fGain            = (adjust_gain(ft)) ? f->pGain->value() : 1.0f;
-                        fp.nSlope           = slope;
-                        fp.fQuality         = f->pQuality->value();
-
-                        c->sEqualizer.set_params(j, &fp);
+                        c->sEqualizer.set_params(j, fp);
                         f->nSync            = CS_UPDATE;
+
+                        if (type_changed)
+                            mode_changed    = true;
+                        if (param_changed)
+                            bSmoothMode     = true;
                     }
 
                     // Output filter activity
                     if (f->pActivity != NULL)
-                        f->pActivity->set_value(((visible) && (ft != dspu::FLT_NONE)) ? 1.0f : 0.0f);
+                        f->pActivity->set_value(((visible) && (fp->nType != dspu::FLT_NONE)) ? 1.0f : 0.0f);
                 }
             }
+
+            // Do not enable smooth mode if significant changes have been applied
+            if ((mode_changed) || (eq_mode != dspu::EQM_IIR))
+                bSmoothMode             = false;
 
             // Update analyzer
             if (sAnalyzer.needs_reconfiguration())
@@ -891,6 +896,44 @@ namespace lsp
             }
         }
 
+        void para_equalizer::process_channel(eq_channel_t *c, size_t start, size_t samples)
+        {
+            // Process the signal by the equalizer
+            if (bSmoothMode)
+            {
+                float den   = 1.0f / samples;
+
+                // In smooth mode, we need to update filter parameters for each sample
+                for (size_t offset=0; offset<samples; ++offset)
+                {
+                    // Tune the filters
+                    float k                     = float(start + offset) * den;
+                    for (size_t j=0; j<nFilters; ++j)
+                    {
+                        eq_filter_t *f              = &c->vFilters[j];
+                        dspu::filter_params_t fp;
+
+                        fp.nType                    = f->sFP.nType;
+                        fp.fFreq                    = f->sOldFP.fFreq * expf(logf(f->sFP.fFreq/f->sOldFP.fFreq)*k);
+                        fp.fFreq2                   = f->sOldFP.fFreq2 * expf(logf(f->sFP.fFreq2/f->sOldFP.fFreq2)*k);
+                        fp.nSlope                   = f->sFP.nSlope;
+                        fp.fGain                    = f->sOldFP.fGain * expf(logf(f->sFP.fGain/f->sOldFP.fGain)*k);
+                        fp.fQuality                 = f->sOldFP.fQuality + (f->sFP.fQuality -f->sOldFP.fQuality)*k;
+
+                        c->sEqualizer.set_params(j, &fp);
+                    }
+
+                    // Apply processing
+                    c->sEqualizer.process(&c->vBuffer[offset], &c->vBuffer[offset], 1);
+                }
+            }
+            else
+                c->sEqualizer.process(c->vBuffer, c->vBuffer, samples);
+
+            if (c->fInGain != 1.0f)
+                dsp::mul_k2(c->vBuffer, c->fInGain, samples);
+        }
+
         void para_equalizer::process(size_t samples)
         {
             size_t channels     = (nMode == EQ_MONO) ? 1 : 2;
@@ -907,10 +950,10 @@ namespace lsp
 
             size_t fft_pos          = (ui_active()) ? nFftPosition : FFTP_NONE;
 
-            while (samples > 0)
+            for (size_t offset = 0; offset < samples; )
             {
                 // Determine buffer size for processing
-                size_t to_process   = (samples > EQ_BUFFER_SIZE) ? EQ_BUFFER_SIZE : samples;
+                size_t to_process   = lsp_min(samples-offset, EQ_BUFFER_SIZE);
 
                 // Store unprocessed data
                 for (size_t i=0; i<channels; ++i)
@@ -969,14 +1012,7 @@ namespace lsp
 
                 // Process each channel individually
                 for (size_t i=0; i<channels; ++i)
-                {
-                    eq_channel_t *c     = &vChannels[i];
-
-                    // Process the signal by the equalizer
-                    c->sEqualizer.process(c->vBuffer, c->vBuffer, to_process);
-                    if (c->fInGain != 1.0f)
-                        dsp::mul_k2(c->vBuffer, c->fInGain, to_process);
-                }
+                    process_channel(&vChannels[i], offset, to_process);
 
                 // Do FFT in 'POST'-position
                 if (fft_pos == FFTP_POST)
@@ -1006,9 +1042,9 @@ namespace lsp
                     c->vOut            += to_process;
                 }
 
-                // Update counters and pointers
-                samples            -= to_process;
-            }
+                // Update offset
+                offset             += to_process;
+            } // for offset
 
             // Output FFT curves for each channel and report latency
             size_t latency          = 0;
@@ -1123,6 +1159,20 @@ namespace lsp
                         pWrapper->query_display_draw();
                 }
             }
+
+            // Reset smooth mode
+            if (bSmoothMode)
+            {
+                // Apply actual settings of equalizer at the end
+                for (size_t i=0; i<channels; ++i)
+                {
+                    eq_channel_t *c     = &vChannels[i];
+                    for (size_t j=0; j<nFilters; ++j)
+                        c->sEqualizer.set_params(j, &c->vFilters[j].sFP);
+                }
+
+                bSmoothMode     = false;
+            }
         }
 
         bool para_equalizer::inline_display(plug::ICanvas *cv, size_t width, size_t height)
@@ -1181,12 +1231,13 @@ namespace lsp
             b->v[4][width+1]    = 0.0f;
 
             size_t channels = ((nMode == EQ_MONO) || (nMode == EQ_STEREO)) ? 1 : 2;
-            static uint32_t c_colors[] = {
-                    CV_MIDDLE_CHANNEL, CV_MIDDLE_CHANNEL,
-                    CV_MIDDLE_CHANNEL, CV_MIDDLE_CHANNEL,
-                    CV_LEFT_CHANNEL, CV_RIGHT_CHANNEL,
-                    CV_MIDDLE_CHANNEL, CV_SIDE_CHANNEL
-                   };
+            static uint32_t c_colors[] =
+            {
+                CV_MIDDLE_CHANNEL, CV_MIDDLE_CHANNEL,
+                CV_MIDDLE_CHANNEL, CV_MIDDLE_CHANNEL,
+                CV_LEFT_CHANNEL, CV_RIGHT_CHANNEL,
+                CV_MIDDLE_CHANNEL, CV_SIDE_CHANNEL
+            };
 
             bool aa = cv->set_anti_aliasing(true);
             cv->set_line_width(2);
@@ -1219,6 +1270,20 @@ namespace lsp
             return true;
         }
 
+        void para_equalizer::dump_filter_params(dspu::IStateDumper *v, const char *id, const dspu::filter_params_t *fp)
+        {
+            v->begin_object(id, fp, sizeof(*fp));
+            {
+                v->write("nType", fp->nType);
+                v->write("fFreq", fp->fFreq);
+                v->write("fFreq2", fp->fFreq2);
+                v->write("fGain", fp->fGain);
+                v->write("nSlope", fp->nSlope);
+                v->write("fQuality", fp->fQuality);
+            }
+            v->end_object();
+        }
+
         void para_equalizer::dump_filter(dspu::IStateDumper *v, const eq_filter_t *f)
         {
             v->begin_object(f, sizeof(eq_filter_t));
@@ -1227,6 +1292,9 @@ namespace lsp
                 v->write("vTrIm", f->vTrIm);
                 v->write("nSync", f->nSync);
                 v->write("bSolo", f->bSolo);
+
+                dump_filter_params(v, "sOldFP", &f->sOldFP);
+                dump_filter_params(v, "sFP", &f->sFP);
 
                 v->write("pType", f->pType);
                 v->write("pMode", f->pMode);
@@ -1302,6 +1370,7 @@ namespace lsp
             v->write("fGainIn", fGainIn);
             v->write("fZoom", fZoom);
             v->write("bListen", bListen);
+            v->write("bSmoothMode", bSmoothMode);
             v->write("nFftPosition", nFftPosition);
             v->write_object("pIDisplay", pIDisplay);
 
