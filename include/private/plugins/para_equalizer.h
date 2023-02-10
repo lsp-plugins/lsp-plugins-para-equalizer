@@ -139,6 +139,8 @@ namespace lsp
                 plug::IPort        *pZoom;                  // Graph zoom
                 plug::IPort        *pEqMode;                // Equalizer mode
                 plug::IPort        *pBalance;               // Output balance
+                plug::IPort        *pInspect;               // Inspected filter index
+                plug::IPort        *pInspectRange;          // Inspecting range
 
             protected:
                 void                destroy_state();

@@ -109,6 +109,8 @@ namespace lsp
             pZoom           = NULL;
             pEqMode         = NULL;
             pBalance        = NULL;
+            pInspect        = NULL;
+            pInspectRange   = NULL;
         }
 
         para_equalizer::~para_equalizer()
@@ -571,6 +573,8 @@ namespace lsp
             pShiftGain              = TRACE_PORT(ports[port_id++]);
             pZoom                   = TRACE_PORT(ports[port_id++]);
             TRACE_PORT(ports[port_id++]); // Skip filter selector
+            pInspect                = TRACE_PORT(ports[port_id++]);
+            pInspectRange           = TRACE_PORT(ports[port_id++]);
 
             // Balance
             if (channels > 1)
@@ -827,7 +831,7 @@ namespace lsp
                 #ifdef LSP_NO_EXPERIMENTAL
                     fp->fFreq2          = fp->fFreq;
                 #else
-                    fp->fFreq2          = 10.0f * fp->fFreq;
+                    fp->fFreq2          = 100.0f * fp->fFreq;
                 #endif /* LSP_NO_EXPERIMENTAL */
                     fp->fGain           = (adjust_gain(fp->nType)) ? f->pGain->value() : 1.0f;
                     fp->fQuality        = f->pQuality->value();

@@ -66,6 +66,11 @@ namespace lsp
             static constexpr float          PITCH_DFL           = 0.0f;
             static constexpr float          PITCH_STEP          = 0.01f;
 
+            static constexpr float          INSPECT_MIN         = 0.0f;
+            static constexpr float          INSPECT_MAX         = 100.0f;
+            static constexpr float          INSPECT_DFL         = 2.0f;
+            static constexpr float          INSPECT_STEP        = 0.01f;
+
             static constexpr size_t         REFRESH_RATE        = 20;
 
             enum eq_filter_t
