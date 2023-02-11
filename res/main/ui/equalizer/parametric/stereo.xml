@@ -123,7 +123,9 @@
 					<fader id="insp_r" angle="0" />
 					<value id="insp_r" />
 				</vbox>
+
 				<void hexpand="true" />
+
 				<label text="labels.mode"/>
 				<combo id="mode" pad.r="12"/>
 				<button id="fftv_l" height="22" width="45" text="labels.chan.left" ui:inject="Button_left"/>

@@ -698,21 +698,8 @@ namespace lsp
             if ((mute) || ((has_solo) && (!solo)))
                 return false;
 
-            // The filter should be enabled and have one of the following types:
-            //   - bell, resonance, lo-shelf, hi-shelf
-            size_t type     = f->pType->value();
-            switch (type)
-            {
-                case meta::para_equalizer_metadata::EQF_BELL:
-                case meta::para_equalizer_metadata::EQF_HISHELF:
-                case meta::para_equalizer_metadata::EQF_LOSHELF:
-                case meta::para_equalizer_metadata::EQF_RESONANCE:
-                    break;
-                default:
-                    return false;
-            }
-
-            return true;
+            // The filter should be enabled
+            return size_t(f->pType->value()) != meta::para_equalizer_metadata::EQF_OFF;
         }
 
         void para_equalizer_ui::sync_filter_inspect_state()
@@ -753,12 +740,13 @@ namespace lsp
 
         void para_equalizer_ui::toggle_inspected_filter(filter_t *f, bool commit)
         {
-            // Get currently selected filter
             ssize_t curr    = pInspect->value();
             ssize_t index   = vFilters.index_of(f);
 
-            // Invert the inspection state relative to this filter
-            select_inspected_filter((curr != index) ? f : NULL, commit);
+            if (curr == index)
+                select_inspected_filter(NULL, true);
+            else if (filter_inspect_can_be_enabled(f))
+                select_inspected_filter(f, true);
         }
 
         void para_equalizer_ui::on_filter_inspect_submit(tk::Widget *button)
@@ -769,11 +757,7 @@ namespace lsp
             // Filter inspect button submitted?
             filter_t *f     = find_filter_by_inspect(button);
             if (f != NULL)
-            {
-                if (!filter_inspect_can_be_enabled(f))
-                    return;
                 toggle_inspected_filter(f, true);
-            }
 
             // We need to reset inspection?
             if (button == wInspectReset)
