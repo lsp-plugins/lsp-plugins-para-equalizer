@@ -42,16 +42,21 @@ namespace lsp
                     ui::IPort          *pSlope;
                     ui::IPort          *pSolo;
                     ui::IPort          *pMute;
-                    tk::GraphDot       *wDot;
-                    tk::Button         *wInspect;
+                    tk::GraphDot       *wDot;           // Graph dot for editing
+                    tk::Button         *wInspect;       // Inspect button
+                    tk::Knob           *wGain;          // Gain button
+                    tk::Knob           *wFreq;          // Frequency button
+                    tk::Knob           *wQuality;       // Quality button
                 } dot_t;
 
             protected:
                 ui::IPort          *pRewPath;
                 ui::IPort          *pInspect;           // Inspected filter index
+                ui::IPort          *pAutoInspect;       // Automatically inspect the filter
                 tk::FileDialog     *pRewImport;
                 tk::Graph          *wGraph;
                 tk::Button         *wInspectReset;      // Inspect reset button
+                tk::Timer           sEditTimer;         // Edit timer
                 const char        **fmtStrings;
                 ssize_t             nXAxisIndex;
                 ssize_t             nYAxisIndex;
@@ -77,6 +82,10 @@ namespace lsp
                 static status_t slot_filter_menu_submit(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_filter_dot_click(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_filter_inspect_submit(tk::Widget *sender, void *ptr, void *data);
+                static status_t slot_filter_begin_edit(tk::Widget *sender, void *ptr, void *data);
+                static status_t slot_filter_change(tk::Widget *sender, void *ptr, void *data);
+                static status_t slot_filter_end_edit(tk::Widget *sender, void *ptr, void *data);
+                static status_t slot_filter_edit_timer(ws::timestamp_t sched, ws::timestamp_t time, void *arg);
 
             protected:
                 tk::Menu       *create_menu();
@@ -99,6 +108,10 @@ namespace lsp
                 void            on_filter_menu_item_submit(tk::MenuItem *mi);
                 void            on_filter_menu_item_selected(lltl::parray<tk::MenuItem> *list, ui::IPort *port, tk::MenuItem *mi);
                 void            on_filter_inspect_submit(tk::Widget *button);
+                void            on_begin_filter_edit(tk::Widget *w);
+                void            on_filter_change(tk::Widget *w);
+                void            on_filter_edit_timer();
+                void            on_end_filter_edit(tk::Widget *w);
 
                 void            set_filter_mode(size_t id, size_t mask, size_t value);
                 void            set_filter_type(size_t id, size_t mask, size_t value);
@@ -113,8 +126,7 @@ namespace lsp
 
                 ssize_t         get_filter_type(size_t id, size_t channel);
 
-                filter_t       *find_filter_by_dot(tk::Widget *dot);
-                filter_t       *find_filter_by_inspect(tk::Widget *button);
+                filter_t       *find_filter_by_widget(tk::Widget *widget);
                 void            add_filters();
                 void            create_filter_menu();
                 void            select_inspected_filter(filter_t *f, bool commit);
@@ -122,12 +134,13 @@ namespace lsp
                 bool            filter_inspect_can_be_enabled(filter_t *f);
                 void            sync_filter_inspect_state();
                 bool            is_filter_inspect_port(ui::IPort *port);
-
+                void            bind_filter_edit(tk::Widget *w);
             public:
                 explicit para_equalizer_ui(const meta::plugin_t *meta);
                 virtual ~para_equalizer_ui() override;
 
                 virtual status_t    post_init() override;
+                virtual status_t    pre_destroy() override;
 
                 virtual void        notify(ui::IPort *port) override;
         };

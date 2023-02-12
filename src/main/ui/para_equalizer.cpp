@@ -94,6 +94,7 @@ namespace lsp
         {
             pRewPath        = NULL;
             pInspect        = NULL;
+            pAutoInspect    = NULL;
             pRewImport      = NULL;
             wGraph          = NULL;
             wInspectReset   = NULL;
@@ -256,6 +257,19 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t para_equalizer_ui::slot_filter_edit_timer(ws::timestamp_t sched, ws::timestamp_t time, void *arg)
+        {
+            // Fetch paramters
+            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(arg);
+            if (_this == NULL)
+                return STATUS_BAD_STATE;
+
+            // Process the event
+            _this->on_filter_edit_timer();
+
+            return STATUS_OK;
+        }
+
         status_t para_equalizer_ui::slot_filter_dot_click(tk::Widget *sender, void *ptr, void *data)
         {
             // Process the right mouse click
@@ -287,26 +301,123 @@ namespace lsp
             return STATUS_OK;
         }
 
-        para_equalizer_ui::filter_t *para_equalizer_ui::find_filter_by_inspect(tk::Widget *button)
+        status_t para_equalizer_ui::slot_filter_begin_edit(tk::Widget *sender, void *ptr, void *data)
+        {
+            // Fetch paramters
+            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+            if (_this == NULL)
+                return STATUS_BAD_STATE;
+
+            _this->on_begin_filter_edit(sender);
+
+            return STATUS_OK;
+        }
+
+        status_t para_equalizer_ui::slot_filter_change(tk::Widget *sender, void *ptr, void *data)
+        {
+            // Fetch paramters
+            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+            if (_this == NULL)
+                return STATUS_BAD_STATE;
+
+            _this->on_filter_change(sender);
+
+            return STATUS_OK;
+        }
+
+        status_t para_equalizer_ui::slot_filter_end_edit(tk::Widget *sender, void *ptr, void *data)
+        {
+            // Fetch paramters
+            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+            if (_this == NULL)
+                return STATUS_BAD_STATE;
+
+            _this->on_end_filter_edit(sender);
+
+            return STATUS_OK;
+        }
+
+        para_equalizer_ui::filter_t *para_equalizer_ui::find_filter_by_widget(tk::Widget *widget)
         {
             for (size_t i=0, n=vFilters.size(); i<n; ++i)
             {
                 filter_t *d = vFilters.uget(i);
-                if (d->wInspect == button)
+                if ((d->wInspect == widget) ||
+                    (d->wDot == widget) ||
+                    (d->wGain == widget) ||
+                    (d->wFreq == widget) ||
+                    (d->wQuality == widget))
                     return d;
             }
             return NULL;
         }
 
-        para_equalizer_ui::filter_t *para_equalizer_ui::find_filter_by_dot(tk::Widget *dot)
+        void para_equalizer_ui::on_begin_filter_edit(tk::Widget *w)
         {
-            for (size_t i=0, n=vFilters.size(); i<n; ++i)
-            {
-                filter_t *d = vFilters.uget(i);
-                if (d->wDot == dot)
-                    return d;
-            }
-            return NULL;
+            if (pInspect == NULL)
+                return;
+
+            // Cancel the previously launched timer
+            pCurrDot = NULL;
+            sEditTimer.cancel();
+
+            // Find the filter
+            filter_t *f = find_filter_by_widget(w);
+            if (f == NULL)
+                return;
+
+            // Check the auto-inspect mode
+            if (pAutoInspect->value() < 0.5f)
+                return;
+
+            // Remember the selected filter and launch the timer
+            pCurrDot    = f;
+            sEditTimer.launch(1, 0, 200);
+        }
+
+        void para_equalizer_ui::on_filter_edit_timer()
+        {
+            if ((pInspect == NULL) || (pCurrDot == NULL))
+                return;
+            select_inspected_filter(pCurrDot, true);
+        }
+
+        void para_equalizer_ui::on_filter_change(tk::Widget *w)
+        {
+            if ((pCurrDot == NULL) || (pInspect == NULL))
+                return;
+
+            // Cancel the previously launched timer
+            sEditTimer.cancel();
+
+            // Check the auto-inspect mode
+            if (pAutoInspect->value() < 0.5f)
+                return;
+            select_inspected_filter(pCurrDot, true);
+        }
+
+        void para_equalizer_ui::on_end_filter_edit(tk::Widget *w)
+        {
+            // Cancel the timer
+            sEditTimer.cancel();
+
+            // Exit if there is nothing to edit
+            if (pCurrDot == NULL)
+                return;
+            lsp_finally { pCurrDot = NULL; };
+
+            // Clear the inspected filter
+            select_inspected_filter(NULL, true);
+        }
+
+        void para_equalizer_ui::bind_filter_edit(tk::Widget *w)
+        {
+            if (w == NULL)
+                return;
+            w->slots()->bind(tk::SLOT_BEGIN_EDIT, slot_filter_begin_edit, this);
+            w->slots()->bind(tk::SLOT_CHANGE, slot_filter_change, this);
+            w->slots()->bind(tk::SLOT_SUBMIT, slot_filter_change, this);
+            w->slots()->bind(tk::SLOT_END_EDIT, slot_filter_end_edit, this);
         }
 
         void para_equalizer_ui::add_filters()
@@ -316,11 +427,12 @@ namespace lsp
                 for (size_t port_id=0; port_id<nFilters; ++port_id)
                 {
                     filter_t dot;
-                    dot.wDot        = find_filter_widget<tk::GraphDot>(*fmt, "filter_dot", port_id);
-                    if (dot.wDot == NULL)
-                        continue;
 
+                    dot.wDot        = find_filter_widget<tk::GraphDot>(*fmt, "filter_dot", port_id);
                     dot.wInspect    = find_filter_widget<tk::Button>(*fmt, "filter_inspect", port_id);
+                    dot.wGain       = find_filter_widget<tk::Knob>(*fmt, "filter_gain", port_id);
+                    dot.wFreq       = find_filter_widget<tk::Knob>(*fmt, "filter_freq", port_id);
+                    dot.wQuality    = find_filter_widget<tk::Knob>(*fmt, "filter_q", port_id);
 
                     dot.pType       = find_port(*fmt, "ft", port_id);
                     dot.pMode       = find_port(*fmt, "fm", port_id);
@@ -335,8 +447,14 @@ namespace lsp
                         (dot.pMute == NULL))
                         continue;
 
-                    dot.wDot->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_filter_dot_click, this);
-                    dot.wInspect->slots()->bind(tk::SLOT_SUBMIT, slot_filter_inspect_submit, this);
+                    if (dot.wDot != NULL)
+                        dot.wDot->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_filter_dot_click, this);
+
+                    bind_filter_edit(dot.wDot);
+                    bind_filter_edit(dot.wInspect);
+                    bind_filter_edit(dot.wGain);
+                    bind_filter_edit(dot.wFreq);
+                    bind_filter_edit(dot.wQuality);
 
                     dot.pType->bind(this);
                     dot.pSolo->bind(this);
@@ -476,6 +594,7 @@ namespace lsp
             pInspect            = pWrapper->port("insp_id");
             if (pInspect != NULL)
                 pInspect->bind(this);
+            pAutoInspect        = pWrapper->port("insp_on");
 
             // Add subwidgets
             ctl::Window *wnd    = pWrapper->controller();
@@ -508,10 +627,29 @@ namespace lsp
                 wInspectReset->slots()->bind(tk::SLOT_SUBMIT, slot_filter_inspect_submit, this);
             }
 
+            // Bind the timer
+            sEditTimer.bind(pDisplay);
+            sEditTimer.set_handler(slot_filter_edit_timer, this);
+
             // Update state
             sync_filter_inspect_state();
 
             return STATUS_OK;
+        }
+
+        status_t para_equalizer_ui::pre_destroy()
+        {
+            // Cancel the edit timer
+            sEditTimer.cancel();
+
+            // Force the inspect mode to be turned off
+            if (pInspect != NULL)
+            {
+                pInspect->set_value(-1.0f);
+                pInspect->notify_all();
+            }
+
+            return ui::Module::pre_destroy();
         }
 
         void para_equalizer_ui::set_menu_items_checked(lltl::parray<tk::MenuItem> *list, ui::IPort *port)
@@ -572,7 +710,9 @@ namespace lsp
                 return;
 
             // Lookup for the dot
-            if ((pCurrDot = find_filter_by_dot(dot)) == NULL)
+            if ((pCurrDot = find_filter_by_widget(dot)) == NULL)
+                return;
+            if (pCurrDot->wDot == NULL)
                 return;
 
             // Update state of menu elements
@@ -718,14 +858,15 @@ namespace lsp
             for (size_t i=0, n=vFilters.size(); i<n; ++i)
             {
                 filter_t *xf    = vFilters.uget(i);
-                xf->wInspect->down()->set((f != NULL) ? (xf == f) : false);
+                if (xf->wInspect != NULL)
+                    xf->wInspect->down()->set((f != NULL) ? (xf == f) : false);
             }
 
             // Update the inspection port
             ssize_t inspect = pInspect->value();
             ssize_t index = (f != NULL) ? vFilters.index_of(f) : -1;
 
-            if ((commit) && (inspect != index))
+            if ((pInspect != NULL) && (commit) && (inspect != index))
             {
                 pInspect->set_value(index);
                 pInspect->notify_all();
@@ -734,7 +875,7 @@ namespace lsp
 
             if (wInspectReset != NULL)
                 wInspectReset->down()->set(inspect >= 0);
-            if (pCurrDot == f)
+            if ((pCurrDot == f) && (wFilterInspect != NULL))
                 wFilterInspect->checked()->set((inspect >= 0) && (inspect == index));
         }
 
@@ -755,7 +896,7 @@ namespace lsp
                 return;
 
             // Filter inspect button submitted?
-            filter_t *f     = find_filter_by_inspect(button);
+            filter_t *f     = find_filter_by_widget(button);
             if (f != NULL)
                 toggle_inspected_filter(f, true);
 

@@ -194,7 +194,8 @@ namespace lsp
                 LOG_CONTROL("zoom", "Graph zoom", U_GAIN_AMP, para_equalizer_metadata::ZOOM), \
                 COMBO("fsel", "Filter select", 0, fselect), \
                 INT_CONTROL_RANGE("insp_id", "Inspected filter identifier", U_NONE, -1, (filters-1), -1, 1), \
-                CONTROL("insp_r", "Inspect frequency range", U_OCTAVES, para_equalizer_metadata::INSPECT)
+                CONTROL("insp_r", "Inspect frequency range", U_OCTAVES, para_equalizer_metadata::INSPECT), \
+                SWITCH("insp_on", "Automatically inspect filter when editing", 0)
 
         #define EQ_MONO_PORTS \
                 MESH("ag", "Amplitude graph", 2, para_equalizer_metadata::MESH_POINTS), \

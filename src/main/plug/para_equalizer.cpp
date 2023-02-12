@@ -577,6 +577,7 @@ namespace lsp
             TRACE_PORT(ports[port_id++]); // Skip filter selector
             pInspect                = TRACE_PORT(ports[port_id++]);
             pInspectRange           = TRACE_PORT(ports[port_id++]);
+            TRACE_PORT(ports[port_id++]); // Skip auto inspect switch
 
             // Balance
             if (channels > 1)

@@ -51,7 +51,6 @@
 						<marker id="fs_${i}" ox="0" oy="1" color="graph_marker_cycle" color.hue=":hues_${i}" visibility=":fvs_${i}"/>
 						<marker id="gm_${i}" ox="1" oy="0" color="graph_marker_cycle" color.hue=":huem_${i}" visibility=":fvm_${i}"/>
 						<marker id="gs_${i}" ox="1" oy="0" color="graph_marker_cycle" color.hue=":hues_${i}" visibility=":fvs_${i}"/>
-
 					</ui:for>
 					<ui:for id="i" first="0" last=":num_filters - 1">
 						<mesh id="agfm_${i}" width="2" color="graph_mesh_cycle" color.hue=":huem_${i}" fill="true" fcolor="graph_mesh_cycle" fcolor.hue=":huem_${i}" fcolor.a="0.8" visibility=":fvm_${i}" smooth="true"/>
@@ -129,6 +128,7 @@
 					<fader id="insp_r" angle="0" />
 					<value id="insp_r" />
 				</vbox>
+				<button id="insp_on" text="labels.auto" />
 				
 				<void hexpand="true" />
 				
@@ -294,10 +294,10 @@
 									</grid>
 								</cell>
 
-								<knob id="f${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
+								<knob ui:id="filter_freq${ch}" id="f${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
 								<value id="f${ch}" width.min="40" detailed="false" precision="1" pad.t="3"/>
 
-								<knob id="q${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
+								<knob ui:id="filter_q${ch}" id="q${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
 								<value id="q${ch}" width.min="40" detailed="false" pad.t="3" pad.b="6"/>
 								
 								<button
@@ -315,7 +315,7 @@
 									pad.r="6"
 									expand="false" />								
 
-								<knob id="g${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
+								<knob ui:id="filter_gain${ch}" id="g${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
 								<value id="g${ch}" width.min="40" detailed="false" pad.t="3"/>
 							</ui:with>
 							<cell rows="2">
