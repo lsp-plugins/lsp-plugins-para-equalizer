@@ -6,6 +6,8 @@
 * Equalizer is now smoothly operating with frequency/gain/q factor for each
   mode: FIR, IIR, FFT, SPM.
 * Added popup menu for more precise control over the equalizer dot on the graph.
+* Added frequency and note displaying (with detune in cents) over the currently
+  configured filter. 
 * Implemented automatic and manual inspect mode for filters.
 * Updated build scripts and dependencies.
 

@@ -82,6 +82,11 @@ namespace lsp
             NULL
         };
 
+        static const char *note_names[] =
+        {
+            "c", "c#", "d", "d#", "e", "f", "f#", "g", "g#", "a", "a#", "b"
+        };
+
         template <class T>
         T *para_equalizer_ui::find_filter_widget(const char *fmt, const char *base, size_t id)
         {
@@ -104,6 +109,7 @@ namespace lsp
             nYAxisIndex     = -1;
 
             pCurrDot        = NULL;
+            pCurrNote       = NULL;
             wFilterMenu     = NULL;
             wFilterInspect  = NULL;
             wFilterSolo     = NULL;
@@ -122,7 +128,7 @@ namespace lsp
                 nSplitChannels  = 2;
             }
 
-            nFilters       = 16;
+            nFilters        = 16;
             if ((!strcmp(meta->uid, meta::para_equalizer_x32_lr.uid)) ||
                 (!strcmp(meta->uid, meta::para_equalizer_x32_mono.uid)) ||
                 (!strcmp(meta->uid, meta::para_equalizer_x32_ms.uid)) ||
@@ -337,13 +343,43 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t para_equalizer_ui::slot_filter_mouse_in(tk::Widget *sender, void *ptr, void *data)
+        {
+            // Fetch paramters
+            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+            if (_this == NULL)
+                return STATUS_BAD_STATE;
+
+            _this->on_filter_mouse_in(sender);
+
+            return STATUS_OK;
+        }
+
+        status_t para_equalizer_ui::slot_filter_mouse_out(tk::Widget *sender, void *ptr, void *data)
+        {
+            // Fetch paramters
+            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+            if (_this == NULL)
+                return STATUS_BAD_STATE;
+
+            _this->on_filter_mouse_out(sender);
+
+            return STATUS_OK;
+        }
+
         para_equalizer_ui::filter_t *para_equalizer_ui::find_filter_by_widget(tk::Widget *widget)
         {
             for (size_t i=0, n=vFilters.size(); i<n; ++i)
             {
                 filter_t *d = vFilters.uget(i);
-                if ((d->wInspect == widget) ||
-                    (d->wDot == widget) ||
+                if ((d->wDot == widget) ||
+                    (d->wNote == widget) ||
+                    (d->wInspect == widget) ||
+                    (d->wSolo == widget) ||
+                    (d->wMute == widget) ||
+                    (d->wType == widget) ||
+                    (d->wMode == widget) ||
+                    (d->wSlope == widget) ||
                     (d->wGain == widget) ||
                     (d->wFreq == widget) ||
                     (d->wQuality == widget))
@@ -410,6 +446,98 @@ namespace lsp
             select_inspected_filter(NULL, true);
         }
 
+        void para_equalizer_ui::on_filter_mouse_in(tk::Widget *w)
+        {
+            if (pCurrNote != NULL)
+                pCurrNote->wNote->visibility()->set(false);
+
+            pCurrNote = find_filter_by_widget(w);
+            if (pCurrNote == NULL)
+                return;
+
+            update_filter_note_text();
+        }
+
+        void para_equalizer_ui::on_filter_mouse_out(tk::Widget *w)
+        {
+            if (pCurrNote == NULL)
+                return;
+
+            if (pCurrNote->wNote != NULL)
+                pCurrNote->wNote->visibility()->set(false);
+            pCurrNote = NULL;
+        }
+
+        void para_equalizer_ui::update_filter_note_text()
+        {
+            // Check that we have the widget to display
+            if ((pCurrNote == NULL) || (pCurrNote->wNote == NULL))
+                return;
+
+            // Get the frequency
+            float freq = (pCurrNote->pFreq != NULL) ? pCurrNote->pFreq->value() : -1.0f;
+            if (freq < 0.0f)
+            {
+                pCurrNote->wNote->visibility()->set(false);
+                return;
+            }
+
+            // Check that filter is enabled
+            ssize_t type = (pCurrNote->pType != NULL) ? ssize_t(pCurrNote->pType->value()) : meta::para_equalizer_metadata::EQF_OFF;
+            if (type == meta::para_equalizer_metadata::EQF_OFF)
+            {
+                pCurrNote->wNote->visibility()->set(false);
+                return;
+            }
+
+            // Updatee the note name displayed in the text
+            {
+                // Fill the parameters
+                expr::Parameters params;
+                tk::prop::String snote;
+                LSPString text;
+                snote.bind(pCurrNote->wNote->style(), pDisplay->dictionary());
+
+                // Frequency
+                text.fmt_ascii("%.2f", freq);
+                params.set_string("frequency", &text);
+
+                float note_full = dspu::frequency_to_note(freq);
+                if (note_full != dspu::NOTE_OUT_OF_RANGE)
+                {
+                    note_full += 0.5f;
+                    ssize_t note_number = ssize_t(note_full);
+
+                    // Note name
+                    ssize_t note        = note_number % 12;
+                    text.fmt_ascii("lists.notes.names.%s", note_names[note]);
+                    snote.set(&text);
+                    snote.format(&text);
+                    params.set_string("note", &text);
+
+                    // Octave number
+                    ssize_t octave      = (note_number / 12) - 1;
+                    params.set_int("octave", octave);
+
+                    // Cents
+                    ssize_t note_cents  = (note_full - float(note_number)) * 100 - 50;
+                    if (note_cents < 0)
+                        text.fmt_ascii(" - %02d", -note_cents);
+                    else
+                        text.fmt_ascii(" + %02d", note_cents);
+                    params.set_string("cents", &text);
+
+                    pCurrNote->wNote->text()->set("lists.notes.display.full", &params);
+                }
+                else
+                    pCurrNote->wNote->text()->set("lists.notes.display.unknown", &params);
+            }
+
+
+            // Enable visibility for the text widget
+            pCurrNote->wNote->visibility()->set(true);
+        }
+
         void para_equalizer_ui::bind_filter_edit(tk::Widget *w)
         {
             if (w == NULL)
@@ -418,6 +546,8 @@ namespace lsp
             w->slots()->bind(tk::SLOT_CHANGE, slot_filter_change, this);
             w->slots()->bind(tk::SLOT_SUBMIT, slot_filter_change, this);
             w->slots()->bind(tk::SLOT_END_EDIT, slot_filter_end_edit, this);
+            w->slots()->bind(tk::SLOT_MOUSE_IN, slot_filter_mouse_in, this);
+            w->slots()->bind(tk::SLOT_MOUSE_OUT, slot_filter_mouse_out, this);
         }
 
         void para_equalizer_ui::add_filters()
@@ -429,7 +559,13 @@ namespace lsp
                     filter_t dot;
 
                     dot.wDot        = find_filter_widget<tk::GraphDot>(*fmt, "filter_dot", port_id);
+                    dot.wNote       = find_filter_widget<tk::GraphText>(*fmt, "filter_note", port_id);
                     dot.wInspect    = find_filter_widget<tk::Button>(*fmt, "filter_inspect", port_id);
+                    dot.wSolo       = find_filter_widget<tk::Button>(*fmt, "filter_solo", port_id);
+                    dot.wMute       = find_filter_widget<tk::Button>(*fmt, "filter_mute", port_id);
+                    dot.wType       = find_filter_widget<tk::ComboBox>(*fmt, "filter_type", port_id);
+                    dot.wMode       = find_filter_widget<tk::ComboBox>(*fmt, "filter_mode", port_id);
+                    dot.wSlope      = find_filter_widget<tk::ComboBox>(*fmt, "filter_slope", port_id);
                     dot.wGain       = find_filter_widget<tk::Knob>(*fmt, "filter_gain", port_id);
                     dot.wFreq       = find_filter_widget<tk::Knob>(*fmt, "filter_freq", port_id);
                     dot.wQuality    = find_filter_widget<tk::Knob>(*fmt, "filter_q", port_id);
@@ -437,28 +573,34 @@ namespace lsp
                     dot.pType       = find_port(*fmt, "ft", port_id);
                     dot.pMode       = find_port(*fmt, "fm", port_id);
                     dot.pSlope      = find_port(*fmt, "s", port_id);
+                    dot.pFreq       = find_port(*fmt, "f", port_id);
                     dot.pSolo       = find_port(*fmt, "xs", port_id);
                     dot.pMute       = find_port(*fmt, "xm", port_id);
 
-                    if ((dot.pType == NULL) ||
-                        (dot.pMode == NULL) ||
-                        (dot.pSlope == NULL) ||
-                        (dot.pSolo == NULL) ||
-                        (dot.pMute == NULL))
-                        continue;
-
                     if (dot.wDot != NULL)
                         dot.wDot->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_filter_dot_click, this);
+                    if (dot.wInspect != NULL)
+                        dot.wInspect->slots()->bind(tk::SLOT_SUBMIT, slot_filter_inspect_submit, this);
 
                     bind_filter_edit(dot.wDot);
                     bind_filter_edit(dot.wInspect);
+                    bind_filter_edit(dot.wSolo);
+                    bind_filter_edit(dot.wMute);
+                    bind_filter_edit(dot.wType);
+                    bind_filter_edit(dot.wMode);
+                    bind_filter_edit(dot.wSlope);
                     bind_filter_edit(dot.wGain);
                     bind_filter_edit(dot.wFreq);
                     bind_filter_edit(dot.wQuality);
 
-                    dot.pType->bind(this);
-                    dot.pSolo->bind(this);
-                    dot.pMute->bind(this);
+                    if (dot.pType != NULL)
+                        dot.pType->bind(this);
+                    if (dot.pSolo != NULL)
+                        dot.pSolo->bind(this);
+                    if (dot.pMute != NULL)
+                        dot.pMute->bind(this);
+                    if (dot.pFreq != NULL)
+                        dot.pFreq->bind(this);
 
                     vFilters.add(&dot);
                 }
@@ -595,6 +737,8 @@ namespace lsp
             if (pInspect != NULL)
                 pInspect->bind(this);
             pAutoInspect        = pWrapper->port("insp_on");
+            if (pAutoInspect != NULL)
+                pAutoInspect->bind(this);
 
             // Add subwidgets
             ctl::Window *wnd    = pWrapper->controller();
@@ -623,9 +767,7 @@ namespace lsp
 
             wInspectReset       = wnd->widgets()->get<tk::Button>("filter_inspect_reset");
             if (wInspectReset != NULL)
-            {
                 wInspectReset->slots()->bind(tk::SLOT_SUBMIT, slot_filter_inspect_submit, this);
-            }
 
             // Bind the timer
             sEditTimer.bind(pDisplay);
@@ -654,6 +796,9 @@ namespace lsp
 
         void para_equalizer_ui::set_menu_items_checked(lltl::parray<tk::MenuItem> *list, ui::IPort *port)
         {
+            if (port == NULL)
+                return;
+
             const meta::port_t *p = port->metadata();
             float min = 0.0f, max = 1.0f, step = 1.0f;
             meta::get_port_parameters(p, &min, &max, &step);
@@ -668,6 +813,9 @@ namespace lsp
 
         void para_equalizer_ui::on_filter_menu_item_selected(lltl::parray<tk::MenuItem> *list, ui::IPort *port, tk::MenuItem *mi)
         {
+            if (port == NULL)
+                return;
+
             ssize_t index = list->index_of(mi);
             if (index < 0)
                 return;
@@ -689,12 +837,12 @@ namespace lsp
             on_filter_menu_item_selected(&vFilterTypes, pCurrDot->pType, mi);
             on_filter_menu_item_selected(&vFilterModes, pCurrDot->pMode, mi);
             on_filter_menu_item_selected(&vFilterSlopes, pCurrDot->pSlope, mi);
-            if (mi == wFilterMute)
+            if ((mi == wFilterMute) && (pCurrDot->pMute != NULL))
             {
                 pCurrDot->pMute->set_value((mi->checked()->get()) ? 0.0f : 1.0f);
                 pCurrDot->pMute->notify_all();
             }
-            if (mi == wFilterSolo)
+            if ((mi == wFilterSolo) && (pCurrDot->pSolo != NULL))
             {
                 pCurrDot->pSolo->set_value((mi->checked()->get()) ? 0.0f : 1.0f);
                 pCurrDot->pSolo->notify_all();
@@ -826,20 +974,21 @@ namespace lsp
             for (size_t i=0, n=vFilters.size(); i<n; ++i)
             {
                 filter_t *xf    = vFilters.uget(i);
-                if (xf->pSolo->value() >= 0.5f)
+                if ((xf->pSolo != NULL) && (xf->pSolo->value() >= 0.5f))
                 {
                     has_solo        = true;
                     break;
                 }
             }
 
-            bool mute       = f->pMute->value() >= 0.5f;
-            bool solo       = f->pSolo->value() >= 0.5f;
+            bool mute       = (f->pMute != NULL) ? f->pMute->value() >= 0.5f : false;
+            bool solo       = (f->pSolo != NULL) ? f->pSolo->value() >= 0.5f : false;
             if ((mute) || ((has_solo) && (!solo)))
                 return false;
 
             // The filter should be enabled
-            return size_t(f->pType->value()) != meta::para_equalizer_metadata::EQF_OFF;
+            size_t type     = (f->pType != NULL) ? size_t(f->pType->value()) : meta::para_equalizer_metadata::EQF_OFF;
+            return type != meta::para_equalizer_metadata::EQF_OFF;
         }
 
         void para_equalizer_ui::sync_filter_inspect_state()
@@ -854,6 +1003,8 @@ namespace lsp
 
         void para_equalizer_ui::select_inspected_filter(filter_t *f, bool commit)
         {
+            bool auto_inspect = (pAutoInspect != NULL) && (pAutoInspect->value() >= 0.5f);
+
             // Set the down state of inspect button for all filters
             for (size_t i=0, n=vFilters.size(); i<n; ++i)
             {
@@ -863,7 +1014,7 @@ namespace lsp
             }
 
             // Update the inspection port
-            ssize_t inspect = pInspect->value();
+            ssize_t inspect = (pInspect != NULL) ? ssize_t(pInspect->value()) : -1;
             ssize_t index = (f != NULL) ? vFilters.index_of(f) : -1;
 
             if ((pInspect != NULL) && (commit) && (inspect != index))
@@ -874,13 +1025,19 @@ namespace lsp
             }
 
             if (wInspectReset != NULL)
-                wInspectReset->down()->set(inspect >= 0);
+                wInspectReset->down()->set((!auto_inspect) && (inspect >= 0));
             if ((pCurrDot == f) && (wFilterInspect != NULL))
                 wFilterInspect->checked()->set((inspect >= 0) && (inspect == index));
         }
 
         void para_equalizer_ui::toggle_inspected_filter(filter_t *f, bool commit)
         {
+            if (pInspect == NULL)
+            {
+                select_inspected_filter(NULL, true);
+                return;
+            }
+
             ssize_t curr    = pInspect->value();
             ssize_t index   = vFilters.index_of(f);
 
@@ -894,6 +1051,11 @@ namespace lsp
         {
             if (pInspect == NULL)
                 return;
+            if ((pAutoInspect != NULL) && (pAutoInspect->value() >= 0.5f))
+            {
+                select_inspected_filter(NULL, true);
+                return;
+            }
 
             // Filter inspect button submitted?
             filter_t *f     = find_filter_by_widget(button);
@@ -1135,7 +1297,18 @@ namespace lsp
         void para_equalizer_ui::notify(ui::IPort *port)
         {
             if (is_filter_inspect_port(port))
-                sync_filter_inspect_state();
+            {
+                if ((port == pAutoInspect) && (pAutoInspect->value() >= 0.5f))
+                    select_inspected_filter(NULL, true);
+                else
+                    sync_filter_inspect_state();
+                update_filter_note_text();
+            }
+            if (pCurrNote != NULL)
+            {
+                if ((port == pCurrNote->pFreq) || (port == pCurrNote->pType))
+                    update_filter_note_text();
+            }
         }
 
         bool para_equalizer_ui::is_filter_inspect_port(ui::IPort *port)
@@ -1143,7 +1316,7 @@ namespace lsp
             if (pInspect == NULL)
                 return false;
 
-            if (port == pInspect)
+            if ((port == pInspect) || (port == pAutoInspect))
                 return true;
 
             ssize_t inspect = pInspect->value();

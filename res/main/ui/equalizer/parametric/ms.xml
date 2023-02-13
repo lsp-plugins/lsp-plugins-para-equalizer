@@ -81,20 +81,20 @@
 
 					<!-- Text -->
 					<ui:with ox="0" oy="2" y="0" halign="1" valign="1">
-					  <text x="10" text="graph.units.hz"/>
-					  <text x="20" text="20"/>
-					  <text x="30" text="30"/>
-					  <text x="50" text="50"/>
-					  <text x="100" text="100"/>
-					  <text x="200" text="200"/>
-					  <text x="300" text="300"/>
-					  <text x="500" text="500"/>
-					  <text x="1000" text="graph.values.x_k" text:value="1"/>
-					  <text x="2000" text="graph.values.x_k" text:value="2"/>
-					  <text x="3000" text="graph.values.x_k" text:value="3"/>
-					  <text x="5000" text="graph.values.x_k" text:value="5"/>
-					  <text x="10000" text="graph.values.x_k" text:value="10"/>
-					  <text x="20000" text="graph.values.x_k" text:value="20"/>
+						<text x="10" text="graph.units.hz"/>
+						<text x="20" text="20"/>
+						<text x="30" text="30"/>
+						<text x="50" text="50"/>
+						<text x="100" text="100"/>
+						<text x="200" text="200"/>
+						<text x="300" text="300"/>
+						<text x="500" text="500"/>
+						<text x="1000" text="graph.values.x_k" text:value="1"/>
+						<text x="2000" text="graph.values.x_k" text:value="2"/>
+						<text x="3000" text="graph.values.x_k" text:value="3"/>
+						<text x="5000" text="graph.values.x_k" text:value="5"/>
+						<text x="10000" text="graph.values.x_k" text:value="10"/>
+						<text x="20000" text="graph.values.x_k" text:value="20"/>
 					</ui:with>
 
 					<ui:with x="10" halign="1">
@@ -119,6 +119,19 @@
 						<text y="-3 db" text="-3" valign="1"/>
 						<text y="-9 db" text="-9" valign="1"/>
 					</ui:with>
+					
+					<ui:for id="i" first="0" last=":num_filters - 1">
+						<ui:with ox="0" oy="2" y="1" valign="-1" color="graph_marker_cycle" visibility="false" pad.h="4">
+							<text ui:id="filter_notem_${i}" x=":fm_${i}" 
+								halign="(:fm_${i} lt 500) ? 1 : -1"
+								text.halign="(:fm_${i} lt 500) ? -1 : 1"
+								color.hue=":huem_${i}" />
+							<text ui:id="filter_notes_${i}" x=":fs_${i}"
+								halign="(:fs_${i} lt 500) ? 1 : -1"
+								text.halign="(:fm_${i} lt 500) ? -1 : 1"
+								color.hue=":hues_${i}" />
+						</ui:with>
+					</ui:for>
 				</graph>
 			</group>
 
@@ -255,15 +268,16 @@
 							<ui:with expand="true" bright="(:ft${ch} igt 0) ? 1 : 0.75" bg.bright="(:ft${ch} igt 0) ? 1.0 : :const_bg_darken">
 								<label text="${chn}" text:id="${i}" pad="6"/>
 								<cell cols="2" fill="true">
-									<combo id="ft${ch}" fill="true" pad.l="6" pad.r="6" pad.b="6"/>
+									<combo ui:id="filter_type${ch}" id="ft${ch}" fill="true" pad.l="6" pad.r="6" pad.b="6"/>
 								</cell>
 								<cell cols="2" fill="true">
-									<combo id="fm${ch}" fill="true" pad.l="6" pad.r="6"/>
+									<combo ui:id="filter_mode${ch}" id="fm${ch}" fill="true" pad.l="6" pad.r="6"/>
 								</cell>
 								<cell cols="2" fill="true">
 									<grid rows="1" cols="3">
-										<combo id="s${ch}" fill="true" pad="6" expand="true"/>
+										<combo ui:id="filter_slope${ch}" id="s${ch}" fill="true" pad="6" expand="true"/>
 										<button
+											ui:id="filter_solo${ch}"
 											id="xs${ch}"
 											text="labels.chan.S_olo"
 											ui:inject="Button_Cycle"
@@ -278,6 +292,7 @@
 											pad.r="6"
 											expand="false"/>
 										<button
+											ui:id="filter_mute${ch}"
 											id="xm${ch}"
 											text="labels.chan.M_ute"
 											ui:inject="Button_Cycle"
