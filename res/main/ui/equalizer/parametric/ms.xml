@@ -125,10 +125,12 @@
 							<text ui:id="filter_notem_${i}" x=":fm_${i}"
 								halign="(:fm_${i} lt 500) ? 1 : -1"
 								text.halign="(:fm_${i} lt 500) ? -1 : 1"
+								font.bold="true"
 								color.hue=":huem_${i}" />
 							<text ui:id="filter_notes_${i}" x=":fs_${i}"
 								halign="(:fs_${i} lt 500) ? 1 : -1"
 								text.halign="(:fm_${i} lt 500) ? -1 : 1"
+								font.bold="true"
 								color.hue=":hues_${i}" />
 						</ui:with>
 					</ui:for>
@@ -247,7 +249,7 @@
 					<ui:eval id="chp" value="(:blk mod 2) ? 's' : 'm'"/>
 					<ui:eval id="f" value=":blk idiv 2"/>
 
-					<grid transpose="true" rows="8" cols="25" spacing="0">
+					<grid ui:id="filters" transpose="true" rows="8" cols="25" spacing="0">
 						<ui:with expand="false">
 							<label text="labels.specials.num" fill="true" halign="0"/>
 							<label text="labels.filter" fill="true" halign="0"/>
@@ -260,63 +262,65 @@
 
 						<!-- Filters -->
 						<ui:for id="i" first=":f*8" last=":f*8+7">
-							<cell rows="8" bg.color="bg" pad.r="2" pad.l="2" expand="false" pad.t="6" pad.b="6">
-								<vsep/>
-							</cell>
 							<ui:set id="ch" value="${chp}_${i}"/>
-							<ui:with expand="true" bright="(:ft${ch} igt 0) ? 1 : 0.75" bg.bright="(:ft${ch} igt 0) ? 1.0 : :const_bg_darken">
-								<cell cols="2"><label text="${chn}" text:id="${i}" pad="6"/></cell>
-								<cell cols="2" fill="true">
-									<combo ui:id="filter_type${ch}" id="ft${ch}" fill="true" pad.l="6" pad.r="6" pad.b="6"/>
+							<ui:with ui:group="grp_filter${ch}">
+								<cell rows="8" bg.color="bg" pad.r="2" pad.l="2" expand="false" pad.t="6" pad.b="6">
+									<vsep/>
 								</cell>
-								<cell cols="2" fill="true">
-									<hbox pad.b="6">
-										<combo ui:id="filter_mode${ch}" id="fm${ch}" fill="true" pad.l="6" expand="true"/>
-										<combo ui:id="filter_slope${ch}" id="s${ch}" fill="false" pad.h="6" expand="false" />
-									</hbox>
+								<ui:with expand="true" bright="(:ft${ch} igt 0) ? 1 : 0.75" bg.bright="(:ft${ch} igt 0) ? 1.0 : :const_bg_darken">
+									<cell cols="2"><label text="${chn}" text:id="${i}" pad="6" fill="true"/></cell>
+									<cell cols="2" fill="true">
+										<combo ui:id="filter_type${ch}" id="ft${ch}" fill="true" pad.l="6" pad.r="6" pad.b="6"/>
+									</cell>
+									<cell cols="2" fill="true">
+										<hbox pad.b="6">
+											<combo ui:id="filter_mode${ch}" id="fm${ch}" fill="true" pad.l="6" expand="true"/>
+											<combo ui:id="filter_slope${ch}" id="s${ch}" fill="false" pad.h="6" expand="false" />
+										</hbox>
+									</cell>
+									<cell cols="2" fill="true">
+										<hbox pad.b="6">
+											<button
+												ui:id="filter_inspect${ch}"
+												text="labels.chan.I_nspect"
+												ui:inject="Button_orange_8"
+												pad.h="6"
+												fill="true"
+												expand="true" />
+											<button
+												ui:id="filter_solo${ch}"
+												id="xs${ch}"
+												text="labels.chan.S_olo"
+												ui:inject="Button_green_8"
+												pad.r="6"
+												fill="true"
+												expand="true"/>
+											<button
+												ui:id="filter_mute${ch}"
+												id="xm${ch}"
+												text="labels.chan.M_ute"
+												ui:inject="Button_red_8"
+												pad.r="6"
+												fill="true"
+												expand="true"/>
+										</hbox>
+									</cell>
+
+									<knob ui:id="filter_freq${ch}" id="f${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
+									<value id="f${ch}" width.min="40" detailed="false" precision="1" pad.t="3" fill="true" />
+
+									<knob ui:id="filter_q${ch}" id="q${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
+									<value id="q${ch}" width.min="40" detailed="false" pad.t="3" pad.b="6" fill="true" />
+
+									<knob ui:id="filter_gain${ch}" id="g${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
+									<value id="g${ch}" width.min="40" detailed="false" pad.t="3" fill="true" />
+								</ui:with>
+								<cell rows="2">
+									<align halign="1" valign="1">
+										<bevel size="34" ui:inject="Bevel_cycle" dir.deg="225" bg.bright="(:ft${ch} igt 0) ? 1.0 : :const_bg_darken"/>
+									</align>
 								</cell>
-								<cell cols="2" fill="true">
-									<grid rows="1" cols="3" pad.b="6">
-										<button
-											ui:id="filter_inspect${ch}"
-											text="labels.chan.I_nspect"
-											ui:inject="Button_orange_8"
-											pad.h="6"
-											fill="true"
-											expand="true" />
-										<button
-											ui:id="filter_solo${ch}"
-											id="xs${ch}"
-											text="labels.chan.S_olo"
-											ui:inject="Button_green_8"
-											pad.r="6"
-											fill="true"
-											expand="true"/>
-										<button
-											ui:id="filter_mute${ch}"
-											id="xm${ch}"
-											text="labels.chan.M_ute"
-											ui:inject="Button_red_8"
-											pad.r="6"
-											fill="true"
-											expand="true"/>
-									</grid>
-								</cell>
-
-								<knob ui:id="filter_freq${ch}" id="f${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
-								<value id="f${ch}" width.min="40" detailed="false" precision="1" pad.t="3"/>
-
-								<knob ui:id="filter_q${ch}" id="q${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
-								<value id="q${ch}" width.min="40" detailed="false" pad.t="3" pad.b="6"/>
-
-								<knob ui:id="filter_gain${ch}" id="g${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
-								<value id="g${ch}" width.min="40" detailed="false" pad.t="3"/>
 							</ui:with>
-							<cell rows="2">
-								<align halign="1" valign="1">
-									<bevel size="34" ui:inject="Bevel_cycle" dir.deg="225" bg.bright="(:ft${ch} igt 0) ? 1.0 : :const_bg_darken"/>
-								</align>
-							</cell>
 						</ui:for>
 					</grid>
 				</ui:for>

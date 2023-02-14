@@ -37,6 +37,9 @@ namespace lsp
             protected:
                 typedef struct filter_t
                 {
+                    para_equalizer_ui  *pUI;
+                    ws::rectangle_t     sRect;          // The overall rectangle over the grid
+
                     ui::IPort          *pType;
                     ui::IPort          *pMode;
                     ui::IPort          *pSlope;
@@ -99,6 +102,11 @@ namespace lsp
                 static status_t slot_filter_mouse_in(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_filter_mouse_out(tk::Widget *sender, void *ptr, void *data);
 
+                static status_t slot_main_grid_realized(tk::Widget *sender, void *ptr, void *data);
+                static status_t slot_main_grid_mouse_in(tk::Widget *sender, void *ptr, void *data);
+                static status_t slot_main_grid_mouse_out(tk::Widget *sender, void *ptr, void *data);
+                static status_t slot_main_grid_mouse_move(tk::Widget *sender, void *ptr, void *data);
+
             protected:
                 tk::Menu       *create_menu();
                 tk::MenuItem   *create_menu_item(tk::Menu *parent, const char *text);
@@ -124,8 +132,13 @@ namespace lsp
                 void            on_filter_change(tk::Widget *w);
                 void            on_filter_edit_timer();
                 void            on_end_filter_edit(tk::Widget *w);
-                void            on_filter_mouse_in(tk::Widget *w);
-                void            on_filter_mouse_out(tk::Widget *w);
+                void            on_filter_mouse_in(filter_t *f);
+                void            on_filter_mouse_out();
+
+                void            on_main_grid_realized(tk::Widget *w);
+                void            on_main_grid_mouse_in(tk::Widget *w, ssize_t x, ssize_t y);
+                void            on_main_grid_mouse_out(tk::Widget *w, ssize_t x, ssize_t y);
+                void            on_main_grid_mouse_move(tk::Widget *w, ssize_t x, ssize_t y);
 
                 void            set_filter_mode(size_t id, size_t mask, size_t value);
                 void            set_filter_type(size_t id, size_t mask, size_t value);
@@ -141,6 +154,7 @@ namespace lsp
                 ssize_t         get_filter_type(size_t id, size_t channel);
 
                 filter_t       *find_filter_by_widget(tk::Widget *widget);
+                filter_t       *find_filter_by_rect(ssize_t x, ssize_t y);
                 void            add_filters();
                 void            create_filter_menu();
                 void            select_inspected_filter(filter_t *f, bool commit);
