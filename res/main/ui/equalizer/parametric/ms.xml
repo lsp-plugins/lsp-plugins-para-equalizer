@@ -119,10 +119,10 @@
 						<text y="-3 db" text="-3" valign="1"/>
 						<text y="-9 db" text="-9" valign="1"/>
 					</ui:with>
-					
+
 					<ui:for id="i" first="0" last=":num_filters - 1">
 						<ui:with ox="0" oy="2" y="1" valign="-1" color="graph_marker_cycle" visibility="false" pad.h="4">
-							<text ui:id="filter_notem_${i}" x=":fm_${i}" 
+							<text ui:id="filter_notem_${i}" x=":fm_${i}"
 								halign="(:fm_${i} lt 500) ? 1 : -1"
 								text.halign="(:fm_${i} lt 500) ? -1 : 1"
 								color.hue=":huem_${i}" />
@@ -136,15 +136,14 @@
 			</group>
 
 			<hbox spacing="4" bg.color="bg_schema" pad.h="6" pad.b="4" pad.t="4">
-				<button ui:id="filter_inspect_reset" text="labels.chan.inspect" />
-				<vbox>
-					<fader id="insp_r" angle="0" />
-					<value id="insp_r" />
-				</vbox>
-				<button id="insp_on" text="labels.auto" />
-				
+				<button ui:id="filter_inspect_reset" text="labels.chan.inspect" ui:inject="Button_orange"/>
+				<button id="insp_on" text="labels.auto" ui:inject="Button_orange"/>
+
+				<knob id="insp_r" scale.size="3" scolor="orange" size="10" pad.l="6"/>
+				<value id="insp_r" width.min="48" same_line="true" fill="true" halign="1" pad.r="12"/>
+
 				<void hexpand="true" />
-				
+
 				<label text="labels.mode"/>
 				<combo id="mode" pad.r="12"/>
 				<button id="fftv_m" height="22" width="48" text="labels.chan.middle" ui:inject="Button_mid"/>
@@ -252,9 +251,9 @@
 						<ui:with expand="false">
 							<label text="labels.specials.num" fill="true" halign="0"/>
 							<label text="labels.filter" fill="true" halign="0"/>
-							<label text="labels.mode" fill="true" halign="0"/>
-							<label text="labels.slope" fill="true" halign="0"/>
-							<label text="labels.freq_gain" halign="0" pad.r="6" pad.l="6"/>
+							<label text="labels.mode_slope" fill="true" halign="0" pad.r="6" pad.l="6" pad.b="6"/>
+							<label text="labels.controls" fill="true" halign="0"/>
+							<label text="labels.freq_gain" halign="0" />
 							<label text="labels.hz_db" halign="0"/>
 							<cell rows="2"><label text="labels.q" halign="0"/></cell>
 						</ui:with>
@@ -266,46 +265,41 @@
 							</cell>
 							<ui:set id="ch" value="${chp}_${i}"/>
 							<ui:with expand="true" bright="(:ft${ch} igt 0) ? 1 : 0.75" bg.bright="(:ft${ch} igt 0) ? 1.0 : :const_bg_darken">
-								<label text="${chn}" text:id="${i}" pad="6"/>
+								<cell cols="2"><label text="${chn}" text:id="${i}" pad="6"/></cell>
 								<cell cols="2" fill="true">
 									<combo ui:id="filter_type${ch}" id="ft${ch}" fill="true" pad.l="6" pad.r="6" pad.b="6"/>
 								</cell>
 								<cell cols="2" fill="true">
-									<combo ui:id="filter_mode${ch}" id="fm${ch}" fill="true" pad.l="6" pad.r="6"/>
+									<hbox pad.b="6">
+										<combo ui:id="filter_mode${ch}" id="fm${ch}" fill="true" pad.l="6" expand="true"/>
+										<combo ui:id="filter_slope${ch}" id="s${ch}" fill="false" pad.h="6" expand="false" />
+									</hbox>
 								</cell>
 								<cell cols="2" fill="true">
-									<grid rows="1" cols="3">
-										<combo ui:id="filter_slope${ch}" id="s${ch}" fill="true" pad="6" expand="true"/>
+									<grid rows="1" cols="3" pad.b="6">
+										<button
+											ui:id="filter_inspect${ch}"
+											text="labels.chan.I_nspect"
+											ui:inject="Button_orange_8"
+											pad.h="6"
+											fill="true"
+											expand="true" />
 										<button
 											ui:id="filter_solo${ch}"
 											id="xs${ch}"
 											text="labels.chan.S_olo"
-											ui:inject="Button_Cycle"
-											size="22"
-											font.size="10"
-											down.color.hue=":hue_${i}"
-											down.hover.color.hue=":hue_${i}"
-											text.down.color.hue=":hue_${i}"
-											text.down.hover.color.hue=":hue_${i}"
-											border.down.color.hue=":hue_${i}"
-											border.down.hover.color.hue=":hue_${i}"
+											ui:inject="Button_green_8"
 											pad.r="6"
-											expand="false"/>
+											fill="true"
+											expand="true"/>
 										<button
 											ui:id="filter_mute${ch}"
 											id="xm${ch}"
 											text="labels.chan.M_ute"
-											ui:inject="Button_Cycle"
-											size="22"
-											font.size="10"
-											down.color.hue=":hue_${i}"
-											down.hover.color.hue=":hue_${i}"
-											text.down.color.hue=":hue_${i}"
-											text.down.hover.color.hue=":hue_${i}"
-											border.down.color.hue=":hue_${i}"
-											border.down.hover.color.hue=":hue_${i}"
+											ui:inject="Button_red_8"
 											pad.r="6"
-											expand="false"/>
+											fill="true"
+											expand="true"/>
 									</grid>
 								</cell>
 
@@ -314,21 +308,6 @@
 
 								<knob ui:id="filter_q${ch}" id="q${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
 								<value id="q${ch}" width.min="40" detailed="false" pad.t="3" pad.b="6"/>
-								
-								<button
-									ui:id="filter_inspect${ch}"
-									text="labels.chan.I_nspect"
-									ui:inject="Button_Cycle"
-									size="22"
-									font.size="10"
-									down.color.hue=":hue_${i}"
-									down.hover.color.hue=":hue_${i}"
-									text.down.color.hue=":hue_${i}"
-									text.down.hover.color.hue=":hue_${i}"
-									border.down.color.hue=":hue_${i}"
-									border.down.hover.color.hue=":hue_${i}"
-									pad.r="6"
-									expand="false" />								
 
 								<knob ui:id="filter_gain${ch}" id="g${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
 								<value id="g${ch}" width.min="40" detailed="false" pad.t="3"/>
