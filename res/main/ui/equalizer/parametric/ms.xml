@@ -122,16 +122,8 @@
 
 					<ui:for id="i" first="0" last=":num_filters - 1">
 						<ui:with ox="0" oy="2" y="1" valign="-1" color="graph_marker_cycle" visibility="false" pad.h="4">
-							<text ui:id="filter_notem_${i}" x=":fm_${i}"
-								halign="(:fm_${i} lt 500) ? 1 : -1"
-								text.halign="(:fm_${i} lt 500) ? -1 : 1"
-								font.bold="true"
-								color.hue=":huem_${i}" />
-							<text ui:id="filter_notes_${i}" x=":fs_${i}"
-								halign="(:fs_${i} lt 500) ? 1 : -1"
-								text.halign="(:fm_${i} lt 500) ? -1 : 1"
-								font.bold="true"
-								color.hue=":hues_${i}" />
+							<text ui:id="filter_notem_${i}" x=":fm_${i}" halign="(:fm_${i} lt 500) ? 1 : -1" text.halign="(:fm_${i} lt 500) ? -1 : 1" font.bold="true" color.hue=":huem_${i}"/>
+							<text ui:id="filter_notes_${i}" x=":fs_${i}" halign="(:fs_${i} lt 500) ? 1 : -1" text.halign="(:fm_${i} lt 500) ? -1 : 1" font.bold="true" color.hue=":hues_${i}"/>
 						</ui:with>
 					</ui:for>
 				</graph>
@@ -144,7 +136,7 @@
 				<knob id="insp_r" scale.size="3" scolor="orange" size="10" pad.l="6"/>
 				<value id="insp_r" width.min="48" same_line="true" fill="true" halign="1" pad.r="12"/>
 
-				<void hexpand="true" />
+				<void hexpand="true"/>
 
 				<label text="labels.mode"/>
 				<combo id="mode" pad.r="12"/>
@@ -255,7 +247,7 @@
 							<label text="labels.filter" fill="true" halign="0"/>
 							<label text="labels.mode_slope" fill="true" halign="0" pad.r="6" pad.l="6" pad.b="6"/>
 							<label text="labels.controls" fill="true" halign="0"/>
-							<label text="labels.freq_gain" halign="0" />
+							<label text="labels.freq_gain" halign="0"/>
 							<label text="labels.hz_db" halign="0"/>
 							<cell rows="2"><label text="labels.q" halign="0"/></cell>
 						</ui:with>
@@ -275,45 +267,25 @@
 									<cell cols="2" fill="true">
 										<hbox pad.b="6">
 											<combo ui:id="filter_mode${ch}" id="fm${ch}" fill="true" pad.l="6" expand="true"/>
-											<combo ui:id="filter_slope${ch}" id="s${ch}" fill="false" pad.h="6" expand="false" />
+											<combo ui:id="filter_slope${ch}" id="s${ch}" fill="false" pad.h="6" expand="false"/>
 										</hbox>
 									</cell>
 									<cell cols="2" fill="true">
 										<hbox pad.b="6">
-											<button
-												ui:id="filter_inspect${ch}"
-												text="labels.chan.I_nspect"
-												ui:inject="Button_orange_8"
-												pad.h="6"
-												fill="true"
-												expand="true" />
-											<button
-												ui:id="filter_solo${ch}"
-												id="xs${ch}"
-												text="labels.chan.S_olo"
-												ui:inject="Button_green_8"
-												pad.r="6"
-												fill="true"
-												expand="true"/>
-											<button
-												ui:id="filter_mute${ch}"
-												id="xm${ch}"
-												text="labels.chan.M_ute"
-												ui:inject="Button_red_8"
-												pad.r="6"
-												fill="true"
-												expand="true"/>
+											<button ui:id="filter_inspect${ch}" text="labels.chan.I_nspect" ui:inject="Button_orange_8" pad.h="6" fill="true" expand="true"/>
+											<button ui:id="filter_solo${ch}" id="xs${ch}" text="labels.chan.S_olo" ui:inject="Button_green_8" pad.r="6" fill="true" expand="true"/>
+											<button ui:id="filter_mute${ch}" id="xm${ch}" text="labels.chan.M_ute" ui:inject="Button_red_8" pad.r="6" fill="true" expand="true"/>
 										</hbox>
 									</cell>
 
 									<knob ui:id="filter_freq${ch}" id="f${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
-									<value id="f${ch}" width.min="40" detailed="false" precision="1" pad.t="3" fill="true" />
+									<value id="f${ch}" width.min="40" detailed="false" precision="1" pad.t="3" fill="true"/>
 
 									<knob ui:id="filter_q${ch}" id="q${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
-									<value id="q${ch}" width.min="40" detailed="false" pad.t="3" pad.b="6" fill="true" />
+									<value id="q${ch}" width.min="40" detailed="false" pad.t="3" pad.b="6" fill="true"/>
 
 									<knob ui:id="filter_gain${ch}" id="g${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
-									<value id="g${ch}" width.min="40" detailed="false" pad.t="3" fill="true" />
+									<value id="g${ch}" width.min="40" detailed="false" pad.t="3" fill="true"/>
 								</ui:with>
 								<cell rows="2">
 									<align halign="1" valign="1">
