@@ -753,6 +753,7 @@ namespace lsp
                 if (parent->add(mi) != STATUS_OK)
                     return NULL;
             }
+            ctl::inject_style(mi, "Graph::MenuItemChecked");
             mi->text()->set(text);
 
             return mi;
@@ -817,19 +818,16 @@ namespace lsp
                 return;
             wFilterInspect->type()->set_check();
             wFilterInspect->slots()->bind(tk::SLOT_SUBMIT, slot_filter_menu_submit, this);
-            ctl::inject_style(wFilterInspect, "MenuItemChecked");
 
             if ((wFilterSolo = create_menu_item(root, "labels.chan.solo")) == NULL)
                 return;
             wFilterSolo->type()->set_check();
             wFilterSolo->slots()->bind(tk::SLOT_SUBMIT, slot_filter_menu_submit, this);
-            ctl::inject_style(wFilterSolo, "MenuItemChecked");
 
             if ((wFilterMute = create_menu_item(root, "labels.chan.mute")) == NULL)
                 return;
             wFilterMute->type()->set_check();
             wFilterMute->slots()->bind(tk::SLOT_SUBMIT, slot_filter_menu_submit, this);
-            ctl::inject_style(wFilterMute, "MenuItemChecked");
 
             wFilterMenu    = root;
         }
