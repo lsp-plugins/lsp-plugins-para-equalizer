@@ -32,6 +32,36 @@
 	elseif ($m == 'lr') echo " by applying individual equalization to left and right channels separately";
 	?>. Up to <?= $nf ?> filters are available for signal processing simultaneously.
 </p>
+<p>
+	Additional filter inspection feature with the controlled width of the bandpass filter allows to listen the frequency
+	band around several filter types to make search and cut off resonances much easier:
+</p>
+<ul>
+<li>Bell-shaped filters;</li>
+<li>Notch filters;</li>
+<li>Resonance filters;</li>
+<li>Hi-shelving filters;</li>
+<li>Lo-shelving filters.</li>
+</ul>
+<p>
+	The frequency control feature allows to detect the note and the note detune the filter is operating with at the top
+	of the graph area.
+</p>
+<p>
+	Additionally, mouse double-click on the graph area allows to add a filter with desired frequency and gain
+	settings depending on the actual frequency value at the position of the mouse click:
+</p>
+<ul>
+	<li>100 Hz and below: Hi-pass RLC BT filter with Q=0.5;</li>
+	<li>100 Hz - 300 Hz: Lo-shelf RLC BT filter with Q=0.5;</li>
+	<li>300 Hz - 7 kHz: Bell RLC BT filter with Q=2;</li>
+	<li>7 kHz - 15 kHz: Hi-shelf RLC BT filter with Q=0.5;</li>
+	<li>15 kHz and above: Lo-pass RLC BT filter with Q=0.5.</li>
+</ul>
+<p>
+	Several filter parameters like type, mode, slope, inspection, solo and mute are also available for change from the
+	context menu which can be displayed by the right mouse click over the filter's control dot in the graph area.
+</p>
 <p><b>Meters:</b></p>
 <ul>
 	<?php if ($m == 'ms') { ?>
@@ -68,6 +98,9 @@
 	<li><b>Right</b> - enables the <?php if ($m != 's') echo "frequency chart and "; ?>FFT analysis for the right channel.</li>
 	<?php } ?>
 	<li><b>Zoom</b> - zoom fader, allows to adjust zoom on the frequency chart.</li>
+	<li><b>Inspect</b> - the button that disables the inspect mode for currently selected filter.</li>
+	<li><b>Auto</b> - the button that enables automatic filter inspection for the currently edited filter.</li>
+	<li><b>Inspect knob</b> - the knob that controls the bandwidth of the bandpass filter around the inspected filter.</li>
 </ul>
 <p><b>'Signal' section:</b></p>
 <ul>
@@ -104,6 +137,7 @@
 		<li><b>Lo-shelf</b> - Shelving filter with adjustment of low frequencies.</li>
 		<li><b>Notch</b> - Notch filter with full rejection of selected frequency.</li>
 		<li><b>Resonance</b> - Resonance filter wih sharp peak/recess.</li>
+		<li><b>Allpass</b> - All-pass filter which only affects the phase of the audio signal.</li>
 	</ul>
 	<li><b>Mode</b> - sets up the class of the filter:</li>
 	<ul>
@@ -118,21 +152,11 @@
         <li><b>DR</b> - Direct design is used to serve the digital filter coefficients directly in the digital domain, without performing transforms.</li>
 	</ul>
 	<li><b>Slope</b> - the slope of the filter characteristics.</li>
-	<li><b>S</b> - the soloing button, allows to inspect selected filters.</li>
+	<li><b>I</b> - the inspection button, allows to inspect selected filter.</li>
+	<li><b>S</b> - the soloing button, allows to solo selected filters.</li>
 	<li><b>M</b> - the mute button, allows to mute selected filters.</li>
 	<li><b>Freq</b> - the cutoff/resonance frequency of the filter.</li>
 	<li><b>Gain</b> - the gain of the filter, disabled for lo-pass/hi-pass/notch filters.</li>
 	<li><b>Q</b> - the quality factor of the filter.</li>
 	<li><b>Hue</b> - the color of the frequency chart of the filter on the graph.</li>
-</ul>
-<p>
-	Additionally, mouse double-click on the graph area allows to add a filter with desired frequency and gain
-	settings depending on the actual frequency value at the position of the mouse click:
-</p>
-<ul>
-	<li>100 Hz and below: Hi-pass RLC BT filter with Q=0.5;</li>
-	<li>100 Hz - 300 Hz: Lo-shelf RLC BT filter with Q=0.5;</li>
-	<li>300 Hz - 7 kHz: Bell RLC BT filter with Q=2;</li>
-	<li>7 kHz - 15 kHz: Hi-shelf RLC BT filter with Q=0.5;</li>
-	<li>15 kHz and above: Lo-pass RLC BT filter with Q=0.5.</li>
 </ul>
