@@ -47,6 +47,7 @@ namespace lsp
                     ui::IPort          *pSolo;
                     ui::IPort          *pMute;
 
+                    tk::Widget         *wGrid;          // Grid associated with the filter
                     tk::GraphDot       *wDot;           // Graph dot for editing
                     tk::GraphText      *wNote;          // Text with note and frequency
                     tk::Button         *wInspect;       // Inspect button
@@ -84,6 +85,7 @@ namespace lsp
                 lltl::parray<tk::MenuItem> vFilterModes;
                 lltl::parray<tk::MenuItem> vFilterSlopes;
                 lltl::darray<filter_t> vFilters;
+                lltl::parray<tk::Widget> vFilterGrids;   // List of filter grids
 
             protected:
                 static status_t slot_start_import_rew_file(tk::Widget *sender, void *ptr, void *data);
@@ -154,7 +156,8 @@ namespace lsp
                 ssize_t         get_filter_type(size_t id, size_t channel);
 
                 filter_t       *find_filter_by_widget(tk::Widget *widget);
-                filter_t       *find_filter_by_rect(ssize_t x, ssize_t y);
+                filter_t       *find_filter_by_rect(tk::Widget *grid, ssize_t x, ssize_t y);
+                tk::Widget     *find_filter_grid(filter_t *f);
                 void            add_filters();
                 void            create_filter_menu();
                 void            select_inspected_filter(filter_t *f, bool commit);

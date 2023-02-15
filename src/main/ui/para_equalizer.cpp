@@ -445,11 +445,13 @@ namespace lsp
             return NULL;
         }
 
-        para_equalizer_ui::filter_t *para_equalizer_ui::find_filter_by_rect(ssize_t x, ssize_t y)
+        para_equalizer_ui::filter_t *para_equalizer_ui::find_filter_by_rect(tk::Widget *grid, ssize_t x, ssize_t y)
         {
             for (size_t i=0, n=vFilters.size(); i<n; ++i)
             {
                 filter_t *d = vFilters.uget(i);
+                if (d->wGrid != grid)
+                    continue;
                 if (tk::Position::inside(&d->sRect, x, y))
                     return d;
             }
@@ -624,6 +626,36 @@ namespace lsp
             w->slots()->bind(tk::SLOT_END_EDIT, slot_filter_end_edit, this);
         }
 
+        tk::Widget *para_equalizer_ui::find_filter_grid(filter_t *f)
+        {
+            tk::Widget *list[] =
+            {
+                f->wNote,
+                f->wInspect,
+                f->wSolo,
+                f->wMute,
+                f->wType,
+                f->wSlope,
+                f->wGain,
+                f->wFreq,
+                f->wQuality
+            };
+
+            for (size_t i=0, n=vFilterGrids.size(); i<n; ++i)
+            {
+                tk::Widget *g = vFilterGrids.uget(i);
+
+                for (size_t j=0, m=sizeof(list)/sizeof(list[0]); j<m; ++j)
+                {
+                    tk::Widget *w = list[j];
+                    if ((w != NULL) && (w->has_parent(g)))
+                        return g;
+                }
+            }
+
+            return NULL;
+        }
+
         void para_equalizer_ui::add_filters()
         {
             for (const char **fmt = fmtStrings; *fmt != NULL; ++fmt)
@@ -650,6 +682,7 @@ namespace lsp
                     f.wGain         = find_filter_widget<tk::Knob>(*fmt, "filter_gain", port_id);
                     f.wFreq         = find_filter_widget<tk::Knob>(*fmt, "filter_freq", port_id);
                     f.wQuality      = find_filter_widget<tk::Knob>(*fmt, "filter_q", port_id);
+                    f.wGrid         = find_filter_grid(&f);
 
                     f.pType         = find_port(*fmt, "ft", port_id);
                     f.pMode         = find_port(*fmt, "fm", port_id);
@@ -840,7 +873,18 @@ namespace lsp
             if (res != STATUS_OK)
                 return res;
 
-            // Add dot widgets
+            // Find main filter grids
+            pWrapper->controller()->widgets()->query_group("filters", &vFilterGrids);
+            for (size_t i=0, n=vFilterGrids.size(); i<n; ++i)
+            {
+                tk::Widget *g = vFilterGrids.uget(i);
+                g->slots()->bind(tk::SLOT_REALIZED, slot_main_grid_realized, this);
+                g->slots()->bind(tk::SLOT_MOUSE_IN, slot_main_grid_mouse_in, this);
+                g->slots()->bind(tk::SLOT_MOUSE_OUT, slot_main_grid_mouse_out, this);
+                g->slots()->bind(tk::SLOT_MOUSE_MOVE, slot_main_grid_mouse_move, this);
+            }
+
+            // Add filter widgets
             add_filters();
             if (!vFilters.is_empty())
                 create_filter_menu();
@@ -882,16 +926,6 @@ namespace lsp
             wInspectReset       = wnd->widgets()->get<tk::Button>("filter_inspect_reset");
             if (wInspectReset != NULL)
                 wInspectReset->slots()->bind(tk::SLOT_SUBMIT, slot_filter_inspect_submit, this);
-
-            // Find main grid
-            tk::Grid *g = pWrapper->controller()->widgets()->get<tk::Grid>("filters");
-            if (g != NULL)
-            {
-                g->slots()->bind(tk::SLOT_REALIZED, slot_main_grid_realized, this);
-                g->slots()->bind(tk::SLOT_MOUSE_IN, slot_main_grid_mouse_in, this);
-                g->slots()->bind(tk::SLOT_MOUSE_OUT, slot_main_grid_mouse_out, this);
-                g->slots()->bind(tk::SLOT_MOUSE_MOVE, slot_main_grid_mouse_move, this);
-            }
 
             // Bind the timer
             sEditTimer.bind(pDisplay);
@@ -1465,8 +1499,8 @@ namespace lsp
                 for (size_t port_id=0; port_id<nFilters; ++port_id)
                 {
                     filter_t *f = vFilters.uget(index++);
-                    if (f == NULL)
-                        return;
+                    if ((f == NULL) || (f->wGrid != w))
+                        continue;
 
                     // Get all filter-related widgets
                     LSPString grp_name;
@@ -1502,7 +1536,7 @@ namespace lsp
 
         void para_equalizer_ui::on_main_grid_mouse_in(tk::Widget *w, ssize_t x, ssize_t y)
         {
-            filter_t *f = find_filter_by_rect(x, y);
+            filter_t *f = find_filter_by_rect(w, x, y);
             if (f != NULL)
                 on_filter_mouse_in(f);
             else
@@ -1516,7 +1550,7 @@ namespace lsp
 
         void para_equalizer_ui::on_main_grid_mouse_move(tk::Widget *w, ssize_t x, ssize_t y)
         {
-            filter_t *f = find_filter_by_rect(x, y);
+            filter_t *f = find_filter_by_rect(w, x, y);
             if (f != NULL)
                 on_filter_mouse_in(f);
             else

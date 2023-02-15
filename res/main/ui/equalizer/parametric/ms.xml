@@ -241,7 +241,7 @@
 					<ui:eval id="chp" value="(:blk mod 2) ? 's' : 'm'"/>
 					<ui:eval id="f" value=":blk idiv 2"/>
 
-					<grid ui:id="filters" transpose="true" rows="8" cols="25" spacing="0">
+					<grid ui:group="filters" transpose="true" rows="8" cols="25" spacing="0">
 						<ui:with expand="false">
 							<label text="labels.specials.num" fill="true" halign="0"/>
 							<label text="labels.filter" fill="true" halign="0"/>

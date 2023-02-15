@@ -237,7 +237,7 @@
 					<ui:eval id="chp" value="(:blk mod 2) ? 'r' : 'l'"/>
 					<ui:eval id="f" value=":blk idiv 2"/>
 
-					<grid ui:id="filters" transpose="true" rows="8" cols="25" spacing="0">
+					<grid ui:group="filters" transpose="true" rows="8" cols="25" spacing="0">
 						<ui:with expand="false">
 							<label text="labels.specials.num" fill="true" halign="0"/>
 							<label text="labels.filter" fill="true" halign="0"/>
@@ -265,11 +265,11 @@
 										</hbox>
 									</cell>
 									<cell cols="2" fill="true">
-										<grid rows="1" cols="3" pad.b="6">
+										<hbox pad.b="6">
 											<button ui:id="filter_inspect${ch}" text="labels.chan.I_nspect" ui:inject="Button_orange_8" pad.h="6" fill="true" expand="true"/>
 											<button ui:id="filter_solo${ch}" id="xs${ch}" text="labels.chan.S_olo" ui:inject="Button_green_8" pad.r="6" fill="true" expand="true"/>
 											<button ui:id="filter_mute${ch}" id="xm${ch}" text="labels.chan.M_ute" ui:inject="Button_red_8" pad.r="6" fill="true" expand="true"/>
-										</grid>
+										</hbox>
 									</cell>
 
 									<knob ui:id="filter_freq${ch}" id="f${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
