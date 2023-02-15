@@ -518,11 +518,23 @@ namespace lsp
 
         void para_equalizer_ui::on_filter_mouse_in(filter_t *f)
         {
-            // Check that inspect is off or matches the found filter
-            ssize_t idx = vFilters.index_of(f);
+            pCurrNote = f;
+            update_filter_note_text();
+        }
+
+        void para_equalizer_ui::on_filter_mouse_out()
+        {
+            pCurrNote = NULL;
+            update_filter_note_text();
+        }
+
+        void para_equalizer_ui::update_filter_note_text()
+        {
+            // Determine which frequency/note to show: of inspected filter or of selected filter
             ssize_t inspect = (pInspect != NULL) ? ssize_t(pInspect->value()) : -1;
-            if ((inspect >= 0) && (idx != inspect))
-                return;
+            filter_t *f = (inspect >= 0) ? vFilters.uget(inspect) : NULL;
+            if (f == NULL)
+                f = pCurrNote;
 
             // Commit current filter pointer and update note text
             for (size_t i=0, n=vFilters.size(); i<n; ++i)
@@ -532,39 +544,23 @@ namespace lsp
                     xf->wNote->visibility()->set(xf == f);
             }
 
-            pCurrNote = f;
-            update_filter_note_text();
-        }
-
-        void para_equalizer_ui::on_filter_mouse_out()
-        {
-            if (pCurrNote == NULL)
-                return;
-
-            if (pCurrNote->wNote != NULL)
-                pCurrNote->wNote->visibility()->set(false);
-            pCurrNote = NULL;
-        }
-
-        void para_equalizer_ui::update_filter_note_text()
-        {
             // Check that we have the widget to display
-            if ((pCurrNote == NULL) || (pCurrNote->wNote == NULL))
+            if ((f == NULL) || (f->wNote == NULL))
                 return;
 
             // Get the frequency
-            float freq = (pCurrNote->pFreq != NULL) ? pCurrNote->pFreq->value() : -1.0f;
+            float freq = (f->pFreq != NULL) ? f->pFreq->value() : -1.0f;
             if (freq < 0.0f)
             {
-                pCurrNote->wNote->visibility()->set(false);
+                f->wNote->visibility()->set(false);
                 return;
             }
 
             // Check that filter is enabled
-            ssize_t type = (pCurrNote->pType != NULL) ? ssize_t(pCurrNote->pType->value()) : meta::para_equalizer_metadata::EQF_OFF;
+            ssize_t type = (f->pType != NULL) ? ssize_t(f->pType->value()) : meta::para_equalizer_metadata::EQF_OFF;
             if (type == meta::para_equalizer_metadata::EQF_OFF)
             {
-                pCurrNote->wNote->visibility()->set(false);
+                f->wNote->visibility()->set(false);
                 return;
             }
 
@@ -574,7 +570,7 @@ namespace lsp
                 expr::Parameters params;
                 tk::prop::String snote;
                 LSPString text;
-                snote.bind(pCurrNote->wNote->style(), pDisplay->dictionary());
+                snote.bind(f->wNote->style(), pDisplay->dictionary());
 
                 // Frequency
                 text.fmt_ascii("%.2f", freq);
@@ -605,15 +601,11 @@ namespace lsp
                         text.fmt_ascii(" + %02d", note_cents);
                     params.set_string("cents", &text);
 
-                    pCurrNote->wNote->text()->set("lists.notes.display.full", &params);
+                    f->wNote->text()->set("lists.notes.display.full", &params);
                 }
                 else
-                    pCurrNote->wNote->text()->set("lists.notes.display.unknown", &params);
+                    f->wNote->text()->set("lists.notes.display.unknown", &params);
             }
-
-
-            // Enable visibility for the text widget
-            pCurrNote->wNote->visibility()->set(true);
         }
 
         void para_equalizer_ui::bind_filter_edit(tk::Widget *w)
@@ -1186,6 +1178,9 @@ namespace lsp
                 wInspectReset->down()->set((!auto_inspect) && (inspect >= 0));
             if ((pCurrDot == f) && (wFilterInspect != NULL))
                 wFilterInspect->checked()->set((inspect >= 0) && (inspect == index));
+
+            // Make the frequency and note visible
+            update_filter_note_text();
         }
 
         void para_equalizer_ui::toggle_inspected_filter(filter_t *f, bool commit)
@@ -1460,7 +1455,6 @@ namespace lsp
                     select_inspected_filter(NULL, true);
                 else
                     sync_filter_inspect_state();
-                update_filter_note_text();
             }
             if (pCurrNote != NULL)
             {
