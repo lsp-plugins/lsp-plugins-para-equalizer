@@ -778,9 +778,8 @@ namespace lsp
                 if (parent->add(mi) != STATUS_OK)
                     return NULL;
             }
-            if (style == NULL)
-                style = "Graph::MenuItem";
-            ctl::inject_style(mi, style);
+            if (style != NULL)
+                ctl::inject_style(mi, style);
             mi->text()->set(text);
 
             return mi;
@@ -841,17 +840,17 @@ namespace lsp
             if ((create_submenu(root, "labels.slope", &vFilterSlopes, dot->pSlope->metadata())) == NULL)
                 return;
 
-            if ((wFilterInspect = create_menu_item(root, "labels.chan.inspect", "Graph::MenuItemChecked")) == NULL)
+            if ((wFilterInspect = create_menu_item(root, "labels.chan.inspect", "MenuItemChecked")) == NULL)
                 return;
             wFilterInspect->type()->set_check();
             wFilterInspect->slots()->bind(tk::SLOT_SUBMIT, slot_filter_menu_submit, this);
 
-            if ((wFilterSolo = create_menu_item(root, "labels.chan.solo", "Graph::MenuItemChecked")) == NULL)
+            if ((wFilterSolo = create_menu_item(root, "labels.chan.solo", "MenuItemChecked")) == NULL)
                 return;
             wFilterSolo->type()->set_check();
             wFilterSolo->slots()->bind(tk::SLOT_SUBMIT, slot_filter_menu_submit, this);
 
-            if ((wFilterMute = create_menu_item(root, "labels.chan.mute", "Graph::MenuItemChecked")) == NULL)
+            if ((wFilterMute = create_menu_item(root, "labels.chan.mute", "MenuItemChecked")) == NULL)
                 return;
             wFilterMute->type()->set_check();
             wFilterMute->slots()->bind(tk::SLOT_SUBMIT, slot_filter_menu_submit, this);
