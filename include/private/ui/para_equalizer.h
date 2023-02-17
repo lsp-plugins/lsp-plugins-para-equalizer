@@ -111,7 +111,7 @@ namespace lsp
 
             protected:
                 tk::Menu       *create_menu();
-                tk::MenuItem   *create_menu_item(tk::Menu *parent, const char *text, const char *style = NULL);
+                tk::MenuItem   *create_menu_item(tk::Menu *parent, const char *text);
                 tk::Menu       *create_submenu(tk::Menu *parent, const char *lc_key,
                     lltl::parray<tk::MenuItem> *items, const meta::port_t *port);
                 void            set_menu_items_checked(lltl::parray<tk::MenuItem> *list, ui::IPort *port);
