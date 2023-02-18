@@ -121,7 +121,7 @@
 					</ui:with>
 
 					<ui:for id="i" first="0" last=":num_filters - 1">
-						<ui:with ox="0" oy="2" y="1" valign="-1" color="graph_marker_cycle" visibility="false" pad.h="4">
+						<ui:with ox="0" oy="2" y="1" valign="-1" color="graph_marker_cycle" visibility="false" pad.h="4" font.bold="true">
 							<text ui:id="filter_notel_${i}" x=":fl_${i}" halign="(:fl_${i} lt 500) ? 1 : -1" text.halign="(:fl_${i} lt 500) ? -1 : 1" color.hue=":huel_${i}"/>
 							<text ui:id="filter_noter_${i}" x=":fr_${i}" halign="(:fr_${i} lt 500) ? 1 : -1" text.halign="(:fr_${i} lt 500) ? -1 : 1" color.hue=":huer_${i}"/>
 						</ui:with>
