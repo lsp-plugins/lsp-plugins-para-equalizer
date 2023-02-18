@@ -59,7 +59,7 @@ namespace lsp
                     tk::Knob           *wGain;          // Gain button
                     tk::Knob           *wFreq;          // Frequency button
                     tk::Knob           *wQuality;       // Quality button
-                } dot_t;
+                } filter_t;
 
             protected:
                 ui::IPort          *pRewPath;
