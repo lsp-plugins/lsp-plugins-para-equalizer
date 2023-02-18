@@ -183,7 +183,7 @@ namespace lsp
         #define EQ_FILTER_LR(x, total, f)       EQ_FILTER("l", "Left ", x, total, f), EQ_FILTER("r", "Right ", x, total, f)
         #define EQ_FILTER_MS(x, total, f)       EQ_FILTER("m", "Mid ", x, total, f), EQ_FILTER("s", "Side ", x, total, f)
 
-        #define EQ_COMMON(fselect) \
+        #define EQ_COMMON(fselect, filters) \
                 BYPASS, \
                 AMP_GAIN("g_in", "Input gain", para_equalizer_metadata::IN_GAIN_DFL, 10.0f), \
                 AMP_GAIN("g_out", "Output gain", para_equalizer_metadata::OUT_GAIN_DFL, 10.0f), \
@@ -192,7 +192,10 @@ namespace lsp
                 LOG_CONTROL("react", "FFT reactivity", U_MSEC, para_equalizer_metadata::REACT_TIME), \
                 AMP_GAIN("shift", "Shift gain", 1.0f, 100.0f), \
                 LOG_CONTROL("zoom", "Graph zoom", U_GAIN_AMP, para_equalizer_metadata::ZOOM), \
-                COMBO("fsel", "Filter select", 0, fselect)
+                COMBO("fsel", "Filter select", 0, fselect), \
+                INT_CONTROL_RANGE("insp_id", "Inspected filter identifier", U_NONE, -1, (filters-1), -1, 1), \
+                CONTROL("insp_r", "Inspect frequency range", U_OCTAVES, para_equalizer_metadata::INSPECT), \
+                SWITCH("insp_on", "Automatically inspect filter when editing", 0)
 
         #define EQ_MONO_PORTS \
                 MESH("ag", "Amplitude graph", 2, para_equalizer_metadata::MESH_POINTS), \
@@ -250,7 +253,7 @@ namespace lsp
         static const port_t para_equalizer_x16_mono_ports[] =
         {
             PORTS_MONO_PLUGIN,
-            EQ_COMMON(filter_select_16),
+            EQ_COMMON(filter_select_16, 16),
             EQ_MONO_PORTS,
             EQ_FILTER_MONO(0, 16, 16.0f),
             EQ_FILTER_MONO(1, 16, 25.0f),
@@ -275,7 +278,7 @@ namespace lsp
         static const port_t para_equalizer_x32_mono_ports[] =
         {
             PORTS_MONO_PLUGIN,
-            EQ_COMMON(filter_select_32),
+            EQ_COMMON(filter_select_32, 32),
             EQ_MONO_PORTS,
             EQ_FILTER_MONO(0, 32, 16.0f),
             EQ_FILTER_MONO(1, 32, 20.0f),
@@ -316,7 +319,7 @@ namespace lsp
         static const port_t para_equalizer_x16_stereo_ports[] =
         {
             PORTS_STEREO_PLUGIN,
-            EQ_COMMON(filter_select_16),
+            EQ_COMMON(filter_select_16, 16),
             EQ_STEREO_PORTS,
             EQ_FILTER_STEREO(0, 16, 16.0f),
             EQ_FILTER_STEREO(1, 16, 25.0f),
@@ -341,7 +344,7 @@ namespace lsp
         static const port_t para_equalizer_x32_stereo_ports[] =
         {
             PORTS_STEREO_PLUGIN,
-            EQ_COMMON(filter_select_32),
+            EQ_COMMON(filter_select_32, 32),
             EQ_STEREO_PORTS,
             EQ_FILTER_STEREO(0, 32, 16.0f),
             EQ_FILTER_STEREO(1, 32, 20.0f),
@@ -382,7 +385,7 @@ namespace lsp
         static const port_t para_equalizer_x16_lr_ports[] =
         {
             PORTS_STEREO_PLUGIN,
-            EQ_COMMON(filter_select_16lr),
+            EQ_COMMON(filter_select_16lr, 32),
             EQ_LR_PORTS,
             EQ_FILTER_LR(0, 16, 16.0f),
             EQ_FILTER_LR(1, 16, 25.0f),
@@ -407,7 +410,7 @@ namespace lsp
         static const port_t para_equalizer_x32_lr_ports[] =
         {
             PORTS_STEREO_PLUGIN,
-            EQ_COMMON(filter_select_32lr),
+            EQ_COMMON(filter_select_32lr, 64),
             EQ_LR_PORTS,
             EQ_FILTER_LR(0, 32, 16.0f),
             EQ_FILTER_LR(1, 32, 20.0f),
@@ -448,7 +451,7 @@ namespace lsp
         static const port_t para_equalizer_x16_ms_ports[] =
         {
             PORTS_STEREO_PLUGIN,
-            EQ_COMMON(filter_select_16ms),
+            EQ_COMMON(filter_select_16ms, 32),
             EQ_MS_PORTS,
             EQ_FILTER_MS(0, 16, 16.0f),
             EQ_FILTER_MS(1, 16, 25.0f),
@@ -473,7 +476,7 @@ namespace lsp
         static const port_t para_equalizer_x32_ms_ports[] =
         {
             PORTS_STEREO_PLUGIN,
-            EQ_COMMON(filter_select_32ms),
+            EQ_COMMON(filter_select_32ms, 64),
             EQ_MS_PORTS,
             EQ_FILTER_MS(0, 32, 16.0f),
             EQ_FILTER_MS(1, 32, 20.0f),

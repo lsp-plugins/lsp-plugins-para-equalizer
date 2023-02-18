@@ -100,6 +100,7 @@ namespace lsp
                     float              *vIn;            // Input buffer
                     float              *vOut;           // Output buffer
                     size_t              nSync;          // Chart state
+                    bool                bHasSolo;       // Channel has soloing filter
 
                     float              *vTrRe;          // Transfer function (real part)
                     float              *vTrIm;          // Transfer function (imaginary part)
@@ -139,17 +140,23 @@ namespace lsp
                 plug::IPort        *pZoom;                  // Graph zoom
                 plug::IPort        *pEqMode;                // Equalizer mode
                 plug::IPort        *pBalance;               // Output balance
+                plug::IPort        *pInspect;               // Inspected filter index
+                plug::IPort        *pInspectRange;          // Inspecting range
+
+            protected:
+                static inline dspu::equalizer_mode_t get_eq_mode(ssize_t mode);
+                static inline void  decode_filter(size_t *ftype, size_t *slope, size_t mode);
+                static inline bool  adjust_gain(size_t filter_type);
 
             protected:
                 void                destroy_state();
-                inline void         decode_filter(size_t *ftype, size_t *slope, size_t mode);
-                inline bool         adjust_gain(size_t filter_type);
-                inline dspu::equalizer_mode_t get_eq_mode();
                 void                process_channel(eq_channel_t *c, size_t start, size_t samples);
 
                 void                dump_channel(dspu::IStateDumper *v, const eq_channel_t *c) const;
                 static void         dump_filter(dspu::IStateDumper *v, const eq_filter_t *f);
                 static void         dump_filter_params(dspu::IStateDumper *v, const char *id, const dspu::filter_params_t *fp);
+
+                bool                filter_inspect_can_be_enabled(eq_channel_t *c, eq_filter_t *f);
 
             public:
                 explicit para_equalizer(const meta::plugin_t *metadata, size_t filters, size_t mode);
