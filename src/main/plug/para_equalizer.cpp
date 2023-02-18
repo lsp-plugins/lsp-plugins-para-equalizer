@@ -661,8 +661,11 @@ namespace lsp
         {
             size_t channels     = ((nMode == EQ_MONO) || (nMode == EQ_STEREO)) ? 1 : 2;
             for (size_t i=0; i<channels; ++i)
+            {
                 for (size_t j=0; j<=nFilters; ++j)
                     vChannels[i].vFilters[j].nSync = CS_UPDATE;
+                vChannels[i].nSync = CS_UPDATE;
+            }
         }
 
         void para_equalizer::destroy()
