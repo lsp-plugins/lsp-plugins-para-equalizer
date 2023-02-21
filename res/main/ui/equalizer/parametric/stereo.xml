@@ -59,7 +59,18 @@
 					<mesh id="ag" width="3" color="bright_cyan" smooth="true"/>
 					<ui:for id="i" first="0" last=":num_filters - 1">
 						<ui:with pointer="drag" color="graph_marker_cycle" hover.color="graph_marker_cycle" bcolor="graph_marker_cycle" hover.bcolor="graph_marker_cycle" x.editable="true" y.editable="true" z.editable="true">
-							<dot ui:id="filter_dot_${i}" x.id="f_${i}" y.id="g_${i}" z.id="q_${i}" color.hue=":hue_${i}" hover.color.hue=":hue_${i}" bcolor.hue=":hue_${i}" hover.bcolor.hue=":hue_${i}" visibility=":fv_${i}"/>
+							<dot
+								ui:id="filter_dot_${i}"
+								x.id="f_${i}"
+								x.astep="1"
+								y.id="g_${i}"
+								y.astep="1"
+								z.id="q_${i}"
+								color.hue=":hue_${i}"
+								hover.color.hue=":hue_${i}"
+								bcolor.hue=":hue_${i}"
+								hover.bcolor.hue=":hue_${i}"
+								visibility=":fv_${i}"/>
 						</ui:with>
 					</ui:for>
 
