@@ -19,12 +19,14 @@
  * along with lsp-plugins-para-equalizer. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <private/plugins/para_equalizer.h>
+#include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/dsp/dsp.h>
 #include <lsp-plug.in/dsp-units/units.h>
 #include <lsp-plug.in/stdlib/math.h>
 
 #include <lsp-plug.in/shared/id_colors.h>
+
+#include <private/plugins/para_equalizer.h>
 
 #define EQ_BUFFER_SIZE          0x1000U
 #define EQ_RANK                 12

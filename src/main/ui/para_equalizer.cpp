@@ -19,6 +19,7 @@
  * along with lsp-plugins-para-equalizer. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/dsp-units/units.h>
 #include <lsp-plug.in/fmt/RoomEQWizard.h>
 #include <lsp-plug.in/plug-fw/meta/func.h>
