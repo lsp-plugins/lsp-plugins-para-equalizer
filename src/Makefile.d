@@ -16,57 +16,10 @@ $(LSP_PLUGINS_PARA_EQUALIZER_BIN)/main/meta/para_equalizer.o: \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/misc/envelope.h
 $(LSP_PLUGINS_PARA_EQUALIZER_BIN)/main/plug/para_equalizer.o: \
  main/plug/para_equalizer.cpp \
- $(LSP_PLUGINS_PARA_EQUALIZER_INC)/private/plugins/para_equalizer.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/version.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/meta/types.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/finally.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/data.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/const.h \
- $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/const.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/midi.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc/types.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc/forge.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc/parse.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc/pattern.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc/debug.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/IPort.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/ICanvas.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/ICanvasFactory.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/IWrapper.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/core/KVTStorage.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/IExecutor.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/ITask.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/IRunnable.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/ILoader.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/types.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/PrefixLoader.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/Module.h \
- $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/iface/IStateDumper.h \
- $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/version.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/Factory.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/core/IDBuffer.h \
- $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/ctl/Bypass.h \
- $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/filters/Equalizer.h \
- $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/filters/common.h \
- $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/filters/FilterBank.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/finally.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/dsp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/version.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/types.h \
@@ -99,6 +52,7 @@ $(LSP_PLUGINS_PARA_EQUALIZER_BIN)/main/plug/para_equalizer.o: \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_kx.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_vv.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/log.h \
+ $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/lramp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/minmax.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/normalize.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/op_kx.h \
@@ -111,23 +65,66 @@ $(LSP_PLUGINS_PARA_EQUALIZER_BIN)/main/plug/para_equalizer.o: \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/smath.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/interpolation.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/interpolation/linear.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/units.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/version.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/const.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h \
+ $(LSP_PLUGINS_SHARED_INC)/lsp-plug.in/shared/id_colors.h \
+ $(LSP_PLUGINS_PARA_EQUALIZER_INC)/private/plugins/para_equalizer.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/version.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/meta/types.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/data.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/const.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/midi.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/IPort.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/ICanvas.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/ICanvasFactory.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/IWrapper.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/core/KVTStorage.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/IExecutor.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/ITask.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/IRunnable.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/ILoader.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/PrefixLoader.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/Module.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/iface/IStateDumper.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/Factory.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/core/IDBuffer.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/ctl/Bypass.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/filters/Equalizer.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/filters/common.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/filters/FilterBank.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/filters/Filter.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/util/Analyzer.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/util/Delay.h \
  $(LSP_PLUGINS_PARA_EQUALIZER_INC)/private/meta/para_equalizer.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/misc/windows.h \
- $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/misc/envelope.h \
- $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/units.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h \
- $(LSP_PLUGINS_SHARED_INC)/lsp-plug.in/shared/id_colors.h
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/misc/envelope.h
 $(LSP_PLUGINS_PARA_EQUALIZER_BIN)/main/ui/para_equalizer.o: \
  main/ui/para_equalizer.cpp \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/finally.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/units.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/version.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/const.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/finally.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/RoomEQWizard.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
@@ -138,28 +135,13 @@ $(LSP_PLUGINS_PARA_EQUALIZER_BIN)/main/ui/para_equalizer.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/File.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/stdio.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
- $(LSP_PLUGINS_PARA_EQUALIZER_INC)/private/meta/para_equalizer.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/meta/types.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/meta/func.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/version.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/const.h \
- $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/misc/windows.h \
- $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/misc/envelope.h \
- $(LSP_PLUGINS_PARA_EQUALIZER_INC)/private/ui/para_equalizer.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/const.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/IPort.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/IPortListener.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/IWrapper.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/PrefixLoader.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/ILoader.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/types.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/Environment.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/meta/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
@@ -189,6 +171,7 @@ $(LSP_PLUGINS_PARA_EQUALIZER_BIN)/main/ui/para_equalizer.o: \
  $(LSP_R3D_IFACE_INC)/lsp-plug.in/r3d/iface/types.h \
  $(LSP_R3D_IFACE_INC)/lsp-plug.in/r3d/iface/factory.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
@@ -230,6 +213,7 @@ $(LSP_PLUGINS_PARA_EQUALIZER_BIN)/main/ui/para_equalizer.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/ColorRange.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Tokenizer.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/token.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Embedding.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/FileMask.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Font.h \
@@ -260,12 +244,16 @@ $(LSP_PLUGINS_PARA_EQUALIZER_BIN)/main/ui/para_equalizer.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/specific/GraphMeshData.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/specific/GraphFrameData.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/StyleSheet.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleFactory.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/ILoader.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/settings.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/Environment.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
@@ -336,19 +324,23 @@ $(LSP_PLUGINS_PARA_EQUALIZER_BIN)/main/ui/para_equalizer.o: \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/bookmarks.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/system.h \
+ $(LSP_PLUGINS_PARA_EQUALIZER_INC)/private/meta/para_equalizer.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/const.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/misc/windows.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/misc/envelope.h \
+ $(LSP_PLUGINS_PARA_EQUALIZER_INC)/private/ui/para_equalizer.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/const.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/IPort.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/IPortListener.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/IWrapper.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/PrefixLoader.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/core/KVTStorage.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Variables.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/Module.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/data.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/midi.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc/types.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc/forge.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc/parse.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc/pattern.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc/debug.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/IPort.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/ICanvas.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/ICanvasFactory.h \
@@ -417,6 +409,7 @@ $(LSP_PLUGINS_PARA_EQUALIZER_BIN)/main/ui/para_equalizer.o: \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_kx.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_vv.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/log.h \
+ $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/lramp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/minmax.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/normalize.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/op_kx.h \
@@ -433,6 +426,8 @@ $(LSP_PLUGINS_PARA_EQUALIZER_BIN)/main/ui/para_equalizer.o: \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/util/Padding.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/util/Enum.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/util/Direction.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/util/Layout.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/util/TextLayout.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/Widget.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/Registry.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/Factory.h \
