@@ -241,14 +241,15 @@
 					<ui:eval id="chp" value="(:blk mod 2) ? 's' : 'm'"/>
 					<ui:eval id="f" value=":blk idiv 2"/>
 
-					<grid ui:group="filters" transpose="true" rows="8" cols="25" spacing="0">
+					<grid ui:group="filters" transpose="true" rows="9" cols="25" spacing="0">
 						<ui:with expand="false">
 							<label text="labels.specials.num" fill="true" halign="0"/>
 							<label text="labels.filter" fill="true" halign="0"/>
-							<label text="labels.mode_slope" fill="true" halign="0" pad.r="6" pad.l="6" pad.b="6"/>
-							<label text="labels.controls" fill="true" halign="0"/>
-							<label text="labels.freq_gain" halign="0"/>
-							<label text="labels.hz_db" halign="0"/>
+							<label text="labels.mode" fill="true" halign="0" pad.b="6"/>
+							<label text="labels.slope" fill="true" halign="0" />
+							<label text="labels.controls" fill="true" halign="0" pad.b="6"/>
+							<label text="labels.freq_gain" halign="0" pad.h="6" />
+							<label text="labels.hz_db" halign="0" pad.t="3"/>
 							<cell rows="2"><label text="labels.q" halign="0"/></cell>
 						</ui:with>
 
@@ -256,7 +257,7 @@
 						<ui:for id="i" first=":f*8" last=":f*8+7">
 							<ui:set id="ch" value="${chp}_${i}"/>
 							<ui:with ui:group="grp_filter${ch}">
-								<cell rows="8" bg.color="bg" pad.r="2" pad.l="2" expand="false" pad.t="6" pad.b="6">
+								<cell rows="9" bg.color="bg" pad.r="2" pad.l="2" expand="false" pad.t="6" pad.b="6">
 									<vsep/>
 								</cell>
 								<ui:with expand="true" bright="(:ft${ch} igt 0) ? 1 : 0.75" bg.bright="(:ft${ch} igt 0) ? 1.0 : :const_bg_darken">
@@ -265,10 +266,10 @@
 										<combo ui:id="filter_type${ch}" id="ft${ch}" fill="true" pad.l="6" pad.r="6" pad.b="6"/>
 									</cell>
 									<cell cols="2" fill="true">
-										<hbox pad.b="6">
-											<combo ui:id="filter_mode${ch}" id="fm${ch}" fill="true" pad.l="6" expand="true"/>
-											<combo ui:id="filter_slope${ch}" id="s${ch}" fill="false" pad.h="6" expand="false"/>
-										</hbox>
+											<combo ui:id="filter_mode${ch}" id="fm${ch}" fill="true" pad.h="6" expand="true" pad.b="6"/>
+									</cell>
+									<cell cols="2" fill="true">
+											<combo ui:id="filter_slope${ch}" id="s${ch}" fill="true" pad.h="6" expand="true" pad.b="6"/>
 									</cell>
 									<cell cols="2" fill="true">
 										<hbox pad.b="6">

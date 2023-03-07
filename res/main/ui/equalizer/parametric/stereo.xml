@@ -59,18 +59,7 @@
 					<mesh id="ag" width="3" color="bright_cyan" smooth="true"/>
 					<ui:for id="i" first="0" last=":num_filters - 1">
 						<ui:with pointer="drag" color="graph_marker_cycle" hover.color="graph_marker_cycle" bcolor="graph_marker_cycle" hover.bcolor="graph_marker_cycle" x.editable="true" y.editable="true" z.editable="true">
-							<dot
-								ui:id="filter_dot_${i}"
-								x.id="f_${i}"
-								x.astep="1"
-								y.id="g_${i}"
-								y.astep="1"
-								z.id="q_${i}"
-								color.hue=":hue_${i}"
-								hover.color.hue=":hue_${i}"
-								bcolor.hue=":hue_${i}"
-								hover.bcolor.hue=":hue_${i}"
-								visibility=":fv_${i}"/>
+							<dot ui:id="filter_dot_${i}" x.id="f_${i}" x.astep="1" y.id="g_${i}" y.astep="1" z.id="q_${i}" color.hue=":hue_${i}" hover.color.hue=":hue_${i}" bcolor.hue=":hue_${i}" hover.bcolor.hue=":hue_${i}" visibility=":fv_${i}"/>
 						</ui:with>
 					</ui:for>
 
@@ -231,14 +220,15 @@
 			<cgroup id="fsel">
 				<!-- 4 blocks of filters -->
 				<ui:for id="f" first="0" last=":num_blocks - 1">
-					<grid ui:group="filters" transpose="true" rows="8" cols="25" spacing="0">
+					<grid ui:group="filters" transpose="true" rows="9" cols="25" spacing="0">
 						<ui:with expand="false">
 							<label text="labels.specials.num" fill="true" halign="0"/>
 							<label text="labels.filter" fill="true" halign="0"/>
-							<label text="labels.mode_slope" fill="true" halign="0" pad.r="6" pad.l="6" pad.b="6"/>
-							<label text="labels.controls" fill="true" halign="0"/>
-							<label text="labels.freq_gain" halign="0" pad.r="6" pad.l="6"/>
-							<label text="labels.hz_db" halign="0"/>
+							<label text="labels.mode" fill="true" halign="0" pad.b="6"/>
+							<label text="labels.slope" fill="true" halign="0"/>
+							<label text="labels.controls" fill="true" halign="0" pad.b="6"/>
+							<label text="labels.freq_gain" halign="0" pad.h="6"/>
+							<label text="labels.hz_db" halign="0" pad.t="3"/>
 							<cell rows="2"><label text="labels.q" halign="0"/></cell>
 						</ui:with>
 
@@ -246,7 +236,7 @@
 						<ui:for id="i" first=":f*8" last=":f*8+7">
 							<ui:set id="ch" value="_${i}"/>
 							<ui:with ui:group="grp_filter${ch}">
-								<cell rows="8" bg.color="bg" pad.r="2" pad.l="2" expand="false" pad.t="6" pad.b="6">
+								<cell rows="9" bg.color="bg" pad.r="2" pad.l="2" expand="false" pad.t="6" pad.b="6">
 									<vsep/>
 								</cell>
 								<ui:with expand="true" bright="(:ft${ch} igt 0) ? 1 : 0.75" bg.bright="(:ft${ch} igt 0) ? 1.0 : :const_bg_darken">
@@ -255,10 +245,10 @@
 										<combo ui:id="filter_type${ch}" id="ft${ch}" fill="true" pad.l="6" pad.r="6" pad.b="6"/>
 									</cell>
 									<cell cols="2" fill="true">
-										<hbox pad.b="6">
-											<combo ui:id="filter_mode${ch}" id="fm${ch}" fill="true" pad.l="6" expand="true"/>
-											<combo ui:id="filter_slope${ch}" id="s${ch}" fill="false" pad.h="6" expand="false"/>
-										</hbox>
+										<combo ui:id="filter_mode${ch}" id="fm${ch}" fill="true" pad.h="6" expand="true" pad.b="6"/>
+									</cell>
+									<cell cols="2" fill="true">
+										<combo ui:id="filter_slope${ch}" id="s${ch}" fill="true" pad.h="6" expand="true" pad.b="6"/>
 									</cell>
 									<cell cols="2" fill="true">
 										<hbox pad.b="6">
