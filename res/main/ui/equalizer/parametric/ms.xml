@@ -244,13 +244,13 @@
 					<grid ui:group="filters" transpose="true" rows="9" cols="25" spacing="0">
 						<ui:with expand="false">
 							<label text="labels.specials.num" fill="true" halign="0"/>
-							<label text="labels.filter" fill="true" halign="0"/>
+							<label text="labels.filter" fill="true" halign="0" pad.b="6"/>
 							<label text="labels.mode" fill="true" halign="0" pad.b="6"/>
-							<label text="labels.slope" fill="true" halign="0" />
+							<label text="labels.slope" fill="true" halign="0" pad.b="6"/>
 							<label text="labels.controls" fill="true" halign="0" pad.b="6"/>
-							<label text="labels.freq_gain" halign="0" pad.h="6" />
+							<label text="labels.freq_gain" halign="0" pad.h="6" pad.t="6"/>
 							<label text="labels.hz_db" halign="0" pad.t="3"/>
-							<cell rows="2"><label text="labels.q" halign="0"/></cell>
+							<cell rows="2"><label text="labels.q" halign="0" /></cell>
 						</ui:with>
 
 						<!-- Filters -->
