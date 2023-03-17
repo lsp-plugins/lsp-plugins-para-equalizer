@@ -668,6 +668,12 @@ namespace lsp
                     vChannels[i].vFilters[j].nSync = CS_UPDATE;
                 vChannels[i].nSync = CS_UPDATE;
             }
+            pWrapper->request_settings_update();
+        }
+
+        void para_equalizer::ui_deactivated()
+        {
+            pWrapper->request_settings_update();
         }
 
         void para_equalizer::destroy()
@@ -807,7 +813,7 @@ namespace lsp
             }
 
             // Check that inspection mode is ON
-            ssize_t i_value         = pInspect->value();
+            ssize_t i_value         = (ui_active()) ? ssize_t(pInspect->value()) : -1;
             size_t i_channel        = i_value / nFilters;
             size_t i_filter         = i_value % nFilters;
             if ((i_value >= 0) && (i_channel < channels))
