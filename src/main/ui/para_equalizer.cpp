@@ -519,13 +519,20 @@ namespace lsp
 
         void para_equalizer_ui::on_filter_mouse_in(filter_t *f)
         {
-            pCurrNote = f;
+            pCurrNote   = (f->pMute->value() >= 0.5) ? NULL : f;
+            f->bMouseIn = true;
             update_filter_note_text();
         }
 
         void para_equalizer_ui::on_filter_mouse_out()
         {
             pCurrNote = NULL;
+            for (size_t i=0, n=vFilters.size(); i<n; ++i)
+            {
+                filter_t *f = vFilters.uget(i);
+                if (f != NULL)
+                    f->bMouseIn = false;
+            }
             update_filter_note_text();
         }
 
@@ -657,12 +664,14 @@ namespace lsp
                 {
                     filter_t f;
 
+                    f.pUI           = this;
+
                     f.sRect.nLeft   = 0;
                     f.sRect.nTop    = 0;
                     f.sRect.nWidth  = 0;
                     f.sRect.nHeight = 0;
 
-                    f.pUI           = this;
+                    f.bMouseIn      = false;
 
                     f.wDot          = find_filter_widget<tk::GraphDot>(*fmt, "filter_dot", port_id);
                     f.wNote         = find_filter_widget<tk::GraphText>(*fmt, "filter_note", port_id);
@@ -1459,6 +1468,27 @@ namespace lsp
                 if ((port == pCurrNote->pFreq) || (port == pCurrNote->pType))
                     update_filter_note_text();
             }
+
+            filter_t *f = find_filter_by_mute(port);
+            if (f != NULL)
+            {
+                if (port->value() >= 0.5)
+                {
+                    if (pCurrNote == f)
+                    {
+                        pCurrNote = NULL;
+                        update_filter_note_text();
+                    }
+                }
+                else
+                {
+                    if (f->bMouseIn)
+                    {
+                        pCurrNote = f;
+                        update_filter_note_text();
+                    }
+                }
+            }
         }
 
         bool para_equalizer_ui::is_filter_inspect_port(ui::IPort *port)
@@ -1480,6 +1510,19 @@ namespace lsp
             return (f->pType == port) ||
                 (f->pSolo == port) ||
                 (f->pMute == port);
+        }
+
+        para_equalizer_ui::filter_t *para_equalizer_ui::find_filter_by_mute(ui::IPort *port)
+        {
+            for (size_t i = 0, n = vFilters.size(); i < n; ++i)
+            {
+                filter_t *f = vFilters.uget(i);
+                if (f == NULL)
+                    continue;
+                if (f->pMute == port)
+                    return f;
+            }
+            return NULL;
         }
 
         void para_equalizer_ui::on_main_grid_realized(tk::Widget *w)

@@ -40,6 +40,8 @@ namespace lsp
                     para_equalizer_ui  *pUI;
                     ws::rectangle_t     sRect;          // The overall rectangle over the grid
 
+                    bool                bMouseIn;       // Mouse is over filter indicator
+
                     ui::IPort          *pType;
                     ui::IPort          *pMode;
                     ui::IPort          *pSlope;
@@ -157,6 +159,7 @@ namespace lsp
 
                 filter_t       *find_filter_by_widget(tk::Widget *widget);
                 filter_t       *find_filter_by_rect(tk::Widget *grid, ssize_t x, ssize_t y);
+                filter_t       *find_filter_by_mute(ui::IPort *port);
                 tk::Widget     *find_filter_grid(filter_t *f);
                 void            add_filters();
                 void            create_filter_menu();
