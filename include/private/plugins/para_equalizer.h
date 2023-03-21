@@ -69,6 +69,8 @@ namespace lsp
                     float              *vTrIm;          // Transfer function (imaginary part)
                     size_t              nSync;          // Chart state
                     bool                bSolo;          // Soloing filter
+                    dspu::filter_params_t sOldFP;       // Old filter parameters
+                    dspu::filter_params_t sFP;          // Filter parameters
 
                     plug::IPort        *pType;          // Filter type
                     plug::IPort        *pMode;          // Filter mode
@@ -98,6 +100,7 @@ namespace lsp
                     float              *vIn;            // Input buffer
                     float              *vOut;           // Output buffer
                     size_t              nSync;          // Chart state
+                    bool                bHasSolo;       // Channel has soloing filter
 
                     float              *vTrRe;          // Transfer function (real part)
                     float              *vTrIm;          // Transfer function (imaginary part)
@@ -123,6 +126,7 @@ namespace lsp
                 float               fGainIn;                // Input gain
                 float               fZoom;                  // Zoom gain
                 bool                bListen;                // Listen mode (only for MS para_equalizer)
+                bool                bSmoothMode;            // Smooth mode for the equalizer
                 fft_position_t      nFftPosition;           // FFT position
                 core::IDBuffer     *pIDisplay;              // Inline display buffer
 
@@ -136,32 +140,41 @@ namespace lsp
                 plug::IPort        *pZoom;                  // Graph zoom
                 plug::IPort        *pEqMode;                // Equalizer mode
                 plug::IPort        *pBalance;               // Output balance
+                plug::IPort        *pInspect;               // Inspected filter index
+                plug::IPort        *pInspectRange;          // Inspecting range
+
+            protected:
+                static inline dspu::equalizer_mode_t get_eq_mode(ssize_t mode);
+                static inline void  decode_filter(size_t *ftype, size_t *slope, size_t mode);
+                static inline bool  adjust_gain(size_t filter_type);
 
             protected:
                 void                destroy_state();
-                inline void         decode_filter(size_t *ftype, size_t *slope, size_t mode);
-                inline bool         adjust_gain(size_t filter_type);
-                inline dspu::equalizer_mode_t get_eq_mode();
+                void                process_channel(eq_channel_t *c, size_t start, size_t samples);
 
                 void                dump_channel(dspu::IStateDumper *v, const eq_channel_t *c) const;
                 static void         dump_filter(dspu::IStateDumper *v, const eq_filter_t *f);
+                static void         dump_filter_params(dspu::IStateDumper *v, const char *id, const dspu::filter_params_t *fp);
+
+                bool                filter_inspect_can_be_enabled(eq_channel_t *c, eq_filter_t *f);
 
             public:
                 explicit para_equalizer(const meta::plugin_t *metadata, size_t filters, size_t mode);
-                virtual ~para_equalizer();
+                virtual ~para_equalizer() override;
 
             public:
-                virtual void        init(plug::IWrapper *wrapper, plug::IPort **ports);
-                virtual void        destroy();
-                virtual void        ui_activated();
+                virtual void        init(plug::IWrapper *wrapper, plug::IPort **ports) override;
+                virtual void        destroy() override;
+                virtual void        ui_activated() override;
+                virtual void        ui_deactivated() override;
 
-                virtual void        update_settings();
-                virtual void        update_sample_rate(long sr);
+                virtual void        update_settings() override;
+                virtual void        update_sample_rate(long sr) override;
 
-                virtual void        process(size_t samples);
-                virtual bool        inline_display(plug::ICanvas *cv, size_t width, size_t height);
+                virtual void        process(size_t samples) override;
+                virtual bool        inline_display(plug::ICanvas *cv, size_t width, size_t height) override;
 
-                virtual void        dump(dspu::IStateDumper *v) const;
+                virtual void        dump(dspu::IStateDumper *v) const override;
         };
 
     } // namespace plugins
