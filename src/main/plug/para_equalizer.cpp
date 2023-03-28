@@ -851,7 +851,6 @@ namespace lsp
             for (size_t i=0; i<channels; ++i)
             {
                 eq_channel_t *c     = &vChannels[i];
-                bool solo           = false;
                 bool visible        = (c->pVisible == NULL) ?  true : (c->pVisible->value() >= 0.5f);
 
                 // Change the operating mode for the equalizer
@@ -879,7 +878,7 @@ namespace lsp
 
                     // Compute filter params
                     bool mute           = f->pMute->value() >= 0.5f;
-                    if ((mute) || ((solo) && (!f->bSolo)))
+                    if ((mute) || ((c->bHasSolo) && (!f->bSolo)))
                     {
                         fp->nType           = dspu::FLT_NONE;
                         fp->nSlope          = 1;
