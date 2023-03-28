@@ -4,6 +4,7 @@
 
 === 1.0.14 ===
 * Fixed non-working solo button after 1.2.6 release.
+* Updated build scripts and dependencies.
 
 === 1.0.13 ===
 * Equalizer is now smoothly operating with frequency/gain/q factor for each
