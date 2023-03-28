@@ -90,7 +90,8 @@ namespace lsp
                 EQF_LADDERPASS,
                 EQF_LADDERREJ,
                 EQF_ENVELOPE,
-                EQF_BANDPASS
+                EQF_BANDPASS,
+                EQF_LUFS,
             #endif /* LSP_USE_EXPERIMENTAL */
             };
 

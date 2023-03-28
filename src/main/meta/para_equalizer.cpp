@@ -81,6 +81,7 @@ namespace lsp
             { "Ladder-rej",     "eq.flt.ladrej" },
             { "Envelope",       "eq.flt.envelope" },
             { "Bandpass",       "eq.flt.bandpass" },
+            { "LUFS",           "eq.flt.lufs" },
         #endif /* LSP_USE_EXPERIMENTAL */
             { NULL, NULL }
         };

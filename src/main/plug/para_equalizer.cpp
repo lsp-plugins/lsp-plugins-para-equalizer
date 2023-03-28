@@ -342,6 +342,22 @@ namespace lsp
                     }
                     break;
                 }
+
+                case EQF(LUFS):
+                {
+                    switch (mode)
+                    {
+                        EQS(RLC_BT, FLT_A_WEIGHTED, 1)
+                        EQS(RLC_MT, FLT_B_WEIGHTED, 1)
+                        EQS(BWC_BT, FLT_C_WEIGHTED, 1)
+                        EQS(BWC_MT, FLT_D_WEIGHTED, 1)
+                        EQS(LRX_BT, FLT_K_WEIGHTED, 1)
+                        EQS(LRX_MT, FLT_K_WEIGHTED, 1)
+                        EQS(APO_DR, FLT_K_WEIGHTED, 1)
+                        EQDFL
+                    }
+                    break;
+                }
             #endif /* LSP_USE_EXPERIMENTAL */
 
                 case EQF(OFF):
