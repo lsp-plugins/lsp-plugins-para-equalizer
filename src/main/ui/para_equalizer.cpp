@@ -571,19 +571,44 @@ namespace lsp
                 f->wNote->visibility()->set(false);
                 return;
             }
+            size_t filter_index = vFilters.index_of(f);
 
-            // Updatee the note name displayed in the text
+            // Update the note name displayed in the text
             {
                 // Fill the parameters
                 expr::Parameters params;
-                tk::prop::String snote;
+                tk::prop::String lc_string;
                 LSPString text;
-                snote.bind(f->wNote->style(), pDisplay->dictionary());
+                lc_string.bind(f->wNote->style(), pDisplay->dictionary());
 
                 // Frequency
                 text.fmt_ascii("%.2f", freq);
                 params.set_string("frequency", &text);
 
+                // Filter number and audio channel
+                text.set_ascii(f->pType->id());
+                if (text.starts_with_ascii("ftm_"))
+                    lc_string.set("lists.filters.index.mid_id");
+                else if (text.starts_with_ascii("fts_"))
+                    lc_string.set("lists.filters.index.side_id");
+                else if (text.starts_with_ascii("ftl_"))
+                    lc_string.set("lists.filters.index.left_id");
+                else if (text.starts_with_ascii("ftr_"))
+                    lc_string.set("lists.filters.index.right_id");
+                else
+                    lc_string.set("lists.filters.index.filter_id");
+                lc_string.params()->set_int("id", filter_index % nFilters);
+                lc_string.format(&text);
+                params.set_string("filter", &text);
+                lc_string.params()->clear();
+
+                // Process filter type
+                text.fmt_ascii("lists.%s", f->pType->metadata()->items[type].lc_key);
+                lc_string.set(&text);
+                lc_string.format(&text);
+                params.set_string("filter_type", &text);
+
+                // Process filter note
                 float note_full = dspu::frequency_to_note(freq);
                 if (note_full != dspu::NOTE_OUT_OF_RANGE)
                 {
@@ -593,8 +618,8 @@ namespace lsp
                     // Note name
                     ssize_t note        = note_number % 12;
                     text.fmt_ascii("lists.notes.names.%s", note_names[note]);
-                    snote.set(&text);
-                    snote.format(&text);
+                    lc_string.set(&text);
+                    lc_string.format(&text);
                     params.set_string("note", &text);
 
                     // Octave number
