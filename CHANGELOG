@@ -6,6 +6,7 @@
 * Fixed regression: non-working solo button after 1.2.6 release.
 * Added display of filter number, filer channel and filter type near to the
   frequency and note.
+* Added possibility to switch filter between Mid/Side and Left/Right channels.
 * Updated build scripts and dependencies.
 
 === 1.0.13 ===

@@ -101,6 +101,7 @@ namespace lsp
             pRewPath        = NULL;
             pInspect        = NULL;
             pAutoInspect    = NULL;
+            pSelector       = NULL;
             pRewImport      = NULL;
             wGraph          = NULL;
             wInspectReset   = NULL;
@@ -115,6 +116,7 @@ namespace lsp
             wFilterInspect  = NULL;
             wFilterSolo     = NULL;
             wFilterMute     = NULL;
+            wFilterSwitch   = NULL;
 
             if ((!strcmp(meta->uid, meta::para_equalizer_x16_lr.uid)) ||
                 (!strcmp(meta->uid, meta::para_equalizer_x32_lr.uid)))
@@ -717,6 +719,8 @@ namespace lsp
                     f.pFreq         = find_port(*fmt, "f", port_id);
                     f.pSolo         = find_port(*fmt, "xs", port_id);
                     f.pMute         = find_port(*fmt, "xm", port_id);
+                    f.pGain         = find_port(*fmt, "g", port_id);
+                    f.pQuality      = find_port(*fmt, "q", port_id);
 
                     if (f.wDot != NULL)
                         f.wDot->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_filter_dot_click, this);
@@ -736,12 +740,12 @@ namespace lsp
 
                     if (f.pType != NULL)
                         f.pType->bind(this);
+                    if (f.pFreq != NULL)
+                        f.pFreq->bind(this);
                     if (f.pSolo != NULL)
                         f.pSolo->bind(this);
                     if (f.pMute != NULL)
                         f.pMute->bind(this);
-                    if (f.pFreq != NULL)
-                        f.pFreq->bind(this);
 
                     vFilters.add(&f);
                 }
@@ -885,8 +889,14 @@ namespace lsp
 
             if ((wFilterMute = create_menu_item(root, "labels.chan.mute")) == NULL)
                 return;
+
             wFilterMute->type()->set_check();
             wFilterMute->slots()->bind(tk::SLOT_SUBMIT, slot_filter_menu_submit, this);
+
+            if ((wFilterSwitch = create_menu_item(root, "")) == NULL)
+                return;
+
+            wFilterSwitch->slots()->bind(tk::SLOT_SUBMIT, slot_filter_menu_submit, this);
 
             wFilterMenu    = root;
         }
@@ -921,6 +931,7 @@ namespace lsp
             pAutoInspect        = pWrapper->port("insp_on");
             if (pAutoInspect != NULL)
                 pAutoInspect->bind(this);
+            pSelector           = pWrapper->port("fsel");
 
             // Add subwidgets
             ctl::Window *wnd    = pWrapper->controller();
@@ -1010,6 +1021,18 @@ namespace lsp
             port->notify_all();
         }
 
+        void para_equalizer_ui::transfer_port_value(ui::IPort *dst, ui::IPort *src)
+        {
+            if ((src == NULL) || (dst == NULL))
+                return;
+
+            dst->set_value(src->value());
+            src->set_default();
+
+            dst->notify_all();
+            src->notify_all();
+        }
+
         void para_equalizer_ui::on_filter_menu_item_submit(tk::MenuItem *mi)
         {
             if (pCurrDot == NULL)
@@ -1029,8 +1052,59 @@ namespace lsp
                 pCurrDot->pSolo->set_value((mi->checked()->get()) ? 0.0f : 1.0f);
                 pCurrDot->pSolo->notify_all();
             }
+            if (mi == wFilterSwitch)
+            {
+                filter_t *alt_f     = find_switchable_filter(pCurrDot);
+
+                // Set-up alternate filter and disable current filter
+                transfer_port_value(alt_f->pMode, pCurrDot->pMode);
+                transfer_port_value(alt_f->pSlope, pCurrDot->pSlope);
+                transfer_port_value(alt_f->pFreq, pCurrDot->pFreq);
+                transfer_port_value(alt_f->pSolo, pCurrDot->pSolo);
+                transfer_port_value(alt_f->pMute, pCurrDot->pMute);
+                transfer_port_value(alt_f->pQuality, pCurrDot->pQuality);
+                transfer_port_value(alt_f->pGain, pCurrDot->pGain);
+                transfer_port_value(alt_f->pType, pCurrDot->pType);
+
+                // Apply selector to filter
+                ssize_t filter_index = vFilters.index_of(alt_f);
+                if ((filter_index >= 0) && (pSelector != NULL))
+                {
+                    size_t group    = filter_index / nFilters;
+                    size_t subgroup = (filter_index % nFilters) / 8;
+                    pSelector->set_value(subgroup * 2 + group);
+                    pSelector->notify_all();
+                }
+
+                // Update current filter
+                pCurrDot            = alt_f;
+            }
             if (mi == wFilterInspect)
                 toggle_inspected_filter(pCurrDot, true);
+        }
+
+        para_equalizer_ui::filter_t *para_equalizer_ui::find_switchable_filter(filter_t *filter)
+        {
+            ssize_t filter_index = vFilters.index_of(filter);
+            if (filter_index < 0)
+                return NULL;
+
+            size_t offset       = filter_index % nFilters;
+            size_t begin        = ((filter_index / nFilters) > 0) ? 0 : nFilters;
+
+            // Seeking an alternate filter in the whole alternate filter group (using round-robin)
+            for (size_t i=0; i<nFilters; ++i)
+            {
+                size_t index    = begin + (offset + i) % nFilters;
+                filter_t *alt_f = vFilters.uget(index);
+                if (alt_f == NULL)
+                    continue;
+
+                if (ssize_t(alt_f->pType->value()) == meta::para_equalizer_metadata::EQF_OFF)
+                    return alt_f;
+            }
+
+            return NULL;
         }
 
         void para_equalizer_ui::on_filter_dot_right_click(tk::Widget *dot, ssize_t x, ssize_t y)
@@ -1058,8 +1132,29 @@ namespace lsp
             }
             else
                 wFilterInspect->checked()->set(false);
+
             wFilterMute->checked()->set(pCurrDot->pMute->value() >= 0.5f);
             wFilterSolo->checked()->set(pCurrDot->pSolo->value() >= 0.5f);
+
+            if (find_switchable_filter(pCurrDot) != NULL)
+            {
+                LSPString id_type;
+                id_type.set_ascii(pCurrDot->pType->id());
+
+                wFilterSwitch->visibility()->set(true);
+                if (id_type.starts_with_ascii("ftm_"))
+                    wFilterSwitch->text()->set_key("actions.filters.switch.to_side");
+                else if (id_type.starts_with_ascii("fts_"))
+                    wFilterSwitch->text()->set_key("actions.filters.switch.to_mid");
+                else if (id_type.starts_with_ascii("ftl_"))
+                    wFilterSwitch->text()->set_key("actions.filters.switch.to_right");
+                else if (id_type.starts_with_ascii("ftr_"))
+                    wFilterSwitch->text()->set_key("actions.filters.switch.to_left");
+                else
+                    wFilterSwitch->visibility()->set(false);
+            }
+            else
+                wFilterSwitch->visibility()->set(false);
 
             // Show the dot menu
             ws::rectangle_t r;
@@ -1094,8 +1189,7 @@ namespace lsp
                 x, y, freq, gain, dspu::gain_to_db(gain));
 
             // Obtain which port set (left/right/mid/side) should be updated
-            ui::IPort *selector = pWrapper->port("fsel");
-            ssize_t channel     = (selector != NULL) ? size_t(selector->value()) % nSplitChannels : 0;
+            ssize_t channel     = (pSelector != NULL) ? size_t(pSelector->value()) % nSplitChannels : 0;
             if (channel < 0)
             {
                 lsp_trace("Could not allocate channel");
