@@ -1085,6 +1085,10 @@ namespace lsp
 
         para_equalizer_ui::filter_t *para_equalizer_ui::find_switchable_filter(filter_t *filter)
         {
+            // We can switch filter between Left/Right and Left/Side only when it is possible
+            if (nSplitChannels < 2)
+                return NULL;
+
             ssize_t filter_index = vFilters.index_of(filter);
             if (filter_index < 0)
                 return NULL;
@@ -1097,7 +1101,7 @@ namespace lsp
             {
                 size_t index    = begin + (offset + i) % nFilters;
                 filter_t *alt_f = vFilters.uget(index);
-                if (alt_f == NULL)
+                if ((alt_f == NULL) || (alt_f->pType == NULL))
                     continue;
 
                 if (ssize_t(alt_f->pType->value()) == meta::para_equalizer_metadata::EQF_OFF)
