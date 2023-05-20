@@ -1670,16 +1670,27 @@ namespace lsp
                     ws::rectangle_t r;
                     ssize_t min_x = 0, max_x = 0;
                     ssize_t min_y = 0, max_y = 0;
+                    size_t processed = 0;
                     for (size_t i=0, n=all_widgets.size(); i<n; ++i)
                     {
                         tk::Widget *w = all_widgets.uget(i);
                         if (w != NULL)
                         {
-                            w->get_rectangle(&r);
-                            min_x = lsp_min(min_x, r.nLeft);
-                            min_y = lsp_min(min_y, r.nTop);
-                            max_x = lsp_max(max_x, r.nLeft + r.nWidth);
-                            max_y = lsp_max(max_y, r.nTop + r.nHeight);
+                            w->get_padded_rectangle(&r);
+                            if (processed++ > 0)
+                            {
+                                min_x = lsp_min(min_x, r.nLeft);
+                                min_y = lsp_min(min_y, r.nTop);
+                                max_x = lsp_max(max_x, r.nLeft + r.nWidth);
+                                max_y = lsp_max(max_y, r.nTop + r.nHeight);
+                            }
+                            else
+                            {
+                                min_x = r.nLeft;
+                                min_y = r.nTop;
+                                max_x = r.nLeft + r.nWidth;
+                                max_y = r.nTop + r.nHeight;
+                            }
                         }
                     }
 
