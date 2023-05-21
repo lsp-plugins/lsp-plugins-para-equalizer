@@ -2,6 +2,9 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.15 ===
+
+
 === 1.0.14 ===
 * Fixed regression: non-working solo button after 1.2.6 release.
 * Added display of filter number, filer channel and filter type near to the
