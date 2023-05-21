@@ -48,6 +48,8 @@ namespace lsp
                     ui::IPort          *pFreq;
                     ui::IPort          *pSolo;
                     ui::IPort          *pMute;
+                    ui::IPort          *pQuality;
+                    ui::IPort          *pGain;
 
                     tk::Widget         *wGrid;          // Grid associated with the filter
                     tk::GraphDot       *wDot;           // Graph dot for editing
@@ -67,6 +69,7 @@ namespace lsp
                 ui::IPort          *pRewPath;
                 ui::IPort          *pInspect;           // Inspected filter index
                 ui::IPort          *pAutoInspect;       // Automatically inspect the filter
+                ui::IPort          *pSelector;          // Filter selector
                 tk::FileDialog     *pRewImport;
                 tk::Graph          *wGraph;
                 tk::Button         *wInspectReset;      // Inspect reset button
@@ -83,6 +86,7 @@ namespace lsp
                 tk::MenuItem       *wFilterInspect;
                 tk::MenuItem       *wFilterSolo;
                 tk::MenuItem       *wFilterMute;
+                tk::MenuItem       *wFilterSwitch;      // Switch filter between Left/Right and Mid/Side
                 lltl::parray<tk::MenuItem> vFilterTypes;
                 lltl::parray<tk::MenuItem> vFilterModes;
                 lltl::parray<tk::MenuItem> vFilterSlopes;
@@ -170,6 +174,8 @@ namespace lsp
                 bool            is_filter_inspect_port(ui::IPort *port);
                 void            bind_filter_edit(tk::Widget *w);
                 void            update_filter_note_text();
+                filter_t       *find_switchable_filter(filter_t *filter);
+                void            transfer_port_value(ui::IPort *dst, ui::IPort *src);
 
             public:
                 explicit para_equalizer_ui(const meta::plugin_t *meta);

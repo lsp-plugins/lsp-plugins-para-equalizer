@@ -36,6 +36,16 @@
 	Additional filter inspection feature with the controlled width of the bandpass filter allows to listen the frequency
 	band around several filter types to make search and cut off resonances much easier:
 </p>
+<? if (($m == 'ms') || ($m == 'lr')) { ?>
+<p>
+	It is also possible to switch filter between <? if ($m == 'ms') echo "Mid and Side"; else "Left and Right"; ?> channels
+	by selecting corresponding menu item in the popup menu (
+		<? if ($m == 'ms') echo "Switch to Mid / Switch to Side";
+		   else "Switch to Left / Switch to Right"; ?>
+	) above the filter's dot on the graph. 
+</p>
+<? } ?>
+
 <ul>
 <li>Bell-shaped filters;</li>
 <li>Notch filters;</li>

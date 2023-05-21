@@ -123,7 +123,7 @@
 					<ui:for id="i" first="0" last=":num_filters - 1">
 						<ui:with ox="0" oy="2" y="1" valign="-1" color="graph_marker_cycle" visibility="false" pad.h="4" font.bold="true">
 							<text ui:id="filter_notem_${i}" x=":fm_${i}" halign="(:fm_${i} lt 500) ? 1 : -1" text.halign="(:fm_${i} lt 500) ? -1 : 1" color.hue=":huem_${i}"/>
-							<text ui:id="filter_notes_${i}" x=":fs_${i}" halign="(:fs_${i} lt 500) ? 1 : -1" text.halign="(:fm_${i} lt 500) ? -1 : 1" color.hue=":hues_${i}"/>
+							<text ui:id="filter_notes_${i}" x=":fs_${i}" halign="(:fs_${i} lt 500) ? 1 : -1" text.halign="(:fs_${i} lt 500) ? -1 : 1" color.hue=":hues_${i}"/>
 						</ui:with>
 					</ui:for>
 				</graph>

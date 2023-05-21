@@ -342,6 +342,22 @@ namespace lsp
                     }
                     break;
                 }
+
+                case EQF(LUFS):
+                {
+                    switch (mode)
+                    {
+                        EQS(RLC_BT, FLT_A_WEIGHTED, 1)
+                        EQS(RLC_MT, FLT_B_WEIGHTED, 1)
+                        EQS(BWC_BT, FLT_C_WEIGHTED, 1)
+                        EQS(BWC_MT, FLT_D_WEIGHTED, 1)
+                        EQS(LRX_BT, FLT_K_WEIGHTED, 1)
+                        EQS(LRX_MT, FLT_K_WEIGHTED, 1)
+                        EQS(APO_DR, FLT_K_WEIGHTED, 1)
+                        EQDFL
+                    }
+                    break;
+                }
             #endif /* LSP_USE_EXPERIMENTAL */
 
                 case EQF(OFF):
@@ -835,7 +851,6 @@ namespace lsp
             for (size_t i=0; i<channels; ++i)
             {
                 eq_channel_t *c     = &vChannels[i];
-                bool solo           = false;
                 bool visible        = (c->pVisible == NULL) ?  true : (c->pVisible->value() >= 0.5f);
 
                 // Change the operating mode for the equalizer
@@ -863,7 +878,7 @@ namespace lsp
 
                     // Compute filter params
                     bool mute           = f->pMute->value() >= 0.5f;
-                    if ((mute) || ((solo) && (!f->bSolo)))
+                    if ((mute) || ((c->bHasSolo) && (!f->bSolo)))
                     {
                         fp->nType           = dspu::FLT_NONE;
                         fp->nSlope          = 1;

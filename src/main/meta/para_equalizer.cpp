@@ -25,7 +25,7 @@
 
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MAJOR         1
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MINOR         0
-#define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MICRO         13
+#define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MICRO         14
 
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION  \
     LSP_MODULE_VERSION( \
@@ -81,6 +81,7 @@ namespace lsp
             { "Ladder-rej",     "eq.flt.ladrej" },
             { "Envelope",       "eq.flt.envelope" },
             { "Bandpass",       "eq.flt.bandpass" },
+            { "LUFS",           "eq.flt.lufs" },
         #endif /* LSP_USE_EXPERIMENTAL */
             { NULL, NULL }
         };
@@ -520,7 +521,7 @@ namespace lsp
             "Parametric Equalizer",
             B_EQUALIZERS,
             "TfpJPsiouuU",
-            "This plugin allows one to perform parametric equalization of inpu tsignal.\nUp to 16 or 32 different filters are simultaneously available for processing."
+            "This plugin allows one to perform parametric equalization of input signal.\nUp to 16 or 32 different filters are simultaneously available for processing."
         };
 
         const meta::plugin_t para_equalizer_x16_mono =
