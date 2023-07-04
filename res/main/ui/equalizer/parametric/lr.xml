@@ -47,18 +47,18 @@
 
 					<!-- Meshes -->
 					<ui:for id="i" first="0" last=":num_filters - 1">
-						<marker id="fl_${i}" ox="0" oy="1" color="graph_marker_cycle" color.hue=":huel_${i}" visibility=":fvl_${i}"/>
-						<marker id="fr_${i}" ox="0" oy="1" color="graph_marker_cycle" color.hue=":huer_${i}" visibility=":fvr_${i}"/>
-						<marker id="gl_${i}" ox="1" oy="0" color="graph_marker_cycle" color.hue=":huel_${i}" visibility=":fvl_${i}"/>
-						<marker id="gr_${i}" ox="1" oy="0" color="graph_marker_cycle" color.hue=":huer_${i}" visibility=":fvr_${i}"/>
+						<marker id="fl_${i}" ox="0" oy="1" color="graph_marker_cycle" color.hue=":huel_${i}" color.a="0.5" visibility=":fvl_${i}"/>
+						<marker id="fr_${i}" ox="0" oy="1" color="graph_marker_cycle" color.hue=":huer_${i}" color.a="0.5" visibility=":fvr_${i}"/>
+						<marker id="gl_${i}" ox="1" oy="0" color="graph_marker_cycle" color.hue=":huel_${i}" color.a="0.5" visibility=":fvl_${i}"/>
+						<marker id="gr_${i}" ox="1" oy="0" color="graph_marker_cycle" color.hue=":huer_${i}" color.a="0.5" visibility=":fvr_${i}"/>
 					</ui:for>
 					<ui:for id="i" first="0" last=":num_filters - 1">
-						<mesh id="agfl_${i}" width="2" color="graph_mesh_cycle" color.hue=":huel_${i}" fill="true" fcolor="graph_mesh_cycle" fcolor.hue=":huel_${i}" fcolor.a="0.8" visibility=":fvl_${i}" smooth="true"/>
-						<mesh id="agfr_${i}" width="2" color="graph_mesh_cycle" color.hue=":huer_${i}" fill="true" fcolor="graph_mesh_cycle" fcolor.hue=":huer_${i}" fcolor.a="0.8" visibility=":fvr_${i}" smooth="true"/>
+						<mesh id="agfl_${i}" width="2" color="graph_mesh_cycle" color.hue=":huel_${i}" fill="true" fcolor="graph_mesh_cycle" fcolor.hue=":huel_${i}" color.a="0.3" fcolor.a="0.9" visibility=":fvl_${i}" smooth="true"/>
+						<mesh id="agfr_${i}" width="2" color="graph_mesh_cycle" color.hue=":huer_${i}" fill="true" fcolor="graph_mesh_cycle" fcolor.hue=":huer_${i}" color.a="0.3" fcolor.a="0.9" visibility=":fvr_${i}" smooth="true"/>
 					</ui:for>
 
-					<mesh id="fftg_l" width="2" color="left" visibility=":fftv_l"/>
-					<mesh id="fftg_r" width="2" color="right" visibility=":fftv_r"/>
+					<mesh id="fftg_l" width="2" color="left" color.a="0.3" visibility=":fftv_l"/>
+					<mesh id="fftg_r" width="2" color="right" color.a="0.3" visibility=":fftv_r"/>
 					<mesh id="ag_l" width="3" color="left" smooth="true" visibility=":fftv_l"/>
 					<mesh id="ag_r" width="3" color="right" smooth="true" visibility=":fftv_r"/>
 					<ui:for id="i" first="0" last=":num_filters - 1">

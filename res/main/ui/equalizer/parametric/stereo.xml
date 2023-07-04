@@ -47,15 +47,15 @@
 
 					<!-- Meshes -->
 					<ui:for id="i" first="0" last=":num_filters - 1">
-						<marker id="f_${i}" ox="0" oy="1" color="graph_marker_cycle" color.hue=":hue_${i}" visibility=":fv_${i}"/>
-						<marker id="g_${i}" ox="1" oy="0" color="graph_marker_cycle" color.hue=":hue_${i}" visibility=":fv_${i}"/>
+						<marker id="f_${i}" ox="0" oy="1" color="graph_marker_cycle" color.hue=":hue_${i}" color.a="0.5" visibility=":fv_${i}"/>
+						<marker id="g_${i}" ox="1" oy="0" color="graph_marker_cycle" color.hue=":hue_${i}" color.a="0.5" visibility=":fv_${i}"/>
 					</ui:for>
 					<ui:for id="i" first="0" last=":num_filters - 1">
-						<mesh id="agf_${i}" width="2" color="graph_mesh_cycle" color.hue=":hue_${i}" fill="true" fcolor="graph_mesh_cycle" fcolor.hue=":hue_${i}" fcolor.a="0.8" visibility=":fv_${i}" smooth="true"/>
+						<mesh id="agf_${i}" width="2" color="graph_mesh_cycle" color.hue=":hue_${i}" fill="true" fcolor="graph_mesh_cycle" fcolor.hue=":hue_${i}" color.a="0.3" fcolor.a="0.9" visibility=":fv_${i}" smooth="true"/>
 					</ui:for>
 
-					<mesh id="fftg_l" width="2" color="left" visibility=":fftv_l"/>
-					<mesh id="fftg_r" width="2" color="right" visibility=":fftv_r"/>
+					<mesh id="fftg_l" width="2" color="left" color.a="0.3" visibility=":fftv_l"/>
+					<mesh id="fftg_r" width="2" color="right" color.a="0.3" visibility=":fftv_r"/>
 					<mesh id="ag" width="3" color="bright_cyan" smooth="true"/>
 					<ui:for id="i" first="0" last=":num_filters - 1">
 						<ui:with pointer="drag" color="graph_marker_cycle" hover.color="graph_marker_cycle" bcolor="graph_marker_cycle" hover.bcolor="graph_marker_cycle" x.editable="true" y.editable="true" z.editable="true">
