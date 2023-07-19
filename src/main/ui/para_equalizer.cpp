@@ -234,7 +234,7 @@ namespace lsp
             {
                 const char *u8path = path.get_utf8();
                 _this->pRewPath->write(u8path, ::strlen(u8path));
-                _this->pRewPath->notify_all();
+                _this->pRewPath->notify_all(ui::PORT_USER_EDIT);
             }
 
             return STATUS_OK;
@@ -981,7 +981,7 @@ namespace lsp
             if (pInspect != NULL)
             {
                 pInspect->set_value(-1.0f);
-                pInspect->notify_all();
+                pInspect->notify_all(ui::PORT_USER_EDIT);
             }
 
             return ui::Module::pre_destroy();
@@ -1018,7 +1018,7 @@ namespace lsp
             meta::get_port_parameters(p, &min, &max, &step);
 
             port->set_value(min + index * step);
-            port->notify_all();
+            port->notify_all(ui::PORT_USER_EDIT);
         }
 
         void para_equalizer_ui::transfer_port_value(ui::IPort *dst, ui::IPort *src)
@@ -1029,8 +1029,8 @@ namespace lsp
             dst->set_value(src->value());
             src->set_default();
 
-            dst->notify_all();
-            src->notify_all();
+            dst->notify_all(ui::PORT_USER_EDIT);
+            src->notify_all(ui::PORT_USER_EDIT);
         }
 
         void para_equalizer_ui::on_filter_menu_item_submit(tk::MenuItem *mi)
@@ -1045,12 +1045,12 @@ namespace lsp
             if ((mi == wFilterMute) && (pCurrDot->pMute != NULL))
             {
                 pCurrDot->pMute->set_value((mi->checked()->get()) ? 0.0f : 1.0f);
-                pCurrDot->pMute->notify_all();
+                pCurrDot->pMute->notify_all(ui::PORT_USER_EDIT);
             }
             if ((mi == wFilterSolo) && (pCurrDot->pSolo != NULL))
             {
                 pCurrDot->pSolo->set_value((mi->checked()->get()) ? 0.0f : 1.0f);
-                pCurrDot->pSolo->notify_all();
+                pCurrDot->pSolo->notify_all(ui::PORT_USER_EDIT);
             }
             if (mi == wFilterSwitch)
             {
@@ -1073,7 +1073,7 @@ namespace lsp
                     size_t group    = filter_index / nFilters;
                     size_t subgroup = (filter_index % nFilters) / 8;
                     pSelector->set_value(subgroup * 2 + group);
-                    pSelector->notify_all();
+                    pSelector->notify_all(ui::PORT_USER_EDIT);
                 }
 
                 // Update current filter
@@ -1300,7 +1300,7 @@ namespace lsp
             if ((pInspect != NULL) && (commit) && (inspect != index))
             {
                 pInspect->set_value(index);
-                pInspect->notify_all();
+                pInspect->notify_all(ui::PORT_USER_EDIT);
                 inspect     = index;
             }
 
@@ -1394,7 +1394,7 @@ namespace lsp
                 if (p != NULL)
                 {
                     p->set_value(value);
-                    p->notify_all();
+                    p->notify_all(ui::PORT_USER_EDIT);
                 }
             }
         }
@@ -1577,7 +1577,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void para_equalizer_ui::notify(ui::IPort *port)
+        void para_equalizer_ui::notify(ui::IPort *port, size_t flags)
         {
             if (is_filter_inspect_port(port))
             {

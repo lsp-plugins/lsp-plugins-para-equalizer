@@ -46,6 +46,85 @@
 </p>
 <? } ?>
 
+<p>The steepness of the filter is depending on the type of the filter selected, it's slope and Q factor.<p>
+<p>There is a simple rule that allows to compute the steepness of IIR (recursive) low-pass or high-pass filter which consists
+of so-called poles and zeros:<p>
+<ul>
+<li>each pole gives -6 dB/octave magnitude attenuation above the pole's frequency;</li>
+<li>each zero gives +6 dB/octave magnitude amplification above the zero's frequency.</li>
+</ul>
+<p>That allows to make the following conclusions:</p>
+<ul>
+<li>the more poles are used by the filter, the more steep magnitude attenuation will be;</li>
+<li>when talking about the magnitude, each zero cancels the pole's attenuation curve and vice verse, depending on their locations in the frequency domain;</li>
+<li>the filter can not contain more zeros than the number of poles. Otherwise it will give infinite magnitude at the infinite frequency;</li>
+<li>the slope of simple filers is a discrete value with step of -6 dB/octave.</li>
+</ul>
+<p>There is a table that specifies characteristics of lowpass filters depending on the selected filter mode and slope.</p>
+<table>
+<tr>
+	<th rowspan="2">Mode</th>
+	<th colspan="4">Poles</th>
+	<th colspan="4">Slope (dB/oct)</th>
+</tr>
+<tr>
+	<th>x1</th>
+	<th>x2</th>
+	<th>x3</th>
+	<th>x4</th>
+	<th>x1</th>
+	<th>x2</th>
+	<th>x3</th>
+	<th>x4</th>
+</tr>
+<tr>
+	<td>RLC</td>
+	<td>2</td>
+	<td>4</td>
+	<td>6</td>
+	<td>8</td>
+	<td>-12</td>
+	<td>-24</td>
+	<td>-36</td>
+	<td>-48</td>
+</tr>
+<tr>
+	<td>BWC</td>
+	<td>2</td>
+	<td>4</td>
+	<td>6</td>
+	<td>8</td>
+	<td>-12</td>
+	<td>-24</td>
+	<td>-36</td>
+	<td>-48</td>
+</tr>
+<tr>
+	<td>LRX</td>
+	<td>4</td>
+	<td>8</td>
+	<td>12</td>
+	<td>16</td>
+	<td>-24</td>
+	<td>-48</td>
+	<td>-72</td>
+	<td>-96</td>
+</tr>
+<tr>
+	<td>APO</td>
+	<td>2</td>
+	<td>2</td>
+	<td>2</td>
+	<td>2</td>
+	<td>-12</td>
+	<td>-12</td>
+	<td>-12</td>
+	<td>-12</td>
+</tr>
+</table>
+
+<p>Adjusting q can give additional steepness to the curve but making it too high gives extra non-linearity of the magnitude in the passed spectrum.</p>
+
 <ul>
 <li>Bell-shaped filters;</li>
 <li>Notch filters;</li>

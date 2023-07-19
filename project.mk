@@ -1,6 +1,6 @@
 #
-# Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
-#           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+# Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+#           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
 #
 # This file is part of lsp-plugins-para-equalizer
 #
@@ -25,7 +25,7 @@ ARTIFACT_TYPE               = plug
 ARTIFACT_DESC               = LSP Parametric Equalizer Plugin Series
 ARTIFACT_HEADERS            = lsp-plug.in
 ARTIFACT_EXPORT_HEADERS     = 0
-ARTIFACT_VERSION            = 1.0.15
+ARTIFACT_VERSION            = 1.0.16
 
 
 
