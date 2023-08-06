@@ -830,8 +830,11 @@ namespace lsp
 
             // Check that inspection mode is ON
             ssize_t i_value         = (ui_active()) ? ssize_t(pInspect->value()) : -1;
-            size_t i_channel        = i_value / nFilters;
-            size_t i_filter         = i_value % nFilters;
+
+            lsp_trace("i_value = %d", int(i_value));
+
+            size_t i_channel        = i_value / ssize_t(nFilters);
+            size_t i_filter         = i_value % ssize_t(nFilters);
             if ((i_value >= 0) && (i_channel < channels))
             {
                 eq_channel_t *c     = &vChannels[i_channel];
@@ -840,6 +843,8 @@ namespace lsp
             }
             else
                 i_value             = -1;
+
+            lsp_trace("i_value = %d", int(i_value));
 
             // Update equalizer mode
             dspu::equalizer_mode_t eq_mode  = get_eq_mode(pEqMode->value());
@@ -864,8 +869,7 @@ namespace lsp
                 if (c->sBypass.set_bypass(bypass))
                     pWrapper->query_display_draw();
                 c->fOutGain         = bal[i];
-                if (c->pInGain != NULL)
-                    c->fInGain          = c->pInGain->value();
+                c->fInGain          = (c->pInGain != NULL) ? c->pInGain->value() : 1.0f;
                 c->fPitch           = dspu::semitones_to_frequency_shift(c->pPitch->value());
 
                 // Update each filter configuration depending on solo except the inspection one
@@ -885,12 +889,8 @@ namespace lsp
                     }
                     else if (i_value >= 0)
                     {
-                        if (j != i_filter)
-                        {
-                            fp->nType           = dspu::FLT_NONE;
-                            fp->nSlope          = 1;
-                        }
-                        else if (((nMode == EQ_LEFT_RIGHT) || (nMode == EQ_MID_SIDE)) && (i != i_channel))
+                        if ((j != i_filter) ||
+                            ((i != i_channel) && ((nMode == EQ_LEFT_RIGHT) || (nMode == EQ_MID_SIDE))))
                         {
                             fp->nType           = dspu::FLT_NONE;
                             fp->nSlope          = 1;
@@ -951,10 +951,10 @@ namespace lsp
                     dspu::filter_params_t *fp = &f->sFP;
                     dspu::filter_params_t *op = &f->sOldFP;
                     float f_range       = expf(M_LN2 * 0.5f * pInspectRange->value());
-                    size_t xi_channel   = ((nMode == EQ_LEFT_RIGHT) || (nMode == EQ_MID_SIDE)) ? i_channel : i;
+                    size_t xi_channel   = ((nMode == EQ_LEFT_RIGHT) || (nMode == EQ_MID_SIDE)) ? i : i_channel;
 
                     // Set filter parameters (for mono and stereo do it for both channels)
-                    if ((i_value >= 0) && (xi_channel == i))
+                    if ((i_value >= 0) && (xi_channel == i_channel))
                     {
                         eq_filter_t *sf     = &c->vFilters[i_filter];
                         float f1            = sf->sFP.fFreq / f_range;
