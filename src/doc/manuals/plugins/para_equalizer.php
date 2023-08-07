@@ -226,7 +226,7 @@ of so-called poles and zeros:<p>
 		<li><b>Lo-shelf</b> - Shelving filter with adjustment of low frequencies.</li>
 		<li><b>Notch</b> - Notch filter with full rejection of selected frequency.</li>
 		<li><b>Resonance</b> - Resonance filter wih sharp peak/recess.</li>
-		<li><b>Allpass</b> - All-pass filter which only affects the phase of the audio signal.</li>
+		<li><b>Allpass</b> - All-pass filter which only affects the phase of the audio signal at the specified frequency.</li>
 	</ul>
 	<li><b>Mode</b> - sets up the class of the filter:</li>
 	<ul>

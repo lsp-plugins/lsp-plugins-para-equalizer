@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-para-equalizer
  * Created on: 2 авг. 2021 г.
@@ -73,14 +73,14 @@ namespace lsp
             { "Notch",          "eq.flt.notch" },
             { "Resonance",      "eq.flt.resonance" },
             { "Allpass",        "eq.flt.allpass" },
+            { "Bandpass",       "eq.flt.bandpass" },
+            { "Ladder-pass",    "eq.flt.ladpass" },
+            { "Ladder-rej",     "eq.flt.ladrej" },
 
             // Additional stuff
         #ifdef LSP_USE_EXPERIMENTAL
             { "Allpass2",       "eq.flt.allpass2" },
-            { "Ladder-pass",    "eq.flt.ladpass" },
-            { "Ladder-rej",     "eq.flt.ladrej" },
             { "Envelope",       "eq.flt.envelope" },
-            { "Bandpass",       "eq.flt.bandpass" },
             { "LUFS",           "eq.flt.lufs" },
         #endif /* LSP_USE_EXPERIMENTAL */
             { NULL, NULL }
@@ -173,6 +173,7 @@ namespace lsp
                 SWITCH("xs" id "_" #x, "Filter solo " label #x, 0.0f), \
                 SWITCH("xm" id "_" #x, "Filter mute " label #x, 0.0f), \
                 LOG_CONTROL_DFL("f" id "_" #x, "Frequency " label #x, U_HZ, para_equalizer_metadata::FREQ, f), \
+                CONTROL("w" id "_" #x, "Filter Width " label #x, U_OCTAVES, para_equalizer_metadata::WIDTH), \
                 { "g" id "_" #x, "Gain " label # x, U_GAIN_AMP, R_CONTROL, F_IN | F_LOG | F_UPPER | F_LOWER | F_STEP, GAIN_AMP_M_36_DB, GAIN_AMP_P_36_DB, GAIN_AMP_0_DB, 0.01, NULL, NULL }, \
                 { "q" id "_" #x, "Quality factor " label #x, U_NONE, R_CONTROL, F_IN | F_UPPER | F_LOWER | F_STEP, 0.0f, 100.0f, 0.0f, 0.025f, NULL        }, \
                 { "hue" id "_" #x, "Hue " label #x, U_NONE, R_CONTROL, F_IN | F_UPPER | F_LOWER | F_STEP | F_CYCLIC, 0.0f, 1.0f, (float(x) / float(total)), 0.25f/360.0f, NULL     }, \
