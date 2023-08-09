@@ -256,9 +256,9 @@
 
 									<knob ui:id="filter_gain${ch}" id="g${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
 									<value id="g${ch}" width.min="40" detailed="false" pad.t="3"/>
-									
-									<knob ui:id="filter_width${ch}" id="w${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
-									<value id="w${ch}" width.min="40" detailed="false" pad.t="3" pad.b="6"/>
+
+									<knob ui:id="filter_width${ch}" id="w${ch}" scolor="(:ft${ch} igt 8) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
+									<value id="w${ch}" bright="(:ft${ch} igt 8) ? 1 : 0.75" width.min="40" detailed="false" pad.t="3" pad.b="6"/>
 								</ui:with>
 							</ui:with>
 						</ui:for>
