@@ -229,7 +229,7 @@
 							<label text="labels.controls" fill="true" halign="0" pad.b="6"/>
 							<label text="labels.freq_gain" halign="0" pad.h="6" pad.t="6"/>
 							<label text="labels.hz_db" halign="0" pad.t="3"/>
-							<cell rows="2"><label text="labels.q" halign="0" /></cell>
+							<cell rows="2"><label text="labels.q_width" halign="0" /></cell>
 						</ui:with>
 
 						<!-- Filters -->
@@ -266,12 +266,10 @@
 
 									<knob ui:id="filter_gain${ch}" id="g${ch}" scolor="(:ft${ch} igt 0) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
 									<value id="g${ch}" width.min="40" detailed="false" pad.t="3"/>
+
+									<knob ui:id="filter_width${ch}" id="w${ch}" scolor="(:ft${ch} igt 8) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
+									<value id="w${ch}" bright="(:ft${ch} igt 8) ? 1 : 0.75" width.min="40" detailed="false" pad.t="3" pad.b="6"/>
 								</ui:with>
-								<cell rows="2">
-									<align halign="1" valign="1">
-										<bevel size="34" ui:inject="Bevel_cycle" dir.deg="225" bg.bright="(:ft${ch} igt 0) ? 1.0 : :const_bg_darken"/>
-									</align>
-								</cell>
 							</ui:with>
 						</ui:for>
 					</grid>

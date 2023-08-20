@@ -71,6 +71,11 @@ namespace lsp
             static constexpr float          INSPECT_DFL         = 1.0f;
             static constexpr float          INSPECT_STEP        = 0.005f;
 
+            static constexpr float          WIDTH_MIN           = 0.0f;
+            static constexpr float          WIDTH_MAX           = 12.0f;
+            static constexpr float          WIDTH_DFL           = 4.0f;
+            static constexpr float          WIDTH_STEP          = 0.002;
+
             static constexpr size_t         REFRESH_RATE        = 20;
 
             enum eq_filter_t
@@ -84,13 +89,13 @@ namespace lsp
                 EQF_NOTCH,
                 EQF_RESONANCE,
                 EQF_ALLPASS,
+                EQF_BANDPASS,
+                EQF_LADDERPASS,
+                EQF_LADDERREJ,
 
             #ifdef LSP_USE_EXPERIMENTAL
                 EQF_ALLPASS2,
-                EQF_LADDERPASS,
-                EQF_LADDERREJ,
                 EQF_ENVELOPE,
-                EQF_BANDPASS,
                 EQF_LUFS,
             #endif /* LSP_USE_EXPERIMENTAL */
             };

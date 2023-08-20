@@ -262,18 +262,17 @@ namespace lsp
                     break;
                 }
 
-            #ifdef LSP_USE_EXPERIMENTAL
-                case EQF(ALLPASS2):
+                case EQF(BANDPASS):
                 {
                     switch (mode)
                     {
-                        EQS(RLC_BT, FLT_BT_RLC_ALLPASS2, 1)
-                        EQS(RLC_MT, FLT_BT_RLC_ALLPASS2, 1)
-                        EQS(BWC_BT, FLT_BT_RLC_ALLPASS2, 1)
-                        EQS(BWC_MT, FLT_BT_RLC_ALLPASS2, 1)
-                        EQS(LRX_BT, FLT_BT_RLC_ALLPASS2, 1)
-                        EQS(LRX_MT, FLT_BT_RLC_ALLPASS2, 1)
-                        EQS(APO_DR, FLT_DR_APO_ALLPASS2, 1)
+                        EQS(RLC_BT, FLT_BT_RLC_BANDPASS, 1)
+                        EQS(RLC_MT, FLT_MT_RLC_BANDPASS, 1)
+                        EQS(BWC_BT, FLT_BT_BWC_BANDPASS, 1)
+                        EQS(BWC_MT, FLT_MT_BWC_BANDPASS, 1)
+                        EQS(LRX_BT, FLT_BT_LRX_BANDPASS, 1)
+                        EQS(LRX_MT, FLT_MT_LRX_BANDPASS, 1)
+                        EQS(APO_DR, FLT_DR_APO_BANDPASS, 1)
                         EQDFL
                     }
                     break;
@@ -311,6 +310,23 @@ namespace lsp
                     break;
                 }
 
+            #ifdef LSP_USE_EXPERIMENTAL
+                case EQF(ALLPASS2):
+                {
+                    switch (mode)
+                    {
+                        EQS(RLC_BT, FLT_BT_RLC_ALLPASS2, 1)
+                        EQS(RLC_MT, FLT_BT_RLC_ALLPASS2, 1)
+                        EQS(BWC_BT, FLT_BT_RLC_ALLPASS2, 1)
+                        EQS(BWC_MT, FLT_BT_RLC_ALLPASS2, 1)
+                        EQS(LRX_BT, FLT_BT_RLC_ALLPASS2, 1)
+                        EQS(LRX_MT, FLT_BT_RLC_ALLPASS2, 1)
+                        EQS(APO_DR, FLT_DR_APO_ALLPASS2, 1)
+                        EQDFL
+                    }
+                    break;
+                }
+
                 case EQF(ENVELOPE):
                 {
                     switch (mode)
@@ -322,22 +338,6 @@ namespace lsp
                         EQS(LRX_BT, FLT_BT_RLC_ENVELOPE, 1)
                         EQS(LRX_MT, FLT_MT_RLC_ENVELOPE, 1)
                         EQS(APO_DR, FLT_MT_RLC_ENVELOPE, 1)
-                        EQDFL
-                    }
-                    break;
-                }
-
-                case EQF(BANDPASS):
-                {
-                    switch (mode)
-                    {
-                        EQS(RLC_BT, FLT_BT_RLC_BANDPASS, 1)
-                        EQS(RLC_MT, FLT_MT_RLC_BANDPASS, 1)
-                        EQS(BWC_BT, FLT_BT_BWC_BANDPASS, 1)
-                        EQS(BWC_MT, FLT_MT_BWC_BANDPASS, 1)
-                        EQS(LRX_BT, FLT_BT_LRX_BANDPASS, 1)
-                        EQS(LRX_MT, FLT_MT_LRX_BANDPASS, 1)
-                        EQS(APO_DR, FLT_DR_APO_BANDPASS, 1)
                         EQDFL
                     }
                     break;
@@ -384,6 +384,8 @@ namespace lsp
                 case dspu::FLT_MT_RLC_ALLPASS:
                 case dspu::FLT_BT_RLC_ALLPASS2:
                 case dspu::FLT_MT_RLC_ALLPASS2:
+                case dspu::FLT_BT_RLC_BANDPASS:
+                case dspu::FLT_MT_RLC_BANDPASS:
 
                 case dspu::FLT_BT_BWC_LOPASS:
                 case dspu::FLT_MT_BWC_LOPASS:
@@ -391,6 +393,8 @@ namespace lsp
                 case dspu::FLT_MT_BWC_HIPASS:
                 case dspu::FLT_BT_BWC_ALLPASS:
                 case dspu::FLT_MT_BWC_ALLPASS:
+                case dspu::FLT_BT_BWC_BANDPASS:
+                case dspu::FLT_MT_BWC_BANDPASS:
 
                 case dspu::FLT_BT_LRX_LOPASS:
                 case dspu::FLT_MT_LRX_LOPASS:
@@ -398,6 +402,8 @@ namespace lsp
                 case dspu::FLT_MT_LRX_HIPASS:
                 case dspu::FLT_BT_LRX_ALLPASS:
                 case dspu::FLT_MT_LRX_ALLPASS:
+                case dspu::FLT_BT_LRX_BANDPASS:
+                case dspu::FLT_MT_LRX_BANDPASS:
 
                 // Disable gain adjust for several APO filters, too
                 case dspu::FLT_DR_APO_NOTCH:
@@ -405,6 +411,7 @@ namespace lsp
                 case dspu::FLT_DR_APO_HIPASS:
                 case dspu::FLT_DR_APO_ALLPASS:
                 case dspu::FLT_DR_APO_ALLPASS2:
+                case dspu::FLT_DR_APO_BANDPASS:
                     return false;
                 default:
                     break;
@@ -557,6 +564,7 @@ namespace lsp
                     f->pType            = NULL;
                     f->pMode            = NULL;
                     f->pFreq            = NULL;
+                    f->pWidth           = NULL;
                     f->pGain            = NULL;
                     f->pQuality         = NULL;
                     f->pActivity        = NULL;
@@ -651,6 +659,7 @@ namespace lsp
                         f->pSolo            = sf->pSolo;
                         f->pMute            = sf->pMute;
                         f->pFreq            = sf->pFreq;
+                        f->pWidth           = sf->pWidth;
                         f->pGain            = sf->pGain;
                         f->pQuality         = sf->pQuality;
                         f->pActivity        = sf->pActivity;
@@ -665,6 +674,7 @@ namespace lsp
                         f->pSolo        = TRACE_PORT(ports[port_id++]);
                         f->pMute        = TRACE_PORT(ports[port_id++]);
                         f->pFreq        = TRACE_PORT(ports[port_id++]);
+                        f->pWidth       = TRACE_PORT(ports[port_id++]);
                         f->pGain        = TRACE_PORT(ports[port_id++]);
                         f->pQuality     = TRACE_PORT(ports[port_id++]);
                         TRACE_PORT(ports[port_id++]); // Skip hue
@@ -754,6 +764,36 @@ namespace lsp
             return size_t(f->pType->value()) != meta::para_equalizer_metadata::EQF_OFF;
         }
 
+        bool para_equalizer::filter_has_width(size_t type)
+        {
+            switch (type)
+            {
+                case dspu::FLT_BT_RLC_BANDPASS:
+                case dspu::FLT_MT_RLC_BANDPASS:
+                case dspu::FLT_BT_BWC_BANDPASS:
+                case dspu::FLT_MT_BWC_BANDPASS:
+                case dspu::FLT_BT_LRX_BANDPASS:
+                case dspu::FLT_MT_LRX_BANDPASS:
+                case dspu::FLT_BT_RLC_LADDERPASS:
+                case dspu::FLT_MT_RLC_LADDERPASS:
+                case dspu::FLT_BT_RLC_LADDERREJ:
+                case dspu::FLT_MT_RLC_LADDERREJ:
+                case dspu::FLT_BT_BWC_LADDERPASS:
+                case dspu::FLT_MT_BWC_LADDERPASS:
+                case dspu::FLT_BT_BWC_LADDERREJ:
+                case dspu::FLT_MT_BWC_LADDERREJ:
+                case dspu::FLT_BT_LRX_LADDERPASS:
+                case dspu::FLT_MT_LRX_LADDERPASS:
+                case dspu::FLT_BT_LRX_LADDERREJ:
+                case dspu::FLT_MT_LRX_LADDERREJ:
+                case dspu::FLT_DR_APO_LADDERPASS:
+                case dspu::FLT_DR_APO_LADDERREJ:
+                    return true;
+            }
+
+            return false;
+        }
+
         void para_equalizer::update_settings()
         {
             // Check sample rate
@@ -830,8 +870,9 @@ namespace lsp
 
             // Check that inspection mode is ON
             ssize_t i_value         = (ui_active()) ? ssize_t(pInspect->value()) : -1;
-            size_t i_channel        = i_value / nFilters;
-            size_t i_filter         = i_value % nFilters;
+
+            size_t i_channel        = i_value / ssize_t(nFilters);
+            size_t i_filter         = i_value % ssize_t(nFilters);
             if ((i_value >= 0) && (i_channel < channels))
             {
                 eq_channel_t *c     = &vChannels[i_channel];
@@ -864,8 +905,7 @@ namespace lsp
                 if (c->sBypass.set_bypass(bypass))
                     pWrapper->query_display_draw();
                 c->fOutGain         = bal[i];
-                if (c->pInGain != NULL)
-                    c->fInGain          = c->pInGain->value();
+                c->fInGain          = (c->pInGain != NULL) ? c->pInGain->value() : 1.0f;
                 c->fPitch           = dspu::semitones_to_frequency_shift(c->pPitch->value());
 
                 // Update each filter configuration depending on solo except the inspection one
@@ -885,12 +925,8 @@ namespace lsp
                     }
                     else if (i_value >= 0)
                     {
-                        if (j != i_filter)
-                        {
-                            fp->nType           = dspu::FLT_NONE;
-                            fp->nSlope          = 1;
-                        }
-                        else if (((nMode == EQ_LEFT_RIGHT) || (nMode == EQ_MID_SIDE)) && (i != i_channel))
+                        if ((j != i_filter) ||
+                            ((i != i_channel) && ((nMode == EQ_LEFT_RIGHT) || (nMode == EQ_MID_SIDE))))
                         {
                             fp->nType           = dspu::FLT_NONE;
                             fp->nSlope          = 1;
@@ -908,12 +944,20 @@ namespace lsp
                         fp->nSlope          = f->pSlope->value() + 1;
                         decode_filter(&fp->nType, &fp->nSlope, f->pMode->value());
                     }
-                    fp->fFreq           = f->pFreq->value() * c->fPitch;
-                #ifdef LSP_NO_EXPERIMENTAL
-                    fp->fFreq2          = fp->fFreq;
-                #else
-                    fp->fFreq2          = 100.0f * fp->fFreq;
-                #endif /* LSP_NO_EXPERIMENTAL */
+
+                    if (filter_has_width(fp->nType))
+                    {
+                        float center        = f->pFreq->value() * c->fPitch;
+                        float k             = powf(2, (f->pWidth->value() * 0.5f));
+                        fp->fFreq           = center/k;
+                        fp->fFreq2          = center*k;
+                    }
+                    else
+                    {
+                        fp->fFreq           = f->pFreq->value() * c->fPitch;
+                        fp->fFreq2          = fp->fFreq;
+                    }
+
                     fp->fGain           = (adjust_gain(fp->nType)) ? f->pGain->value() : 1.0f;
                     fp->fQuality        = f->pQuality->value();
 
@@ -951,10 +995,10 @@ namespace lsp
                     dspu::filter_params_t *fp = &f->sFP;
                     dspu::filter_params_t *op = &f->sOldFP;
                     float f_range       = expf(M_LN2 * 0.5f * pInspectRange->value());
-                    size_t xi_channel   = ((nMode == EQ_LEFT_RIGHT) || (nMode == EQ_MID_SIDE)) ? i_channel : i;
+                    size_t xi_channel   = ((nMode == EQ_LEFT_RIGHT) || (nMode == EQ_MID_SIDE)) ? i : i_channel;
 
                     // Set filter parameters (for mono and stereo do it for both channels)
-                    if ((i_value >= 0) && (xi_channel == i))
+                    if ((i_value >= 0) && (xi_channel == i_channel))
                     {
                         eq_filter_t *sf     = &c->vFilters[i_filter];
                         float f1            = sf->sFP.fFreq / f_range;

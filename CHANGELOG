@@ -2,6 +2,11 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.17 ===
+* Fixed frequency inspection bug for LeftRight and MidSide versions of plugin.
+* Added Bandpass, Ladder-pass and Ladder-rej filters.
+* Updated build scripts and dependencies.
+
 === 1.0.16 ===
 * Updated build scripts and dependencies.
 
