@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-para-equalizer
  * Created on: 2 авг. 2021 г.
@@ -117,7 +117,7 @@ namespace lsp
 
         para_equalizer::~para_equalizer()
         {
-            destroy_state();
+            do_destroy();
         }
 
         inline void para_equalizer::decode_filter(size_t *ftype, size_t *slope, size_t mode)
@@ -704,10 +704,10 @@ namespace lsp
 
         void para_equalizer::destroy()
         {
-            destroy_state();
+            do_destroy();
         }
 
-        void para_equalizer::destroy_state()
+        void para_equalizer::do_destroy()
         {
             size_t channels     = (nMode == EQ_MONO) ? 1 : 2;
 
@@ -1604,7 +1604,7 @@ namespace lsp
             v->write("pBalance", pBalance);
         }
 
-    } // namespace plugins
-} // namespace lsp
+    } /* namespace plugins */
+} /* namespace lsp */
 
 
