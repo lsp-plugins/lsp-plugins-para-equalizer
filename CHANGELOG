@@ -3,7 +3,7 @@
 *******************************************************************************
 
 === 1.0.18 ===
-
+* Updated build scripts and dependencies.
 
 === 1.0.17 ===
 * Fixed frequency inspection bug for LeftRight and MidSide versions of plugin.
