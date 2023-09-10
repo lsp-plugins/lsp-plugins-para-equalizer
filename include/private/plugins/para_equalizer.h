@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-para-equalizer
  * Created on: 2 авг. 2021 г.
@@ -152,7 +152,7 @@ namespace lsp
                 static bool         filter_has_width(size_t type);
 
             protected:
-                void                destroy_state();
+                void                do_destroy();
                 void                process_channel(eq_channel_t *c, size_t start, size_t samples);
 
                 void                dump_channel(dspu::IStateDumper *v, const eq_channel_t *c) const;
@@ -178,8 +178,8 @@ namespace lsp
                 virtual void        dump(dspu::IStateDumper *v) const override;
         };
 
-    } // namespace plugins
-} // namespace lsp
+    } /* namespace plugins */
+} /* namespace lsp */
 
 
 #endif /* PRIVATE_PLUGINS_PARA_EQUALIZER_H_ */
