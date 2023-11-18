@@ -98,14 +98,6 @@ namespace lsp
             { NULL, NULL }
         };
 
-        static const port_item_t equalizer_fft_mode[] =
-        {
-            { "Off",            "metering.fft.off" },
-            { "Post-eq",        "metering.fft.post_eq" },
-            { "Pre-eq",         "metering.fft.pre_eq" },
-            { NULL, NULL }
-        };
-
         static const port_item_t filter_select_16[] =
         {
             { "Filters 0-7",            "para_eq.flt_0:7" },
@@ -190,7 +182,6 @@ namespace lsp
                 AMP_GAIN("g_in", "Input gain", para_equalizer_metadata::IN_GAIN_DFL, 10.0f), \
                 AMP_GAIN("g_out", "Output gain", para_equalizer_metadata::OUT_GAIN_DFL, 10.0f), \
                 COMBO("mode", "Equalizer mode", 0, equalizer_eq_modes), \
-                COMBO("fft", "FFT analysis", 0, equalizer_fft_mode), \
                 LOG_CONTROL("react", "FFT reactivity", U_MSEC, para_equalizer_metadata::REACT_TIME), \
                 AMP_GAIN("shift", "Shift gain", 1.0f, 100.0f), \
                 LOG_CONTROL("zoom", "Graph zoom", U_GAIN_AMP, para_equalizer_metadata::ZOOM), \
@@ -203,8 +194,7 @@ namespace lsp
                 MESH("ag", "Amplitude graph", 2, para_equalizer_metadata::MESH_POINTS), \
                 CONTROL("frqs", "Frequency shift", U_SEMITONES, para_equalizer_metadata::PITCH), \
                 METER_GAIN("im", "Input signal meter", GAIN_AMP_P_12_DB), \
-                METER_GAIN("sm", "Output signal meter", GAIN_AMP_P_12_DB), \
-                MESH("fftg", "FFT graph", 2, para_equalizer_metadata::MESH_POINTS)
+                METER_GAIN("sm", "Output signal meter", GAIN_AMP_P_12_DB)
 
         #define EQ_STEREO_PORTS \
                 PAN_CTL("bal", "Output balance", 0.0f), \
@@ -212,12 +202,8 @@ namespace lsp
                 CONTROL("frqs", "Frequency shift", U_SEMITONES, para_equalizer_metadata::PITCH), \
                 METER_GAIN("iml", "Input signal meter Left", GAIN_AMP_P_12_DB), \
                 METER_GAIN("sml", "Output signal meter Left", GAIN_AMP_P_12_DB), \
-                MESH("fftg_l", "FFT channel Left", 2, para_equalizer_metadata::MESH_POINTS), \
-                SWITCH("fftv_l", "FFT visibility Left", 1.0f), \
                 METER_GAIN("imr", "Input signal meter Right", GAIN_AMP_P_12_DB), \
-                METER_GAIN("smr", "Output signal meter Right", GAIN_AMP_P_12_DB), \
-                MESH("fftg_r", "FFT channel Right", 2, para_equalizer_metadata::MESH_POINTS), \
-                SWITCH("fftv_r", "FFT visibility Right", 1.0f) \
+                METER_GAIN("smr", "Output signal meter Right", GAIN_AMP_P_12_DB)
 
         #define EQ_LR_PORTS \
                 PAN_CTL("bal", "Output balance", 0.0f), \
@@ -225,14 +211,12 @@ namespace lsp
                 CONTROL("frqs_l", "Frequency shift Left", U_SEMITONES, para_equalizer_metadata::PITCH), \
                 METER_GAIN("iml", "Input signal meter Left", GAIN_AMP_P_12_DB), \
                 METER_GAIN("sml", "Output signal meter Left", GAIN_AMP_P_12_DB), \
-                MESH("fftg_l", "FFT channel Left", 2, para_equalizer_metadata::MESH_POINTS), \
-                SWITCH("fftv_l", "FFT visibility Left", 1.0f), \
+                SWITCH("fltv_l", "Filter visibility Left", 1.0f), \
                 MESH("ag_r", "Amplitude graph Right", 2, para_equalizer_metadata::MESH_POINTS), \
                 CONTROL("frqs_r", "Frequency shift Right", U_SEMITONES, para_equalizer_metadata::PITCH), \
                 METER_GAIN("imr", "Input signal meter Right", GAIN_AMP_P_12_DB), \
                 METER_GAIN("smr", "Output signal meter Right", GAIN_AMP_P_12_DB), \
-                MESH("fftg_r", "FFT channel Right", 2, para_equalizer_metadata::MESH_POINTS), \
-                SWITCH("fftv_r", "FFT visibility Right", 1.0f)
+                SWITCH("fltv_r", "Filter visibility Right", 1.0f)
 
         #define EQ_MS_PORTS \
                 PAN_CTL("bal", "Output balance", 0.0f), \
@@ -243,19 +227,24 @@ namespace lsp
                 CONTROL("frqs_m", "Frequency shift Mid", U_SEMITONES, para_equalizer_metadata::PITCH), \
                 METER_GAIN("iml", "Input signal meter Left", GAIN_AMP_P_12_DB), \
                 METER_GAIN("sml", "Output signal meter Left", GAIN_AMP_P_12_DB), \
-                MESH("fftg_m", "FFT channel Mid", 2, para_equalizer_metadata::MESH_POINTS), \
-                SWITCH("fftv_m", "FFT visibility Mid", 1.0f), \
+                SWITCH("fltv_m", "Filter visibility Mid", 1.0f), \
                 MESH("ag_s", "Amplitude graph Side", 2, para_equalizer_metadata::MESH_POINTS), \
                 CONTROL("frqs_s", "Frequency shift Side", U_SEMITONES, para_equalizer_metadata::PITCH), \
                 METER_GAIN("imr", "Input signal meter Right", GAIN_AMP_P_12_DB), \
                 METER_GAIN("smr", "Output signal meter Right", GAIN_AMP_P_12_DB), \
-                MESH("fftg_s", "FFT channel Side", 2, para_equalizer_metadata::MESH_POINTS), \
-                SWITCH("fftv_s", "FFT visibility Side", 1.0f)
+                SWITCH("fltv_s", "Filter visibility Side", 1.0f)
+
+        #define CHANNEL_ANALYSIS(id, label) \
+            SWITCH("ife" id, "Input FFT graph enable" label, 1.0f), \
+            SWITCH("ofe" id, "Output FFT graph enable" label, 1.0f), \
+            MESH("ifg" id, "Input FFT graph" label, 2, para_equalizer_metadata::MESH_POINTS + 2), \
+            MESH("ofg" id, "Output FFT graph" label, 2, para_equalizer_metadata::MESH_POINTS)
 
         static const port_t para_equalizer_x16_mono_ports[] =
         {
             PORTS_MONO_PLUGIN,
             EQ_COMMON(filter_select_16, 16),
+            CHANNEL_ANALYSIS("", ""),
             EQ_MONO_PORTS,
             EQ_FILTER_MONO(0, 16, 16.0f),
             EQ_FILTER_MONO(1, 16, 25.0f),
@@ -281,6 +270,7 @@ namespace lsp
         {
             PORTS_MONO_PLUGIN,
             EQ_COMMON(filter_select_32, 32),
+            CHANNEL_ANALYSIS("", ""),
             EQ_MONO_PORTS,
             EQ_FILTER_MONO(0, 32, 16.0f),
             EQ_FILTER_MONO(1, 32, 20.0f),
@@ -322,6 +312,8 @@ namespace lsp
         {
             PORTS_STEREO_PLUGIN,
             EQ_COMMON(filter_select_16, 16),
+            CHANNEL_ANALYSIS("_l", " Left"),
+            CHANNEL_ANALYSIS("_r", " Right"),
             EQ_STEREO_PORTS,
             EQ_FILTER_STEREO(0, 16, 16.0f),
             EQ_FILTER_STEREO(1, 16, 25.0f),
@@ -347,6 +339,8 @@ namespace lsp
         {
             PORTS_STEREO_PLUGIN,
             EQ_COMMON(filter_select_32, 32),
+            CHANNEL_ANALYSIS("_l", " Left"),
+            CHANNEL_ANALYSIS("_r", " Right"),
             EQ_STEREO_PORTS,
             EQ_FILTER_STEREO(0, 32, 16.0f),
             EQ_FILTER_STEREO(1, 32, 20.0f),
@@ -388,6 +382,8 @@ namespace lsp
         {
             PORTS_STEREO_PLUGIN,
             EQ_COMMON(filter_select_16lr, 32),
+            CHANNEL_ANALYSIS("_l", " Left"),
+            CHANNEL_ANALYSIS("_r", " Right"),
             EQ_LR_PORTS,
             EQ_FILTER_LR(0, 16, 16.0f),
             EQ_FILTER_LR(1, 16, 25.0f),
@@ -413,6 +409,8 @@ namespace lsp
         {
             PORTS_STEREO_PLUGIN,
             EQ_COMMON(filter_select_32lr, 64),
+            CHANNEL_ANALYSIS("_l", " Left"),
+            CHANNEL_ANALYSIS("_r", " Right"),
             EQ_LR_PORTS,
             EQ_FILTER_LR(0, 32, 16.0f),
             EQ_FILTER_LR(1, 32, 20.0f),
@@ -454,6 +452,8 @@ namespace lsp
         {
             PORTS_STEREO_PLUGIN,
             EQ_COMMON(filter_select_16ms, 32),
+            CHANNEL_ANALYSIS("_m", " Mid"),
+            CHANNEL_ANALYSIS("_s", " Side"),
             EQ_MS_PORTS,
             EQ_FILTER_MS(0, 16, 16.0f),
             EQ_FILTER_MS(1, 16, 25.0f),
@@ -479,6 +479,8 @@ namespace lsp
         {
             PORTS_STEREO_PLUGIN,
             EQ_COMMON(filter_select_32ms, 64),
+            CHANNEL_ANALYSIS("_m", " Mid"),
+            CHANNEL_ANALYSIS("_s", " Side"),
             EQ_MS_PORTS,
             EQ_FILTER_MS(0, 32, 16.0f),
             EQ_FILTER_MS(1, 32, 20.0f),

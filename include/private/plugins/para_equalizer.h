@@ -100,6 +100,7 @@ namespace lsp
                     float              *vBuffer;        // Buffer for temporary data
                     float              *vIn;            // Input buffer
                     float              *vOut;           // Output buffer
+                    float              *vAnalyzer;      // Buffer for analyzer
                     size_t              nSync;          // Chart state
                     bool                bHasSolo;       // Channel has soloing filter
 
@@ -111,7 +112,10 @@ namespace lsp
                     plug::IPort        *pInGain;        // Input gain
                     plug::IPort        *pTrAmp;         // Amplitude chart
                     plug::IPort        *pPitch;         // Frequency shift
-                    plug::IPort        *pFft;           // FFT chart
+                    plug::IPort        *pFftInSwitch;   // FFT input switch
+                    plug::IPort        *pFftOutSwitch;  // FFT output switch
+                    plug::IPort        *pFftInMesh;     // FFT input mesh
+                    plug::IPort        *pFftOutMesh;    // FFT output mesh
                     plug::IPort        *pVisible;       // Visibility flag
                     plug::IPort        *pInMeter;       // Output level meter
                     plug::IPort        *pOutMeter;      // Output level meter
@@ -128,13 +132,11 @@ namespace lsp
                 float               fZoom;                  // Zoom gain
                 bool                bListen;                // Listen mode (only for MS para_equalizer)
                 bool                bSmoothMode;            // Smooth mode for the equalizer
-                fft_position_t      nFftPosition;           // FFT position
                 core::IDBuffer     *pIDisplay;              // Inline display buffer
 
                 plug::IPort        *pBypass;                // Bypass port
                 plug::IPort        *pGainIn;                // Input gain port
                 plug::IPort        *pGainOut;               // Output gain port
-                plug::IPort        *pFftMode;               // FFT mode
                 plug::IPort        *pReactivity;            // FFT reactivity
                 plug::IPort        *pListen;                // Listen mode (only for MS equalizer)
                 plug::IPort        *pShiftGain;             // Shift gain
@@ -153,6 +155,7 @@ namespace lsp
 
             protected:
                 void                do_destroy();
+                void                perform_analysis(size_t samples);
                 void                process_channel(eq_channel_t *c, size_t start, size_t samples);
 
                 void                dump_channel(dspu::IStateDumper *v, const eq_channel_t *c) const;
