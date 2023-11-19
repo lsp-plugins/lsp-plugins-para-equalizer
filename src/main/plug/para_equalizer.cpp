@@ -1137,21 +1137,21 @@ namespace lsp
         }
 
         void para_equalizer::perform_analysis(size_t samples)
-                {
-                    // Prepare processing
-                    size_t channels     = (nMode == EQ_MONO) ? 1 : 2;
+        {
+            // Prepare processing
+            size_t channels     = (nMode == EQ_MONO) ? 1 : 2;
 
-                    const float *bufs[4] = { NULL, NULL, NULL, NULL };
-                    for (size_t i=0; i<channels; ++i)
-                    {
-                        eq_channel_t *c         = &vChannels[i];
-                        bufs[i*2]               = c->vAnalyzer;
-                        bufs[i*2+1]             = c->vBuffer;
-                    }
+            const float *bufs[4] = { NULL, NULL, NULL, NULL };
+            for (size_t i=0; i<channels; ++i)
+            {
+                eq_channel_t *c         = &vChannels[i];
+                bufs[i*2]               = c->vAnalyzer;
+                bufs[i*2+1]             = c->vBuffer;
+            }
 
-                    // Perform FFT analysis
-                    sAnalyzer.process(bufs, samples);
-                }
+            // Perform FFT analysis
+            sAnalyzer.process(bufs, samples);
+        }
 
         void para_equalizer::process_channel(eq_channel_t *c, size_t start, size_t samples)
         {
@@ -1601,6 +1601,7 @@ namespace lsp
                 v->write("vBuffer", c->vBuffer);
                 v->write("vIn", c->vIn);
                 v->write("vOut", c->vOut);
+                v->write("vAnalyzer", c->vAnalyzer);
                 v->write("nSync", c->nSync);
                 v->write("bHasSolo", c->bHasSolo);
 
