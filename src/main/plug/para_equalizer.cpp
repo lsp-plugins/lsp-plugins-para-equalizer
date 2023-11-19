@@ -25,6 +25,7 @@
 #include <lsp-plug.in/dsp-units/units.h>
 #include <lsp-plug.in/stdlib/math.h>
 
+#include <lsp-plug.in/shared/debug.h>
 #include <lsp-plug.in/shared/id_colors.h>
 
 #include <private/plugins/para_equalizer.h>
@@ -34,12 +35,6 @@
 
 namespace lsp
 {
-    static plug::IPort *TRACE_PORT(plug::IPort *p)
-    {
-        lsp_trace("  port id=%s", (p)->metadata()->id);
-        return p;
-    }
-
     namespace plugins
     {
         //-------------------------------------------------------------------------
@@ -575,45 +570,45 @@ namespace lsp
             // Bind audio ports
             lsp_trace("Binding audio ports");
             for (size_t i=0; i<channels; ++i)
-                vChannels[i].pIn        =   TRACE_PORT(ports[port_id++]);
+                vChannels[i].pIn        =   trace_port(ports[port_id++]);
             for (size_t i=0; i<channels; ++i)
-                vChannels[i].pOut       =   TRACE_PORT(ports[port_id++]);
+                vChannels[i].pOut       =   trace_port(ports[port_id++]);
 
             // Bind common ports
             lsp_trace("Binding common ports");
-            pBypass                 = TRACE_PORT(ports[port_id++]);
-            pGainIn                 = TRACE_PORT(ports[port_id++]);
-            pGainOut                = TRACE_PORT(ports[port_id++]);
-            pEqMode                 = TRACE_PORT(ports[port_id++]);
-            pReactivity             = TRACE_PORT(ports[port_id++]);
-            pShiftGain              = TRACE_PORT(ports[port_id++]);
-            pZoom                   = TRACE_PORT(ports[port_id++]);
-            TRACE_PORT(ports[port_id++]); // Skip filter selector
-            pInspect                = TRACE_PORT(ports[port_id++]);
-            pInspectRange           = TRACE_PORT(ports[port_id++]);
-            TRACE_PORT(ports[port_id++]); // Skip auto inspect switch
+            pBypass                 = trace_port(ports[port_id++]);
+            pGainIn                 = trace_port(ports[port_id++]);
+            pGainOut                = trace_port(ports[port_id++]);
+            pEqMode                 = trace_port(ports[port_id++]);
+            pReactivity             = trace_port(ports[port_id++]);
+            pShiftGain              = trace_port(ports[port_id++]);
+            pZoom                   = trace_port(ports[port_id++]);
+            trace_port(ports[port_id++]); // Skip filter selector
+            pInspect                = trace_port(ports[port_id++]);
+            pInspectRange           = trace_port(ports[port_id++]);
+            trace_port(ports[port_id++]); // Skip auto inspect switch
 
             // Meters
             for (size_t i=0; i<channels; ++i)
             {
                 eq_channel_t *c     = &vChannels[i];
 
-                c->pFftInSwitch         = TRACE_PORT(ports[port_id++]);
-                c->pFftOutSwitch        = TRACE_PORT(ports[port_id++]);
-                c->pFftInMesh           = TRACE_PORT(ports[port_id++]);
-                c->pFftOutMesh          = TRACE_PORT(ports[port_id++]);
+                c->pFftInSwitch         = trace_port(ports[port_id++]);
+                c->pFftOutSwitch        = trace_port(ports[port_id++]);
+                c->pFftInMesh           = trace_port(ports[port_id++]);
+                c->pFftOutMesh          = trace_port(ports[port_id++]);
             }
 
             // Balance
             if (channels > 1)
-                pBalance                = TRACE_PORT(ports[port_id++]);
+                pBalance                = trace_port(ports[port_id++]);
 
             // Listen port
             if (nMode == EQ_MID_SIDE)
             {
-                pListen                 = TRACE_PORT(ports[port_id++]);
-                vChannels[0].pInGain    = TRACE_PORT(ports[port_id++]);
-                vChannels[1].pInGain    = TRACE_PORT(ports[port_id++]);
+                pListen                 = trace_port(ports[port_id++]);
+                vChannels[0].pInGain    = trace_port(ports[port_id++]);
+                vChannels[1].pInGain    = trace_port(ports[port_id++]);
             }
 
             for (size_t i=0; i<channels; ++i)
@@ -625,14 +620,14 @@ namespace lsp
                 }
                 else
                 {
-                    vChannels[i].pTrAmp     = TRACE_PORT(ports[port_id++]);
-                    vChannels[i].pPitch     = TRACE_PORT(ports[port_id++]);
+                    vChannels[i].pTrAmp     = trace_port(ports[port_id++]);
+                    vChannels[i].pPitch     = trace_port(ports[port_id++]);
                 }
-                vChannels[i].pInMeter   =   TRACE_PORT(ports[port_id++]);
-                vChannels[i].pOutMeter  =   TRACE_PORT(ports[port_id++]);
+                vChannels[i].pInMeter   =   trace_port(ports[port_id++]);
+                vChannels[i].pOutMeter  =   trace_port(ports[port_id++]);
 
                 if ((nMode == EQ_LEFT_RIGHT) || (nMode == EQ_MID_SIDE))
-                    vChannels[i].pVisible   = TRACE_PORT(ports[port_id++]); // Skip eq curve visibility
+                    vChannels[i].pVisible   = trace_port(ports[port_id++]); // Skip eq curve visibility
                 else
                     vChannels[i].pVisible   = NULL;
             }
@@ -665,18 +660,18 @@ namespace lsp
                     else
                     {
                         // 1 port controls 1 filter
-                        f->pType        = TRACE_PORT(ports[port_id++]);
-                        f->pMode        = TRACE_PORT(ports[port_id++]);
-                        f->pSlope       = TRACE_PORT(ports[port_id++]);
-                        f->pSolo        = TRACE_PORT(ports[port_id++]);
-                        f->pMute        = TRACE_PORT(ports[port_id++]);
-                        f->pFreq        = TRACE_PORT(ports[port_id++]);
-                        f->pWidth       = TRACE_PORT(ports[port_id++]);
-                        f->pGain        = TRACE_PORT(ports[port_id++]);
-                        f->pQuality     = TRACE_PORT(ports[port_id++]);
-                        TRACE_PORT(ports[port_id++]); // Skip hue
-                        f->pActivity    = TRACE_PORT(ports[port_id++]);
-                        f->pTrAmp       = TRACE_PORT(ports[port_id++]);
+                        f->pType        = trace_port(ports[port_id++]);
+                        f->pMode        = trace_port(ports[port_id++]);
+                        f->pSlope       = trace_port(ports[port_id++]);
+                        f->pSolo        = trace_port(ports[port_id++]);
+                        f->pMute        = trace_port(ports[port_id++]);
+                        f->pFreq        = trace_port(ports[port_id++]);
+                        f->pWidth       = trace_port(ports[port_id++]);
+                        f->pGain        = trace_port(ports[port_id++]);
+                        f->pQuality     = trace_port(ports[port_id++]);
+                        trace_port(ports[port_id++]); // Skip hue
+                        f->pActivity    = trace_port(ports[port_id++]);
+                        f->pTrAmp       = trace_port(ports[port_id++]);
                     }
                 }
             }
