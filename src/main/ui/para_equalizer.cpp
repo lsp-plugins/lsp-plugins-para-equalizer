@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-para-equalizer
  * Created on: 2 авг. 2021 г.
@@ -23,6 +23,7 @@
 #include <lsp-plug.in/dsp-units/units.h>
 #include <lsp-plug.in/fmt/RoomEQWizard.h>
 #include <lsp-plug.in/plug-fw/meta/func.h>
+#include <lsp-plug.in/stdlib/locale.h>
 #include <lsp-plug.in/stdlib/string.h>
 #include <lsp-plug.in/tk/tk.h>
 
@@ -582,6 +583,7 @@ namespace lsp
                 tk::prop::String lc_string;
                 LSPString text;
                 lc_string.bind(f->wNote->style(), pDisplay->dictionary());
+                SET_LOCALE_SCOPED(LC_NUMERIC, "C");
 
                 // Frequency
                 text.fmt_ascii("%.2f", freq);
