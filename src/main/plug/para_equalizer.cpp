@@ -19,6 +19,7 @@
  * along with lsp-plugins-para-equalizer. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <lsp-plug.in/common/alloc.h>
 #include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/dsp/dsp.h>
 #include <lsp-plug.in/dsp-units/units.h>
@@ -460,6 +461,7 @@ namespace lsp
             float *abuf         = new float[allocate];
             if (abuf == NULL)
                 return;
+            lsp_guard_assert(float *save = &abuf[allocate]);
 
             // Clear all floating-point buffers
             dsp::fill_zero(abuf, allocate);
@@ -478,14 +480,10 @@ namespace lsp
                 c->fOutGain         = 1.0f;
                 c->fPitch           = 1.0f;
                 c->vFilters         = NULL;
-                c->vDryBuf          = abuf;
-                abuf               += EQ_BUFFER_SIZE;
-                c->vBuffer          = abuf;
-                abuf               += EQ_BUFFER_SIZE;
-                c->vTrRe            = abuf;
-                abuf               += meta::para_equalizer_metadata::MESH_POINTS;
-                c->vTrIm            = abuf;
-                abuf               += meta::para_equalizer_metadata::MESH_POINTS;
+                c->vDryBuf          = advance_ptr<float>(abuf, EQ_BUFFER_SIZE);
+                c->vBuffer          = advance_ptr<float>(abuf, EQ_BUFFER_SIZE);
+                c->vTrRe            = advance_ptr<float>(abuf, meta::para_equalizer_metadata::MESH_POINTS);
+                c->vTrIm            = advance_ptr<float>(abuf, meta::para_equalizer_metadata::MESH_POINTS);
 
                 // Input and output ports
                 c->vIn              = NULL;
@@ -530,10 +528,8 @@ namespace lsp
                     eq_filter_t *f      = &c->vFilters[j];
 
                     // Filter characteristics
-                    f->vTrRe            = abuf;
-                    abuf               += meta::para_equalizer_metadata::MESH_POINTS;
-                    f->vTrIm            = abuf;
-                    abuf               += meta::para_equalizer_metadata::MESH_POINTS;
+                    f->vTrRe            = advance_ptr<float>(abuf, meta::para_equalizer_metadata::MESH_POINTS);
+                    f->vTrIm            = advance_ptr<float>(abuf, meta::para_equalizer_metadata::MESH_POINTS);
                     f->nSync            = CS_UPDATE;
                     f->bSolo            = false;
 
@@ -563,6 +559,7 @@ namespace lsp
                     f->pTrAmp           = NULL;
                 }
             }
+            lsp_assert(abuf <= save);
 
             // Initialize latency compensation delay
             for (size_t i=0; i<channels; ++i)
