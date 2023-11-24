@@ -38,6 +38,10 @@ namespace lsp
         // Plugin UI factory
         static const meta::plugin_t *plugin_uis[] =
         {
+            &meta::para_equalizer_x8_mono,
+            &meta::para_equalizer_x8_stereo,
+            &meta::para_equalizer_x8_lr,
+            &meta::para_equalizer_x8_ms,
             &meta::para_equalizer_x16_mono,
             &meta::para_equalizer_x16_stereo,
             &meta::para_equalizer_x16_lr,
@@ -53,7 +57,7 @@ namespace lsp
             return new para_equalizer_ui(meta);
         }
 
-        static ui::Factory factory(ui_factory, plugin_uis, 8);
+        static ui::Factory factory(ui_factory, plugin_uis, 12);
 
         static const tk::tether_t dot_menu_tether_list[] =
         {

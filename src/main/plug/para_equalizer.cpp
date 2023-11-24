@@ -48,6 +48,10 @@ namespace lsp
 
         static const meta::plugin_t *plugins[] =
         {
+            &meta::para_equalizer_x8_mono,
+            &meta::para_equalizer_x8_stereo,
+            &meta::para_equalizer_x8_lr,
+            &meta::para_equalizer_x8_ms,
             &meta::para_equalizer_x16_mono,
             &meta::para_equalizer_x16_stereo,
             &meta::para_equalizer_x16_lr,
@@ -60,6 +64,10 @@ namespace lsp
 
         static const plugin_settings_t plugin_settings[] =
         {
+            { &meta::para_equalizer_x8_mono,     8, para_equalizer::EQ_MONO         },
+            { &meta::para_equalizer_x8_stereo,   8, para_equalizer::EQ_STEREO       },
+            { &meta::para_equalizer_x8_lr,       8, para_equalizer::EQ_LEFT_RIGHT   },
+            { &meta::para_equalizer_x8_ms,       8, para_equalizer::EQ_MID_SIDE     },
             { &meta::para_equalizer_x16_mono,   16, para_equalizer::EQ_MONO         },
             { &meta::para_equalizer_x16_stereo, 16, para_equalizer::EQ_STEREO       },
             { &meta::para_equalizer_x16_lr,     16, para_equalizer::EQ_LEFT_RIGHT   },
@@ -80,7 +88,7 @@ namespace lsp
             return NULL;
         }
 
-        static plug::Factory factory(plugin_factory, plugins, 8);
+        static plug::Factory factory(plugin_factory, plugins, 12);
 
         //-------------------------------------------------------------------------
         para_equalizer::para_equalizer(const meta::plugin_t *metadata, size_t filters, size_t mode): plug::Module(metadata)
