@@ -123,20 +123,28 @@ namespace lsp
             wFilterMute     = NULL;
             wFilterSwitch   = NULL;
 
-            if ((!strcmp(meta->uid, meta::para_equalizer_x16_lr.uid)) ||
+            if ((!strcmp(meta->uid, meta::para_equalizer_x8_lr.uid)) ||
+                (!strcmp(meta->uid, meta::para_equalizer_x16_lr.uid)) ||
                 (!strcmp(meta->uid, meta::para_equalizer_x32_lr.uid)))
             {
                 fmtStrings      = fmt_strings_lr;
                 nSplitChannels  = 2;
             }
-            else if ((!strcmp(meta->uid, meta::para_equalizer_x16_ms.uid)) ||
+            else if (
+                    (!strcmp(meta->uid, meta::para_equalizer_x8_ms.uid)) ||
+                    (!strcmp(meta->uid, meta::para_equalizer_x16_ms.uid)) ||
                  (!strcmp(meta->uid, meta::para_equalizer_x32_ms.uid)))
             {
                 fmtStrings      = fmt_strings_ms;
                 nSplitChannels  = 2;
             }
 
-            nFilters        = 16;
+            nFilters        = 8;
+            if ((!strcmp(meta->uid, meta::para_equalizer_x16_lr.uid)) ||
+                (!strcmp(meta->uid, meta::para_equalizer_x16_mono.uid)) ||
+                (!strcmp(meta->uid, meta::para_equalizer_x16_ms.uid)) ||
+                (!strcmp(meta->uid, meta::para_equalizer_x16_stereo.uid)))
+                nFilters       = 16;
             if ((!strcmp(meta->uid, meta::para_equalizer_x32_lr.uid)) ||
                 (!strcmp(meta->uid, meta::para_equalizer_x32_mono.uid)) ||
                 (!strcmp(meta->uid, meta::para_equalizer_x32_ms.uid)) ||
