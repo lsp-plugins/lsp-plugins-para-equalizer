@@ -1,6 +1,6 @@
 <plugin resizable="true">
 	<ui:eval id="num_filters" value="(ex :ftm_16) ? 32 : ((ex :ftm_8) ? 16 : 8)"/>
-	<ui:eval id="num_blocks" value="(ex :ftm_16) ? 4 : ((ex :ftm_8) ? 2 : 1)"/>
+	<ui:eval id="num_blocks" value="(ex :ftm_16) ? 8 : ((ex :ftm_8) ? 4 : 2)"/>
 	<grid rows="2" cols="3" spacing="4">
 		<vbox spacing="4" expand="true">
 
