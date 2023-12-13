@@ -626,6 +626,7 @@ namespace lsp
         {
             "Parametrischer Entzerrer x8 Mono",
             "Parametric Equalizer x8 Mono",
+            "Parametric Equalizer x8 Mono",
             "PE8M",
             &developers::v_sadovnikov,
             "para_equalizer_x8_mono",
@@ -649,6 +650,7 @@ namespace lsp
         const meta::plugin_t para_equalizer_x16_mono =
         {
             "Parametrischer Entzerrer x16 Mono",
+            "Parametric Equalizer x16 Mono",
             "Parametric Equalizer x16 Mono",
             "PE16M",
             &developers::v_sadovnikov,
@@ -674,6 +676,7 @@ namespace lsp
         {
             "Parametrischer Entzerrer x32 Mono",
             "Parametric Equalizer x32 Mono",
+            "Parametric Equalizer x32 Mono",
             "PE32M",
             &developers::v_sadovnikov,
             "para_equalizer_x32_mono",
@@ -697,6 +700,7 @@ namespace lsp
         const meta::plugin_t para_equalizer_x8_stereo =
         {
             "Parametrischer Entzerrer x8 Stereo",
+            "Parametric Equalizer x8 Stereo",
             "Parametric Equalizer x8 Stereo",
             "PE8S",
             &developers::v_sadovnikov,
@@ -722,6 +726,7 @@ namespace lsp
         {
             "Parametrischer Entzerrer x16 Stereo",
             "Parametric Equalizer x16 Stereo",
+            "Parametric Equalizer x16 Stereo",
             "PE16S",
             &developers::v_sadovnikov,
             "para_equalizer_x16_stereo",
@@ -745,6 +750,7 @@ namespace lsp
         const meta::plugin_t para_equalizer_x32_stereo =
         {
             "Parametrischer Entzerrer x32 Stereo",
+            "Parametric Equalizer x32 Stereo",
             "Parametric Equalizer x32 Stereo",
             "PE32S",
             &developers::v_sadovnikov,
@@ -770,6 +776,7 @@ namespace lsp
         {
             "Parametrischer Entzerrer x8 LeftRight",
             "Parametric Equalizer x8 LeftRight",
+            "Parametric Equalizer x8 L/R",
             "PE8LR",
             &developers::v_sadovnikov,
             "para_equalizer_x8_lr",
@@ -794,6 +801,7 @@ namespace lsp
         {
             "Parametrischer Entzerrer x16 LeftRight",
             "Parametric Equalizer x16 LeftRight",
+            "Parametric Equalizer x16 L/R",
             "PE16LR",
             &developers::v_sadovnikov,
             "para_equalizer_x16_lr",
@@ -818,6 +826,7 @@ namespace lsp
         {
             "Parametrischer Entzerrer x32 LeftRight",
             "Parametric Equalizer x32 LeftRight",
+            "Parametric Equalizer x32 L/R",
             "PE32LR",
             &developers::v_sadovnikov,
             "para_equalizer_x32_lr",
@@ -842,6 +851,7 @@ namespace lsp
         {
             "Parametrischer Entzerrer x8 MidSide",
             "Parametric Equalizer x8 MidSide",
+            "Parametric Equalizer x8 M/S",
             "PE8MS",
             &developers::v_sadovnikov,
             "para_equalizer_x8_ms",
@@ -866,6 +876,7 @@ namespace lsp
         {
             "Parametrischer Entzerrer x16 MidSide",
             "Parametric Equalizer x16 MidSide",
+            "Parametric Equalizer x16 M/S",
             "PE16MS",
             &developers::v_sadovnikov,
             "para_equalizer_x16_ms",
@@ -890,6 +901,7 @@ namespace lsp
         {
             "Parametrischer Entzerrer x32 MidSide",
             "Parametric Equalizer x32 MidSide",
+            "Parametric Equalizer x32 M/S",
             "PE32MS",
             &developers::v_sadovnikov,
             "para_equalizer_x32_ms",
