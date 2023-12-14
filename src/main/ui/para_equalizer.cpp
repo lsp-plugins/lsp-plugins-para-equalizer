@@ -104,6 +104,7 @@ namespace lsp
         para_equalizer_ui::para_equalizer_ui(const meta::plugin_t *meta): ui::Module(meta)
         {
             pRewPath        = NULL;
+            pRewFileType    = NULL;
             pInspect        = NULL;
             pAutoInspect    = NULL;
             pSelector       = NULL;
@@ -229,25 +230,40 @@ namespace lsp
         status_t para_equalizer_ui::slot_fetch_rew_path(tk::Widget *sender, void *ptr, void *data)
         {
             para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
-            if ((_this == NULL) || (_this->pRewPath == NULL))
+            if (_this == NULL)
                 return STATUS_BAD_STATE;
 
-            _this->pRewImport->path()->set_raw(_this->pRewPath->buffer<char>());
+            if (_this->pRewPath != NULL)
+                _this->pRewImport->path()->set_raw(_this->pRewPath->buffer<char>());
+            if (_this->pRewFileType != NULL)
+            {
+                size_t filter = _this->pRewFileType->value();
+                _this->pRewImport->selected_filter()->set(filter);
+            }
+
             return STATUS_OK;
         }
 
         status_t para_equalizer_ui::slot_commit_rew_path(tk::Widget *sender, void *ptr, void *data)
         {
             para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
-            if ((_this == NULL) || (_this->pRewPath == NULL))
+            if (_this == NULL)
                 return STATUS_BAD_STATE;
 
-            LSPString path;
-            if (_this->pRewImport->path()->format(&path) == STATUS_OK)
+            if (_this->pRewPath != NULL)
             {
-                const char *u8path = path.get_utf8();
-                _this->pRewPath->write(u8path, ::strlen(u8path));
-                _this->pRewPath->notify_all(ui::PORT_USER_EDIT);
+                LSPString path;
+                if (_this->pRewImport->path()->format(&path) == STATUS_OK)
+                {
+                    const char *u8path = path.get_utf8();
+                    _this->pRewPath->write(u8path, ::strlen(u8path));
+                    _this->pRewPath->notify_all(ui::PORT_USER_EDIT);
+                }
+            }
+            if (_this->pRewFileType != NULL)
+            {
+                _this->pRewFileType->set_value(_this->pRewImport->selected_filter()->get());
+                _this->pRewFileType->notify_all(ui::PORT_USER_EDIT);
             }
 
             return STATUS_OK;
@@ -938,7 +954,8 @@ namespace lsp
                 create_filter_menu();
 
             // Find REW port
-            pRewPath            = pWrapper->port(UI_CONFIG_PORT_PREFIX UI_DLG_REW_PATH_ID);
+            pRewPath            = pWrapper->port(REW_PATH_PORT);
+            pRewFileType        = pWrapper->port(REW_FTYPE_PORT);
             pInspect            = pWrapper->port("insp_id");
             if (pInspect != NULL)
                 pInspect->bind(this);

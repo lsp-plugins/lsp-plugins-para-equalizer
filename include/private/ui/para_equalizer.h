@@ -67,6 +67,7 @@ namespace lsp
 
             protected:
                 ui::IPort          *pRewPath;
+                ui::IPort          *pRewFileType;
                 ui::IPort          *pInspect;           // Inspected filter index
                 ui::IPort          *pAutoInspect;       // Automatically inspect the filter
                 ui::IPort          *pSelector;          // Filter selector
