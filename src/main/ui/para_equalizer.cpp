@@ -595,6 +595,14 @@ namespace lsp
                 return;
             }
 
+            // Get the gain
+            float gain = (f->pGain != NULL) ? f->pGain->value() : -1.0f;
+            if (gain < 0.0f)
+            {
+                f->wNote->visibility()->set(false);
+                return;
+            }
+
             // Check that filter is enabled
             ssize_t type = (f->pType != NULL) ? ssize_t(f->pType->value()) : meta::para_equalizer_metadata::EQF_OFF;
             if (type == meta::para_equalizer_metadata::EQF_OFF)
@@ -613,9 +621,9 @@ namespace lsp
                 lc_string.bind(f->wNote->style(), pDisplay->dictionary());
                 SET_LOCALE_SCOPED(LC_NUMERIC, "C");
 
-                // Frequency
-                text.fmt_ascii("%.2f", freq);
-                params.set_string("frequency", &text);
+                // Frequency and gain
+                params.set_float("frequency", freq);
+                params.set_float("gain", dspu::gain_to_db(gain));
 
                 // Filter number and audio channel
                 text.set_ascii(f->pType->id());
@@ -666,10 +674,10 @@ namespace lsp
                         text.fmt_ascii(" + %02d", note_cents);
                     params.set_string("cents", &text);
 
-                    f->wNote->text()->set("lists.notes.display.full", &params);
+                    f->wNote->text()->set("lists.para_eq.display.full", &params);
                 }
                 else
-                    f->wNote->text()->set("lists.notes.display.unknown", &params);
+                    f->wNote->text()->set("lists.para_eq.display.unknown", &params);
             }
         }
 

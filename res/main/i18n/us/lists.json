@@ -1,5 +1,10 @@
 {
 	"para_eq": {
+		"display": {
+			"full": "{@filter}\n{@filter_type}\n{@frequency%.2f} Hz\n{@note}{@octave}{@cents}\n{@gain%.2f} dB",
+			"unknown": "{@filter}\n{@filter_type}\n{@frequency%.2f} Hz\n{@gain%.2f} dB"
+		},
+		
 		"flt_0:7": "Filters 0-7",
 		"flt_16:23": "Filters 16-23",
 		"flt_24:31": "Filters 24-31",
