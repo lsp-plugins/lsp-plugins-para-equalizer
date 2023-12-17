@@ -6,6 +6,7 @@
 * Implemented separate input and output signal spectrum analysis.
 * Implemented automatic scale of spectrum graph switch.
 * Updated zoom fader.
+* Added support of variable size of filter dots.
 * Implemented x8 versions.
 
 === 1.0.20 ===
