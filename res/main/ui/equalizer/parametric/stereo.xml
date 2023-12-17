@@ -32,6 +32,20 @@
 					<ui:for id="g" first="-9" last="9" step="6">
 						<marker v="${g} db" ox="1" oy="0" color="graph_alt_1" visibility=":zoom le -33 db"/>
 					</ui:for>
+					<ui:with ox="1" oy="0" color="graph_alt_2" visibility=":zoom le -39 db">
+						<marker v="8 db" />
+						<marker v="7 db" />
+						<marker v="5 db" />
+						<marker v="4 db" />
+						<marker v="2 db" />
+						<marker v="1 db" />
+						<marker v="-1 db" />
+						<marker v="-2 db" />
+						<marker v="-4 db" />
+						<marker v="-5 db" />
+						<marker v="-7 db" />
+						<marker v="-8 db" />
+					</ui:with>
 
 					<!-- Yellow grid -->
 					<ui:with ox="0" oy="1" color="graph_sec">
@@ -79,8 +93,8 @@
 					<axis min="-48 db" max="48 db" angle="0.5" log="true" visibility="false"/>
 
 					<!-- Text -->
-					<ui:with ox="0" oy="2" y="0" halign="1" valign="1">
-						<text x="10" text="graph.units.hz"/>
+					<ui:with ox="0" oy="2" y="0" halign="1" valign="1" pgroup="0" priority="0">
+						<text x="10" text="graph.units.hz" />
 						<text x="20" text="20"/>
 						<text x="30" text="30"/>
 						<text x="50" text="50"/>
@@ -96,27 +110,22 @@
 						<text x="20000" text="graph.values.x_k" text:value="20"/>
 					</ui:with>
 
-					<ui:with x="10" halign="1">
-						<text y="36 db" text="+36" valign="-1"/>
-						<text y="24 db" text="+24" valign="-1"/>
-						<text y="12 db" text="+12" valign="-1"/>
-						<text y="0 db" text="0" valign="1"/>
-						<text y="-12 db" text="-12" valign="1"/>
-						<text y="-24 db" text="-24" valign="1"/>
-						<text y="-36 db" text="-36" valign="1"/>
-						<text y="1" ox="0" oy="2" text="graph.units.db" valign="-1"/>
-					</ui:with>
-					<ui:with x="10" halign="1" visibility=":zoom le -18 db">
-						<text y="18 db" text="+18" valign="-1"/>
-						<text y="6 db" text="+6" valign="-1"/>
-						<text y="-6 db" text="-6" valign="1"/>
-						<text y="-18 db" text="-18" valign="1"/>
-					</ui:with>
-					<ui:with x="10" halign="1" visibility=":zoom le -33 db">
-						<text y="9 db" text="+9" valign="-1"/>
-						<text y="3 db" text="+3" valign="-1"/>
-						<text y="-3 db" text="-3" valign="1"/>
-						<text y="-9 db" text="-9" valign="1"/>
+					<ui:with x="10" halign="1" pgroup="0" priority="10">
+						<text y="0 db" text="0" valign="1" priority="0" />
+						<text y="1" ox="0" oy="2" text="graph.units.db" valign="-1" priority="0" />
+						
+						<ui:for id="g" counter="i" list="+36;+24;+12;-12;-24;-36">
+							<text y="${g} db" text="${g}" valign="-1" />
+						</ui:for>
+						<ui:for id="g" counter="i" list="+18;+6;-6;-18">
+							<text y="${g} db" text="${g}" valign="-1" visibility=":zoom le -18 db"/>
+						</ui:for>
+						<ui:for id="g" counter="i" list="+9;+3;-3;-9">
+							<text y="${g} db" text="${g}" valign="-1" visibility=":zoom le -33 db"/>
+						</ui:for>
+						<ui:for id="g" counter="i" list="+8;+7;+5;+4;+2;+1;-1;-2;-4;-5;-7;-8">
+							<text y="${g} db" text="${g}" valign="-1" visibility="(:zoom le -39 db) "/>
+						</ui:for>
 					</ui:with>
 
 					<ui:for id="i" first="0" last=":num_filters - 1">

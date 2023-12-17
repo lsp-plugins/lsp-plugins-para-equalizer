@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-para-equalizer
  * Created on: 2 авг. 2021 г.
@@ -37,8 +37,8 @@ namespace lsp
         {
             static constexpr float          FREQ_MIN            = SPEC_FREQ_MIN;
             static constexpr float          FREQ_MAX            = SPEC_FREQ_MAX;
-            static constexpr float          FREQ_DFL            = 1000;
-            static constexpr float          FREQ_STEP           = 0.002;
+            static constexpr float          FREQ_DFL            = 1000.0f;
+            static constexpr float          FREQ_STEP           = 0.002f;
 
             static constexpr size_t         FFT_RANK            = 13;
             static constexpr size_t         FFT_ITEMS           = 1 << FFT_RANK;
@@ -47,14 +47,14 @@ namespace lsp
             static constexpr size_t         FFT_WINDOW          = lsp::dspu::windows::HANN;
             static constexpr size_t         FFT_ENVELOPE        = lsp::dspu::envelope::PINK_NOISE;
 
-            static constexpr float          REACT_TIME_MIN      = 0.000;
-            static constexpr float          REACT_TIME_MAX      = 1.000;
-            static constexpr float          REACT_TIME_DFL      = 0.200;
-            static constexpr float          REACT_TIME_STEP     = 0.001;
+            static constexpr float          REACT_TIME_MIN      = 0.000f;
+            static constexpr float          REACT_TIME_MAX      = 1.000f;
+            static constexpr float          REACT_TIME_DFL      = 0.200f;
+            static constexpr float          REACT_TIME_STEP     = 0.001f;
 
-            static constexpr float          ZOOM_MIN            = GAIN_AMP_M_36_DB;
+            static constexpr float          ZOOM_MIN            = GAIN_AMP_M_42_DB;
             static constexpr float          ZOOM_MAX            = GAIN_AMP_0_DB;
-            static constexpr float          ZOOM_DFL            = GAIN_AMP_0_DB;
+            static constexpr float          ZOOM_DFL            = GAIN_AMP_M_36_DB;
             static constexpr float          ZOOM_STEP           = 0.025f;
 
             static constexpr float          IN_GAIN_DFL         = 1.0f;
@@ -74,7 +74,7 @@ namespace lsp
             static constexpr float          WIDTH_MIN           = 0.0f;
             static constexpr float          WIDTH_MAX           = 12.0f;
             static constexpr float          WIDTH_DFL           = 4.0f;
-            static constexpr float          WIDTH_STEP          = 0.002;
+            static constexpr float          WIDTH_STEP          = 0.002f;
 
             static constexpr size_t         REFRESH_RATE        = 20;
 
@@ -133,7 +133,7 @@ namespace lsp
         extern const meta::plugin_t para_equalizer_x32_lr;
         extern const meta::plugin_t para_equalizer_x32_ms;
 
-    } // namespace meta
-} // namespace lsp
+    } /* namespace meta */
+} /* namespace lsp */
 
 #endif /* PRIVATE_META_PARA_EQUALIZER_H_ */

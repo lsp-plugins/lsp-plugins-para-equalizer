@@ -5,6 +5,7 @@
 === 1.0.21 ===
 * Implemented separate input and output signal spectrum analysis.
 * Implemented automatic scale of spectrum graph switch.
+* Updated zoom fader.
 * Implemented x8 versions.
 
 === 1.0.20 ===
