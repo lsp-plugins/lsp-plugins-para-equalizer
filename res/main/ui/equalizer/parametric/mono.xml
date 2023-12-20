@@ -246,7 +246,7 @@
 						</ui:with>
 
 						<!-- Filters -->
-						<ui:for id="i" first=":f*8" last=":f*8+7">
+						<ui:for id="i" first=":f*8" last=":f*8">
 							<ui:set id="ch" value="_${i}"/>
 							<ui:with ui:group="grp_filter${ch}">
 								<cell rows="9" bg.color="bg" pad.r="2" pad.l="2" expand="false" pad.t="6" pad.b="6">
