@@ -8,6 +8,7 @@
 * Updated zoom fader.
 * Added support of variable size of filter dots.
 * Implemented x8 versions.
+* Updated build scripts and dependencies.
 
 === 1.0.20 ===
 * Updated build scripts and dependencies.
