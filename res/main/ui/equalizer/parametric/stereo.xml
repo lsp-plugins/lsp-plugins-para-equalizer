@@ -260,7 +260,7 @@
 		<!-- EQ params -->
 		<cell cols="1" bg.bright="1">
 			<vbox>
-			<ui:for id="ch" first="0" last=":num_blocks - 1" visibility="${ch} ieq :current_filter">
+			<ui:for id="ch" first="0" last=":num_blocks - 1">
 				<!-- TODO: Dim panel with the color of the active point -->
 				<hbox bcolor="bg_schema" visibility=":ft_${ch} igt 0">
 					<void hexpand="true"/>
