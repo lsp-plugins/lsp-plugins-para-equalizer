@@ -106,6 +106,7 @@ namespace lsp
                 static status_t slot_filter_menu_submit(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_filter_dot_click(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_filter_dot_mouse_down(tk::Widget *sender, void *ptr, void *data);
+                static status_t slot_filter_dot_mouse_scroll(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_filter_inspect_submit(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_filter_begin_edit(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_filter_change(tk::Widget *sender, void *ptr, void *data);
@@ -136,8 +137,9 @@ namespace lsp
 
                 void            on_graph_dbl_click(ssize_t x, ssize_t y);
 
-                void            on_filter_dot_right_click(tk::Widget *dot, ssize_t x, ssize_t y);
-                void            on_filter_dot_mouse_down(tk::Widget *dot, ssize_t x, ssize_t y);
+                void            on_filter_dot_right_click(tk::Widget *sender, ssize_t x, ssize_t y);
+                void            on_filter_dot_mouse_down(tk::Widget *sender, ssize_t x, ssize_t y);
+                void            on_filter_dot_mouse_scroll(tk::Widget *sender, const ws::event_t *ev);
                 void            on_filter_menu_item_submit(tk::MenuItem *mi);
                 void            on_filter_menu_item_selected(lltl::parray<tk::MenuItem> *list, ui::IPort *port, tk::MenuItem *mi);
                 void            on_filter_inspect_submit(tk::Widget *button);

@@ -352,6 +352,21 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t para_equalizer_ui::slot_filter_dot_mouse_scroll(tk::Widget *sender, void *ptr, void *data)
+        {
+            // Process the left mouse click
+            ws::event_t *ev = static_cast<ws::event_t *>(data);
+
+            // Fetch paramters
+            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+            if (_this == NULL)
+                return STATUS_BAD_STATE;
+
+            _this->on_filter_dot_mouse_scroll(sender, ev);
+
+            return STATUS_OK;
+        }
+
         status_t para_equalizer_ui::slot_filter_inspect_submit(tk::Widget *sender, void *ptr, void *data)
         {
             // Fetch parameters
@@ -790,6 +805,7 @@ namespace lsp
                     {
                         f.wDot->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_filter_dot_click, this);
                         f.wDot->slots()->bind(tk::SLOT_MOUSE_DOWN, slot_filter_dot_mouse_down, this);
+                        f.wDot->slots()->bind(tk::SLOT_MOUSE_SCROLL, slot_filter_dot_mouse_scroll, this);
                     }
                     if (f.wInspect != NULL)
                         f.wInspect->slots()->bind(tk::SLOT_SUBMIT, slot_filter_inspect_submit, this);
@@ -1193,7 +1209,20 @@ namespace lsp
         void para_equalizer_ui::on_filter_dot_mouse_down(tk::Widget *sender, ssize_t x, ssize_t y)
         {
             filter_t *dot = find_filter_by_widget(sender);
+            if (dot == NULL)
+                return;
 
+            nCurrentFilter = vFilters.index_of(dot);
+            if (pCurrentFilter != NULL)
+            {
+                pCurrentFilter->set_value(nCurrentFilter);
+                pCurrentFilter->notify_all(ui::PORT_USER_EDIT);
+            }
+        }
+
+        void para_equalizer_ui::on_filter_dot_mouse_scroll(tk::Widget *sender, const ws::event_t *ev)
+        {
+            filter_t *dot = find_filter_by_widget(sender);
             if (dot == NULL)
                 return;
 
