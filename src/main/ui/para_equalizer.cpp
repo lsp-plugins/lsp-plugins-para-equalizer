@@ -321,19 +321,33 @@ namespace lsp
         {
             // Process the right mouse click
             ws::event_t *ev = static_cast<ws::event_t *>(data);
+            if (ev->nCode != ws::MCB_RIGHT)
+                return STATUS_OK;
 
-            if (ev->nCode == ws::MCB_LEFT || ev->nCode == ws::MCB_RIGHT) {
-                // Fetch paramters
-                para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
-                if (_this == NULL)
-                    return STATUS_BAD_STATE;
+            // Fetch paramters
+            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+            if (_this == NULL)
+                return STATUS_BAD_STATE;
 
-                // Process the event
-                if (ev->nCode == ws::MCB_LEFT)
-                    _this->on_filter_dot_left_click(sender, ev->nLeft, ev->nTop);
-                else
-                    _this->on_filter_dot_right_click(sender, ev->nLeft, ev->nTop);
-            }
+            // Process the event
+            _this->on_filter_dot_right_click(sender, ev->nLeft, ev->nTop);
+
+            return STATUS_OK;
+        }
+
+        status_t para_equalizer_ui::slot_filter_dot_mouse_down(tk::Widget *sender, void *ptr, void *data)
+        {
+            // Process the left mouse click
+            ws::event_t *ev = static_cast<ws::event_t *>(data);
+            if ((ev->nCode != ws::MCB_LEFT) && (ev->nCode != ws::MCB_RIGHT))
+                return STATUS_OK;
+
+            // Fetch paramters
+            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+            if (_this == NULL)
+                return STATUS_BAD_STATE;
+
+            _this->on_filter_dot_mouse_down(sender, ev->nLeft, ev->nTop);
 
             return STATUS_OK;
         }
@@ -773,7 +787,10 @@ namespace lsp
                     f.pQuality      = find_port(*fmt, "q", port_id);
 
                     if (f.wDot != NULL)
+                    {
                         f.wDot->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_filter_dot_click, this);
+                        f.wDot->slots()->bind(tk::SLOT_MOUSE_DOWN, slot_filter_dot_mouse_down, this);
+                    }
                     if (f.wInspect != NULL)
                         f.wInspect->slots()->bind(tk::SLOT_SUBMIT, slot_filter_inspect_submit, this);
 
@@ -1173,7 +1190,7 @@ namespace lsp
             return NULL;
         }
 
-        void para_equalizer_ui::on_filter_dot_left_click(tk::Widget *sender, ssize_t x, ssize_t y)
+        void para_equalizer_ui::on_filter_dot_mouse_down(tk::Widget *sender, ssize_t x, ssize_t y)
         {
             filter_t *dot = find_filter_by_widget(sender);
 
@@ -1728,6 +1745,8 @@ namespace lsp
         void para_equalizer_ui::set_current_filter(size_t id)
         {
             if (id < 0 || id >= vFilters.size())
+                return;
+            if (nCurrentFilter == id)
                 return;
 
             nCurrentFilter = id;

@@ -259,65 +259,62 @@
 
 		<!-- EQ params -->
 		<cell cols="1" bg.bright="1">
-			<!-- FIXME: Possible bug if first filter is disabled -->
-			<vbox visibility=":ft_0 igt 0">
-				<ui:for id="ch" first="0" last=":num_blocks - 1">
-					<!-- TODO: Dim panel with the color of the active point -->
-					<hbox bcolor="bg_schema" visibility="${ch} ieq :current_filter">
-						<void hexpand="true"/>
+			<!-- TODO: Dim panel with the color of the active point -->
+			<hbox bcolor="bg_schema">
+				<void hexpand="true"/>
 
-						<vbox padding="5" width="128" pad.l="10" pad.r="50">
-							<hbox>
-								<label text="Type" />
-								<combo ui:id="filter_type_${ch}" id="ft_${ch}" fill="false" pad.l="6" pad.r="6" pad.b="6"/>
+				<ui:for id="ch" first="0" count=":num_filters">
+					<vbox padding="5" width="128" pad.l="10" pad.r="50" visibility="${ch} ieq :current_filter">
+						<hbox>
+							<label text="Type" />
+							<label text="CURRENT: {@filter}" text:filter=":current_filter" text.eval="true" />
+							<combo ui:id="filter_type_${ch}" id="ft_${ch}" fill="false" pad.l="6" pad.r="6" pad.b="6"/>
+						</hbox>
+						<hbox>
+							<label text="Slope" />
+							<hbox hspacing="1" pad.b="6">
+								<button text="x1" id="s_${ch}" value="0" />
+								<button text="x2" id="s_${ch}" value="1" />
+								<button text="x3" id="s_${ch}" value="2" />
+								<button text="x4" id="s_${ch}" value="3" />
 							</hbox>
-							<hbox>
-								<label text="Slope" />
-								<hbox hspacing="1" pad.b="6">
-									<button text="x1" id="s_${ch}" value="0" />
-									<button text="x2" id="s_${ch}" value="1" />
-									<button text="x3" id="s_${ch}" value="2" />
-									<button text="x4" id="s_${ch}" value="3" />
-								</hbox>
-								<!-- <combo ui:id="filter_slope_${ch}" id="s_${ch}" fill="false" pad.h="6" expand="false" pad.b="6"/> -->
-							</hbox>
-						</vbox>
+							<!-- <combo ui:id="filter_slope_${ch}" id="s_${ch}" fill="false" pad.h="6" expand="false" pad.b="6"/> -->
+						</hbox>
+					</vbox>
 
-						<!---->
+					<!---->
+	
+					<grid rows="3" cols="3" vspacing="2" hspacing="50" transpose="true" visibility="${ch} ieq :current_filter">
+						<label text="Frequency" />
+						<knob ui:id="filter_freq_${ch}" id="f_${ch}" scolor="blue" size="40" pad.t="6"/>
+						<value id="f_${ch}" width.min="40" sline="true" detailed="true" precision="1" pad.t="3" pad.b="6" />
+	
+						<label text="Gain" />
+						<knob ui:id="filter_gain_${ch}" id="g_${ch}" scolor="red" size="60" pad.t="6"/>
+						<value id="g_${ch}" width.min="40" sline="true" detailed="true" pad.t="3" pad.b="6"/>
+	
+						<label text="Q" />
+						<knob ui:id="filter_q_${ch}" id="q_${ch}" scolor="cyan" size="40" pad.t="6"/>
+						<value id="q_${ch}" width.min="40" sline="true" detailed="true" pad.t="3" pad.b="6"/>
+					</grid>
 
-						<grid rows="3" cols="3" vspacing="2" hspacing="50" transpose="true">
-							<label text="Frequency" />
-							<knob ui:id="filter_freq_${ch}" id="f_${ch}" scolor="blue" size="40" pad.t="6"/>
-							<value id="f_${ch}" width.min="40" sline="true" detailed="true" precision="1" pad.t="3" pad.b="6" />
-
-							<label text="Gain" />
-							<knob ui:id="filter_gain_${ch}" id="g_${ch}" scolor="red" size="60" pad.t="6"/>
-							<value id="g_${ch}" width.min="40" sline="true" detailed="true" pad.t="3" pad.b="6"/>
-
-							<label text="Q" />
-							<knob ui:id="filter_q_${ch}" id="q_${ch}" scolor="cyan" size="40" pad.t="6"/>
-							<value id="q_${ch}" width.min="40" sline="true" detailed="true" pad.t="3" pad.b="6"/>
-						</grid>
-
-						<!---->
-
-						<vbox pad.l="50" pad.r="10">
-							<hbox pad.t="10">
-								<label text="Mode" />
-								<combo ui:id="filter_mode_${ch}" id="fm_${ch}" fill="false" pad.h="6" expand="false" pad.b="6"/>
-							</hbox>
-
-							<void vexpand="true"/>
-
-							<label visibility=":ft_${ch} igt 8" text="Width" />
-							<knob ui:id="filter_width_${ch}" id="w_${ch}" visibility=":ft_${ch} igt 8" scolor="yellow" size="20" pad.t="6"/>
-							<value visibility=":ft_${ch} igt 8" id="w_${ch}" bright="(:ft_${ch} igt 8) ? 1 : 0.75" width.min="20" detailed="false" pad.t="3" />
-						</vbox>
-
-						<void hexpand="true"/>
-					</hbox>
+					<vbox pad.l="50" pad.r="10" visibility="${ch} ieq :current_filter">
+						<hbox pad.t="10">
+							<label text="Mode" />
+							<combo ui:id="filter_mode_${ch}" id="fm_${ch}" fill="false" pad.h="6" expand="false" pad.b="6"/>
+						</hbox>
+	
+						<void vexpand="true"/>
+	
+						<label visibility=":ft_${ch} igt 8" text="Width" />
+						<knob ui:id="filter_width_${ch}" id="w_${ch}" visibility=":ft_${ch} igt 8" scolor="yellow" size="20" pad.t="6"/>
+						<value visibility=":ft_${ch} igt 8" id="w_${ch}" bright="(:ft_${ch} igt 8) ? 1 : 0.75" width.min="20" detailed="false" pad.t="3" />
+					</vbox>
 				</ui:for>
-			</vbox>
+					
+
+				<void hexpand="true"/>
+			</hbox>
 		</cell>
 	</grid>
 </plugin>
