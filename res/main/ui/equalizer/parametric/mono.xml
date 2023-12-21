@@ -68,8 +68,8 @@
 							<dot
 								ui:id="filter_dot_${i}"
 								x.id="f_${i}" y.id="g_${i}" z.id="q_${i}"
-								size="1 + 4*:_ui_filter_point_thickness"
-								hover.size="1 + 4*:_ui_filter_point_thickness"
+								size="1 + 3*:_ui_filter_point_thickness"
+								hover.size="1 + 3*:_ui_filter_point_thickness"
 								color.hue=":hue_${i}"
 								hover.color.hue=":hue_${i}"
 								bcolor.hue=":hue_${i}" hover.bcolor.hue=":hue_${i}"
@@ -257,7 +257,7 @@
 									<cell cols="2" fill="true">
 										<combo ui:id="filter_type${ch}" id="ft${ch}" fill="true" pad.l="6" pad.r="6" pad.b="6"/></cell>
 									<cell cols="2" fill="true">
-											<combo ui:id="filter_mode${ch}" id="fm${ch}" fill="true" pad.h="6" expand="true" pad.b="6"/>
+											<combo ui:id="filter_mode${ch}" id="fm${ch}" fill="true" pad.h="6" expand="true" pad.b="6"/>А то качать проект и читать txt файл как-то сложно
 									</cell>
 									<cell cols="2" fill="true">
 											<combo ui:id="filter_slope${ch}" id="s${ch}" fill="true" pad.h="6" expand="true" pad.b="6"/>

@@ -74,8 +74,8 @@
 							<dot
 								ui:id="filter_dotl_${i}"
 								x.id="fl_${i}" y.id="gl_${i}" z.id="ql_${i}"
-								size="1 + 2*:_ui_filter_point_thickness"
-								hover.size="1 + 2*:_ui_filter_point_thickness"
+								size="1 + 3*:_ui_filter_point_thickness"
+								hover.size="1 + 3*:_ui_filter_point_thickness"
 								color.hue=":huel_${i}"
 								hover.color.hue=":huel_${i}"
 								bcolor.hue=":huel_${i}"
@@ -85,8 +85,8 @@
 							<dot
 								ui:id="filter_dotr_${i}"
 								x.id="fr_${i}" y.id="gr_${i}" z.id="qr_${i}"
-								size="1 + 2*:_ui_filter_point_thickness"
-								hover.size="1 + 2*:_ui_filter_point_thickness"
+								size="1 + 3*:_ui_filter_point_thickness"
+								hover.size="1 + 3*:_ui_filter_point_thickness"
 								color.hue=":huer_${i}"
 								hover.color.hue=":huer_${i}"
 								bcolor.hue=":huer_${i}"
@@ -129,7 +129,7 @@
 					<ui:with x="10" halign="1" pgroup="0" priority="10">
 						<text y="0 db" text="0" valign="1" priority="0" />
 						<text y="1" ox="0" oy="2" text="graph.units.db" valign="-1" priority="0" />
-						
+
 						<ui:for id="g" counter="i" list="+36;+24;+12;-12;-24;-36">
 							<text y="${g} db" text="${g}" valign="-1" />
 						</ui:for>
