@@ -80,6 +80,7 @@ namespace lsp
                 ssize_t             nYAxisIndex;
                 ssize_t             nSplitChannels;
                 size_t              nFilters;
+                size_t              nCurrentFilter;
 
                 filter_t           *pCurrDot;           // Current filter associated with dot
                 filter_t           *pCurrNote;          // Current filter note
@@ -133,6 +134,7 @@ namespace lsp
 
                 void            on_graph_dbl_click(ssize_t x, ssize_t y);
 
+                void            on_filter_dot_left_click(tk::Widget *dot, ssize_t x, ssize_t y);
                 void            on_filter_dot_right_click(tk::Widget *dot, ssize_t x, ssize_t y);
                 void            on_filter_menu_item_submit(tk::MenuItem *mi);
                 void            on_filter_menu_item_selected(lltl::parray<tk::MenuItem> *list, ui::IPort *port, tk::MenuItem *mi);
@@ -149,6 +151,7 @@ namespace lsp
                 void            on_main_grid_mouse_out(tk::Widget *w, ssize_t x, ssize_t y);
                 void            on_main_grid_mouse_move(tk::Widget *w, ssize_t x, ssize_t y);
 
+                void            set_current_filter(size_t id);
                 void            set_filter_mode(size_t id, size_t mask, size_t value);
                 void            set_filter_type(size_t id, size_t mask, size_t value);
                 void            set_filter_frequency(size_t id, size_t mask, float value);

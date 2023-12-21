@@ -115,6 +115,7 @@ namespace lsp
             nSplitChannels  = 1;
             nXAxisIndex     = -1;
             nYAxisIndex     = -1;
+            nCurrentFilter  = -1;
 
             pCurrDot        = NULL;
             pCurrNote       = NULL;
@@ -312,16 +313,19 @@ namespace lsp
         {
             // Process the right mouse click
             ws::event_t *ev = static_cast<ws::event_t *>(data);
-            if (ev->nCode != ws::MCB_RIGHT)
-                return STATUS_OK;
 
-            // Fetch paramters
-            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
-            if (_this == NULL)
-                return STATUS_BAD_STATE;
+            if (ev->nCode == ws::MCB_LEFT || ev->nCode == ws::MCB_RIGHT) {
+                // Fetch paramters
+                para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+                if (_this == NULL)
+                    return STATUS_BAD_STATE;
 
-            // Process the event
-            _this->on_filter_dot_right_click(sender, ev->nLeft, ev->nTop);
+                // Process the event
+                if (ev->nCode == ws::MCB_LEFT)
+                    _this->on_filter_dot_left_click(sender, ev->nLeft, ev->nTop);
+                else
+                    _this->on_filter_dot_right_click(sender, ev->nLeft, ev->nTop);
+            }
 
             return STATUS_OK;
         }
@@ -1150,6 +1154,16 @@ namespace lsp
             return NULL;
         }
 
+        void para_equalizer_ui::on_filter_dot_left_click(tk::Widget *sender, ssize_t x, ssize_t y)
+        {
+            auto dot = find_filter_by_widget(sender);
+
+            if (dot == NULL)
+                return;
+
+            nCurrentFilter = vFilters.index_of(dot);
+        }
+
         void para_equalizer_ui::on_filter_dot_right_click(tk::Widget *dot, ssize_t x, ssize_t y)
         {
             // Is filter dot menu present?
@@ -1685,6 +1699,13 @@ namespace lsp
                     return f;
             }
             return NULL;
+        }
+
+        void para_equalizer_ui::set_current_filter(size_t id) {
+            if (id < 0 || id >= vFilters.size())
+                return;
+
+            nCurrentFilter = id;
         }
 
         void para_equalizer_ui::on_main_grid_realized(tk::Widget *w)

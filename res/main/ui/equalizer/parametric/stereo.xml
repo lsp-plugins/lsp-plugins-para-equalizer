@@ -6,7 +6,7 @@
 		<vbox spacing="4" expand="true">
 
 			<!-- Graph -->
-			<group ui:inject="GraphGroup" ipadding="0" expand="true" fill="true" text="labels.graphs.spectrum">
+			<!-- <group ui:inject="GraphGroup" ipadding="0" expand="true" fill="true" text="labels.graphs.spectrum"> -->
 				<graph ui:id="para_eq_graph" width.min="640" height.min="340" expand="true">
 					<origin hpos="-1" vpos="-1" visible="false"/>
 
@@ -66,17 +66,21 @@
 
 					<mesh id="ag" width="3" color="bright_cyan" smooth="true"/>
 					<ui:for id="i" first="0" last=":num_filters - 1">
-						<ui:with pointer="drag" color="graph_marker_cycle" hover.color="graph_marker_cycle" bcolor="graph_marker_cycle" hover.bcolor="graph_marker_cycle" x.editable="true" y.editable="true" z.editable="true">
+						<ui:with pointer="drag" x.editable="true" y.editable="true" z.editable="true">
 							<dot
 								ui:id="filter_dot_${i}"
 								x.id="f_${i}" y.id="g_${i}" z.id="q_${i}"
 								size="1 + 3*:_ui_filter_point_thickness"
 								hover.size="1 + 3*:_ui_filter_point_thickness"
+								color=":xm_${i} ? 'gray_inactive' : 'graph_marker_cycle'"
 								color.hue=":hue_${i}"
+								hover.color=":xm_${i} ? 'gray_inactive' : 'graph_marker_cycle'"
 								hover.color.hue=":hue_${i}"
+								bcolor=":xm_${i} ? 'gray_inactive' : 'graph_marker_cycle'"
 								bcolor.hue=":hue_${i}"
+								hover.bcolor=":xm_${i} ? 'gray_inactive' : 'graph_marker_cycle'"
 								hover.bcolor.hue=":hue_${i}"
-								visibility=":fv_${i}"
+								visibility=":fv_${i} or :xm_${i}"
 								x.astep="1" y.astep="1"/>
 						</ui:with>
 					</ui:for>
@@ -135,14 +139,23 @@
 						</ui:with>
 					</ui:for>
 				</graph>
-			</group>
+			<!-- </group> -->
 
 			<hbox spacing="4" bg.color="bg_schema" pad.l="6" pad.r="6" pad.b="4" pad.t="4">
-				<button ui:id="filter_inspect_reset" text="labels.chan.inspect" ui:inject="Button_orange"/>
-				<button id="insp_on" text="labels.auto" ui:inject="Button_red"/>
+				<!-- <button ui:id="filter_inspect_reset" text="labels.chan.inspect" ui:inject="Button_orange"/> -->
+				<button id="insp_on" text="Autolisten" ui:inject="Button_orange"/>
 
-				<knob id="insp_r" scale.size="3" scolor="orange" size="10" pad.l="6"/>
-				<value id="insp_r" width.min="48" same_line="true" fill="true" halign="1" pad.r="12"/>
+				<label visibility=":insp_on" text="Range:" />
+				<knob visibility=":insp_on" id="insp_r" scale.size="3" scolor="orange" size="10" pad.l="6"/>
+				<value visibility=":insp_on" id="insp_r" width.min="48" same_line="true" fill="true" halign="1" pad.r="12"/>
+
+				<void hexpand="true"/>
+
+				<hbox visibility=":ft_0 igt 0">
+					<button ui:id="filter_inspect_0" text="Listen" ui:inject="Button_orange_8" />
+					<button ui:id="filter_solo_0" id="xs_0" text="Solo" ui:inject="Button_green_8" />
+					<button ui:id="filter_mute_0" id="xm_0" text="Mute" ui:inject="Button_red_8" />
+				</hbox>
 
 				<void hexpand="true"/>
 
@@ -161,24 +174,28 @@
 
 			<!-- Signal meters -->
 
+			<fader id="g_in" vexpand="true" angle="1" ui:inject="Fader_balance" bcolor="fader" scolor="fader"/>
 			<vbox vexpand="true" bg.color="bg_schema">
 				<label text="labels.chan.in" pad.b="3" pad.t="3"/>
 				<ledmeter vexpand="true" angle="1">
 					<ledchannel id="iml" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left_in"/>
 					<ledchannel id="imr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right_in"/>
 				</ledmeter>
+				<value id="g_in" sline="true" halign="0"/>
 			</vbox>
 
+			<fader id="g_out" vexpand="true" angle="1" ui:inject="Fader_balance" bcolor="fader" scolor="fader"/>
 			<vbox vexpand="true" bg.color="bg_schema">
 				<label text="labels.chan.out" pad.b="3" pad.t="3"/>
 				<ledmeter vexpand="true" angle="1">
 					<ledchannel id="sml" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left"/>
 					<ledchannel id="smr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right"/>
 				</ledmeter>
+				<value id="g_out" sline="true" halign="0"/>
 			</vbox>
 		</hbox>
 
-		<vbox spacing="4">
+		<vbox visibility="false" spacing="4">
 			<group text="groups.signal" expand="true">
 				<grid rows="4" cols="2" hspacing="4">
 					<knob id="g_in" pad.r="4"/>
@@ -193,21 +210,22 @@
 						<value id="g_out" width.min="50" sline="true" halign="0"/>
 					</vbox>
 
-					<knob id="bal" balance="0.5" scolor="balance" pad.r="4"/>
+					<!-- <knob id="bal" balance="0.5" scolor="balance" pad.r="4"/>
 					<vbox vfill="false">
 						<label text="labels.balance" halign="0"/>
 						<value id="bal" width.min="50" sline="true" halign="0"/>
-					</vbox>
+					</vbox> -->
 
-					<knob id="frqs" scolor="mid" pad.r="4"/>
+					<!-- <knob id="frqs" scolor="mid" pad.r="4"/>
 					<vbox vfill="false">
 						<label text="labels.chan.pitch" halign="0"/>
 						<value id="frqs" width.min="50" sline="true" halign="0"/>
-					</vbox>
+					</vbox> -->
 				</grid>
 			</group>
+
 			<!-- Analysis -->
-			<group text="groups.analysis" expand="true" ipadding="0">
+			<!-- <group text="groups.analysis" expand="true" ipadding="0">
 				<vbox>
 					<grid rows="4" cols="2">
 						<align halign="-1" pad.t="4" pad.l="6">
@@ -241,15 +259,67 @@
 						</vbox>
 					</grid>
 				</vbox>
-			</group>
+			</group> -->
 		</vbox>
 
-		<cell cols="3">
-			<cgroup id="fsel">
+		<ui:for id="i" first="0" count="1">
+			<ui:set id="ch" value="_${i}"/>
+				<cell cols="3">
+					<!-- TODO: Dim panel with the color of the active point -->
+					<hbox border.color="red" visibility=":ft${ch} igt 0">
+						<vbox vreduce="true">
+							<hbox>
+								<label text="Type" />
+								<combo ui:id="filter_type${ch}" id="ft${ch}" fill="false" pad.l="6" pad.r="6" pad.b="6"/>
+							</hbox>
+							<hbox>
+								<label text="Slope" />
+								<hbox hspacing="1" pad.b="6">
+									<button text="x1" id="s${ch}" value="0" />
+									<button text="x2" id="s${ch}" value="1" />
+									<button text="x3" id="s${ch}" value="2" />
+									<button text="x4" id="s${ch}" value="3" />
+								</hbox>
+								<!-- <combo ui:id="filter_slope${ch}" id="s${ch}" fill="false" pad.h="6" expand="false" pad.b="6"/> -->
+							</hbox>
+						</vbox>
+						<vbox>
+							<label text="Frequency" />
+							<knob ui:id="filter_freq${ch}" id="f${ch}" scolor="(:ft${ch} igt 0) ? '#0077ff' : 'cycle_inactive'" size="40" pad.t="6"/>
+							<value id="f${ch}" width.min="40" detailed="false" precision="1" pad.t="3"/>
+						</vbox>
+
+						<vbox>
+							<label text="Gain" />
+							<knob ui:id="filter_gain${ch}" id="g${ch}" scolor="(:ft${ch} igt 0) ? '#ff0000' : 'cycle_inactive'" size="60" pad.t="6"/>
+							<value id="q${ch}" width.min="40" detailed="false" pad.t="3" pad.b="6"/>
+						</vbox>
+
+						<vbox>
+							<label text="Q" />
+							<knob ui:id="filter_q${ch}" id="q${ch}" scolor="(:ft${ch} igt 0) ? '#007777' : 'cycle_inactive'" size="40" pad.t="6"/>
+							<value id="q${ch}" width.min="40" detailed="false" pad.t="3" pad.b="6"/>
+						</vbox>
+
+						<group text="Advanced" expand="false" ipadding="0">
+							<vbox>
+								<hbox>
+									<label text="Mode" />
+									<combo ui:id="filter_mode${ch}" id="fm${ch}" fill="false" pad.h="6" expand="false" pad.b="6"/>
+								</hbox>
+								<label text="Width" />
+								<knob ui:id="filter_width${ch}" id="w${ch}" scolor="(:ft${ch} igt 8) ? 'cycle' : 'cycle_inactive'" scolor.hue=":hue${ch}" size="20" pad.t="6"/>
+								<value id="w${ch}" bright="(:ft${ch} igt 8) ? 1 : 0.75" width.min="20" detailed="false" pad.t="3" pad.b="6"/>
+							</vbox>
+						</group>
+					</hbox>
+				</cell>
+			</ui:for>
+			<!-- <cgroup id="fsel"> -->
 				<!-- 4 blocks of filters -->
-				<ui:for id="f" first="0" last=":num_blocks - 1">
-					<grid ui:group="filters" transpose="true" rows="9" cols="25" spacing="0">
-						<ui:with expand="false">
+				<!-- <ui:for id="f" first="0" last=":num_blocks - 1"> -->
+					<!-- <grid ui:group="filters" transpose="true" rows="9" cols="25" spacing="0"> -->
+						<!-- <ui:with expand="false">
 							<label text="labels.specials.num" fill="true" halign="0"/>
 							<label text="labels.filter" fill="true" halign="0" pad.b="6"/>
 							<label text="labels.mode" fill="true" halign="0" pad.b="6"/>
@@ -258,10 +328,10 @@
 							<label text="labels.freq_gain" halign="0" pad.h="6" pad.t="6"/>
 							<label text="labels.hz_db" halign="0" pad.t="3"/>
 							<cell rows="2"><label text="labels.q_width" halign="0" /></cell>
-						</ui:with>
+						</ui:with> -->
 
 						<!-- Filters -->
-						<ui:for id="i" first=":f*8" last=":f*8">
+						<!-- <ui:for id="i" first=":f*8" last=":f*8">
 							<ui:set id="ch" value="_${i}"/>
 							<ui:with ui:group="grp_filter${ch}">
 								<cell rows="9" bg.color="bg" pad.r="2" pad.l="2" expand="false" pad.t="6" pad.b="6">
@@ -299,10 +369,10 @@
 									<value id="w${ch}" bright="(:ft${ch} igt 8) ? 1 : 0.75" width.min="40" detailed="false" pad.t="3" pad.b="6"/>
 								</ui:with>
 							</ui:with>
-						</ui:for>
-					</grid>
-				</ui:for>
-			</cgroup>
-		</cell>
+						</ui:for> -->
+					<!-- </grid> -->
+				<!-- </ui:for> -->
+			<!-- </cgroup> -->
+		<!-- </cell> -->
 	</grid>
 </plugin>
