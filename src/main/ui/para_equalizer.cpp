@@ -22,6 +22,7 @@
 #include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/dsp-units/units.h>
 #include <lsp-plug.in/fmt/RoomEQWizard.h>
+#include <lsp-plug.in/plug-fw/meta/ports.h>
 #include <lsp-plug.in/plug-fw/meta/func.h>
 #include <lsp-plug.in/stdlib/locale.h>
 #include <lsp-plug.in/stdlib/string.h>
@@ -32,6 +33,12 @@
 
 namespace lsp
 {
+    namespace meta
+    {
+        static const meta::port_t current_filter_port =
+            INT_CONTROL_RANGE("current_filter", "Current Filter", U_NONE, 0.0f, 64.0f, 0.0f, 1.0f);
+    } /* namespace meta */
+
     namespace plugins
     {
         //---------------------------------------------------------------------
@@ -108,6 +115,7 @@ namespace lsp
             pInspect        = NULL;
             pAutoInspect    = NULL;
             pSelector       = NULL;
+            pCurrentFilter  = NULL;
             pRewImport      = NULL;
             wGraph          = NULL;
             wInspectReset   = NULL;
@@ -943,6 +951,17 @@ namespace lsp
             wFilterMenu    = root;
         }
 
+        status_t para_equalizer_ui::init(ui::IWrapper *wrapper, tk::Display *dpy)
+        {
+            status_t res = Module::init(wrapper, dpy);
+            if (res != STATUS_OK)
+                return res;
+
+            pCurrentFilter = create_control_port(&meta::current_filter_port);
+
+            return STATUS_OK;
+        }
+
         status_t para_equalizer_ui::post_init()
         {
             status_t res = ui::Module::post_init();
@@ -1156,12 +1175,17 @@ namespace lsp
 
         void para_equalizer_ui::on_filter_dot_left_click(tk::Widget *sender, ssize_t x, ssize_t y)
         {
-            auto dot = find_filter_by_widget(sender);
+            filter_t *dot = find_filter_by_widget(sender);
 
             if (dot == NULL)
                 return;
 
             nCurrentFilter = vFilters.index_of(dot);
+            if (pCurrentFilter != NULL)
+            {
+                pCurrentFilter->set_value(nCurrentFilter);
+                pCurrentFilter->notify_all(ui::PORT_USER_EDIT);
+            }
         }
 
         void para_equalizer_ui::on_filter_dot_right_click(tk::Widget *dot, ssize_t x, ssize_t y)
@@ -1701,11 +1725,17 @@ namespace lsp
             return NULL;
         }
 
-        void para_equalizer_ui::set_current_filter(size_t id) {
+        void para_equalizer_ui::set_current_filter(size_t id)
+        {
             if (id < 0 || id >= vFilters.size())
                 return;
 
             nCurrentFilter = id;
+            if (pCurrentFilter != NULL)
+            {
+                pCurrentFilter->set_value(nCurrentFilter);
+                pCurrentFilter->notify_all(ui::PORT_USER_EDIT);
+            }
         }
 
         void para_equalizer_ui::on_main_grid_realized(tk::Widget *w)

@@ -273,6 +273,7 @@
 									<button text="x3" id="s${ch}" value="2" />
 									<button text="x4" id="s${ch}" value="3" />
 								</hbox>
+								<label text="CURRENT FILTER: {@value}" text:value=":current_filter" text.eval="true" />
 								<!-- <combo ui:id="filter_slope${ch}" id="s${ch}" fill="false" pad.h="6" expand="false" pad.b="6"/> -->
 							</hbox>
 						</vbox>

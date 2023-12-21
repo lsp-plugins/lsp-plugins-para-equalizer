@@ -71,6 +71,7 @@ namespace lsp
                 ui::IPort          *pInspect;           // Inspected filter index
                 ui::IPort          *pAutoInspect;       // Automatically inspect the filter
                 ui::IPort          *pSelector;          // Filter selector
+                ui::IPort          *pCurrentFilter;     // Current filter
                 tk::FileDialog     *pRewImport;
                 tk::Graph          *wGraph;
                 tk::Button         *wInspectReset;      // Inspect reset button
@@ -184,6 +185,8 @@ namespace lsp
             public:
                 explicit para_equalizer_ui(const meta::plugin_t *meta);
                 virtual ~para_equalizer_ui() override;
+
+                virtual status_t    init(ui::IWrapper *wrapper, tk::Display *dpy) override;
 
                 virtual status_t    post_init() override;
                 virtual status_t    pre_destroy() override;
