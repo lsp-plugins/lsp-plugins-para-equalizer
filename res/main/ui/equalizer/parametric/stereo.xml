@@ -148,7 +148,7 @@
 		</hbox>
 
 		<!-- Zoom Fader -->
-		<cell rows="2" spacing="4" bg.color="bg">
+		<cell rows="2" spacing="4">
 			<vbox vexpand="true" bg.color="bg_schema">
 				<label font.name="lsp-icons" font.size="12" font.antialias="true" text="E" color="text_icon" pad.b="4" pad.t="4"/>
 				<fader id="zoom" angle="1" vexpand="true" ui:inject="Fader_prophessor" bg.inherit="true" flat="true" />
@@ -168,7 +168,7 @@
 							<ledchannel id="imr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right_in"/>
 						</ledmeter>
 					</hbox>
-					<value id="g_in" detailed="false" sline="true" halign="0"/>
+					<value id="g_in" halign="0"/>
 				</vbox>
 
 				<vbox vexpand="true" bg.color="bg_schema">
@@ -180,7 +180,7 @@
 							<ledchannel id="smr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right"/>
 						</ledmeter>
 					</hbox>
-					<value id="g_out" detailed="false" sline="true" halign="0"/>
+					<value id="g_out" halign="0"/>
 				</vbox>
 			</hbox>
 		</cell>

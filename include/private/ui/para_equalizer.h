@@ -107,6 +107,7 @@ namespace lsp
                 static status_t slot_filter_dot_click(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_filter_dot_mouse_down(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_filter_dot_mouse_scroll(tk::Widget *sender, void *ptr, void *data);
+                static status_t slot_filter_dot_mouse_dbl_click(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_filter_inspect_submit(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_filter_begin_edit(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_filter_change(tk::Widget *sender, void *ptr, void *data);
@@ -149,6 +150,7 @@ namespace lsp
                 void            on_end_filter_edit(tk::Widget *w);
                 void            on_filter_mouse_in(filter_t *f);
                 void            on_filter_mouse_out();
+                void            on_filter_mouse_dbl_click(tk::Widget *sender);
 
                 void            on_main_grid_realized(tk::Widget *w);
                 void            on_main_grid_mouse_in(tk::Widget *w, ssize_t x, ssize_t y);

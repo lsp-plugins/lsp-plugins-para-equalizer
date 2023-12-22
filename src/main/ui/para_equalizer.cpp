@@ -367,6 +367,26 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t para_equalizer_ui::slot_filter_dot_mouse_dbl_click(tk::Widget *sender, void *ptr, void *data)
+        {
+            // Process the left mouse click
+            ws::event_t *ev = static_cast<ws::event_t *>(data);
+
+            if (ev->nCode == ws::MCB_LEFT)
+            {
+                // Fetch paramters
+                para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+                if (_this == NULL)
+                    return STATUS_BAD_STATE;
+
+                _this->on_filter_mouse_dbl_click(sender);
+                // ........
+                return STATUS_SKIP;
+            }
+
+            return STATUS_OK;
+        }
+
         status_t para_equalizer_ui::slot_filter_inspect_submit(tk::Widget *sender, void *ptr, void *data)
         {
             // Fetch parameters
@@ -806,6 +826,7 @@ namespace lsp
                         f.wDot->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_filter_dot_click, this);
                         f.wDot->slots()->bind(tk::SLOT_MOUSE_DOWN, slot_filter_dot_mouse_down, this);
                         f.wDot->slots()->bind(tk::SLOT_MOUSE_SCROLL, slot_filter_dot_mouse_scroll, this);
+                        f.wDot->slots()->intercept(tk::SLOT_MOUSE_DBL_CLICK, slot_filter_dot_mouse_dbl_click, this);
                     }
                     if (f.wInspect != NULL)
                         f.wInspect->slots()->bind(tk::SLOT_SUBMIT, slot_filter_inspect_submit, this);
@@ -1204,6 +1225,20 @@ namespace lsp
             }
 
             return NULL;
+        }
+
+        void para_equalizer_ui::on_filter_mouse_dbl_click(tk::Widget *sender)
+        {
+            filter_t *dot = find_filter_by_widget(sender);
+            if (dot == NULL)
+                return;
+
+            if (dot->pMute != NULL)
+            {
+                float value = dot->pMute->value();
+                dot->pMute->set_value((value >= 0.5f) ? 0.0f : 1.0f);
+                dot->pMute->notify_all(ui::PORT_USER_EDIT);
+            }
         }
 
         void para_equalizer_ui::on_filter_dot_mouse_down(tk::Widget *sender, ssize_t x, ssize_t y)
