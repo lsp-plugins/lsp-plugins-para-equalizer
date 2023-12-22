@@ -25,7 +25,7 @@
 
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MAJOR         1
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MINOR         0
-#define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MICRO         20
+#define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MICRO         21
 
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION  \
     LSP_MODULE_VERSION( \
@@ -98,11 +98,23 @@ namespace lsp
             { NULL, NULL }
         };
 
-        static const port_item_t equalizer_fft_mode[] =
+        static const port_item_t filter_select_8[] =
         {
-            { "Off",            "metering.fft.off" },
-            { "Post-eq",        "metering.fft.post_eq" },
-            { "Pre-eq",         "metering.fft.pre_eq" },
+            { "Filters 0-7",            "para_eq.flt_0:7" },
+            { NULL, NULL }
+        };
+
+        static const port_item_t filter_select_8lr[] =
+        {
+            { "Filters Left 0-7",       "para_eq.flt_l_0:7" },
+            { "Filters Right 0-7",      "para_eq.flt_r_0:7" },
+            { NULL, NULL }
+        };
+
+        static const port_item_t filter_select_8ms[] =
+        {
+            { "Filters Middle 0-7",     "para_eq.flt_m_0:7" },
+            { "Filters Side 0-7",       "para_eq.flt_s_0:7" },
             { NULL, NULL }
         };
 
@@ -190,7 +202,6 @@ namespace lsp
                 AMP_GAIN("g_in", "Input gain", para_equalizer_metadata::IN_GAIN_DFL, 10.0f), \
                 AMP_GAIN("g_out", "Output gain", para_equalizer_metadata::OUT_GAIN_DFL, 10.0f), \
                 COMBO("mode", "Equalizer mode", 0, equalizer_eq_modes), \
-                COMBO("fft", "FFT analysis", 0, equalizer_fft_mode), \
                 LOG_CONTROL("react", "FFT reactivity", U_MSEC, para_equalizer_metadata::REACT_TIME), \
                 AMP_GAIN("shift", "Shift gain", 1.0f, 100.0f), \
                 LOG_CONTROL("zoom", "Graph zoom", U_GAIN_AMP, para_equalizer_metadata::ZOOM), \
@@ -203,8 +214,7 @@ namespace lsp
                 MESH("ag", "Amplitude graph", 2, para_equalizer_metadata::MESH_POINTS), \
                 CONTROL("frqs", "Frequency shift", U_SEMITONES, para_equalizer_metadata::PITCH), \
                 METER_GAIN("im", "Input signal meter", GAIN_AMP_P_12_DB), \
-                METER_GAIN("sm", "Output signal meter", GAIN_AMP_P_12_DB), \
-                MESH("fftg", "FFT graph", 2, para_equalizer_metadata::MESH_POINTS)
+                METER_GAIN("sm", "Output signal meter", GAIN_AMP_P_12_DB)
 
         #define EQ_STEREO_PORTS \
                 PAN_CTL("bal", "Output balance", 0.0f), \
@@ -212,12 +222,8 @@ namespace lsp
                 CONTROL("frqs", "Frequency shift", U_SEMITONES, para_equalizer_metadata::PITCH), \
                 METER_GAIN("iml", "Input signal meter Left", GAIN_AMP_P_12_DB), \
                 METER_GAIN("sml", "Output signal meter Left", GAIN_AMP_P_12_DB), \
-                MESH("fftg_l", "FFT channel Left", 2, para_equalizer_metadata::MESH_POINTS), \
-                SWITCH("fftv_l", "FFT visibility Left", 1.0f), \
                 METER_GAIN("imr", "Input signal meter Right", GAIN_AMP_P_12_DB), \
-                METER_GAIN("smr", "Output signal meter Right", GAIN_AMP_P_12_DB), \
-                MESH("fftg_r", "FFT channel Right", 2, para_equalizer_metadata::MESH_POINTS), \
-                SWITCH("fftv_r", "FFT visibility Right", 1.0f) \
+                METER_GAIN("smr", "Output signal meter Right", GAIN_AMP_P_12_DB)
 
         #define EQ_LR_PORTS \
                 PAN_CTL("bal", "Output balance", 0.0f), \
@@ -225,14 +231,12 @@ namespace lsp
                 CONTROL("frqs_l", "Frequency shift Left", U_SEMITONES, para_equalizer_metadata::PITCH), \
                 METER_GAIN("iml", "Input signal meter Left", GAIN_AMP_P_12_DB), \
                 METER_GAIN("sml", "Output signal meter Left", GAIN_AMP_P_12_DB), \
-                MESH("fftg_l", "FFT channel Left", 2, para_equalizer_metadata::MESH_POINTS), \
-                SWITCH("fftv_l", "FFT visibility Left", 1.0f), \
+                SWITCH("fltv_l", "Filter visibility Left", 1.0f), \
                 MESH("ag_r", "Amplitude graph Right", 2, para_equalizer_metadata::MESH_POINTS), \
                 CONTROL("frqs_r", "Frequency shift Right", U_SEMITONES, para_equalizer_metadata::PITCH), \
                 METER_GAIN("imr", "Input signal meter Right", GAIN_AMP_P_12_DB), \
                 METER_GAIN("smr", "Output signal meter Right", GAIN_AMP_P_12_DB), \
-                MESH("fftg_r", "FFT channel Right", 2, para_equalizer_metadata::MESH_POINTS), \
-                SWITCH("fftv_r", "FFT visibility Right", 1.0f)
+                SWITCH("fltv_r", "Filter visibility Right", 1.0f)
 
         #define EQ_MS_PORTS \
                 PAN_CTL("bal", "Output balance", 0.0f), \
@@ -243,19 +247,42 @@ namespace lsp
                 CONTROL("frqs_m", "Frequency shift Mid", U_SEMITONES, para_equalizer_metadata::PITCH), \
                 METER_GAIN("iml", "Input signal meter Left", GAIN_AMP_P_12_DB), \
                 METER_GAIN("sml", "Output signal meter Left", GAIN_AMP_P_12_DB), \
-                MESH("fftg_m", "FFT channel Mid", 2, para_equalizer_metadata::MESH_POINTS), \
-                SWITCH("fftv_m", "FFT visibility Mid", 1.0f), \
+                SWITCH("fltv_m", "Filter visibility Mid", 1.0f), \
                 MESH("ag_s", "Amplitude graph Side", 2, para_equalizer_metadata::MESH_POINTS), \
                 CONTROL("frqs_s", "Frequency shift Side", U_SEMITONES, para_equalizer_metadata::PITCH), \
                 METER_GAIN("imr", "Input signal meter Right", GAIN_AMP_P_12_DB), \
                 METER_GAIN("smr", "Output signal meter Right", GAIN_AMP_P_12_DB), \
-                MESH("fftg_s", "FFT channel Side", 2, para_equalizer_metadata::MESH_POINTS), \
-                SWITCH("fftv_s", "FFT visibility Side", 1.0f)
+                SWITCH("fltv_s", "Filter visibility Side", 1.0f)
+
+        #define CHANNEL_ANALYSIS(id, label) \
+            SWITCH("ife" id, "Input FFT graph enable" label, 1.0f), \
+            SWITCH("ofe" id, "Output FFT graph enable" label, 1.0f), \
+            MESH("ifg" id, "Input FFT graph" label, 2, para_equalizer_metadata::MESH_POINTS + 2), \
+            MESH("ofg" id, "Output FFT graph" label, 2, para_equalizer_metadata::MESH_POINTS)
+
+        static const port_t para_equalizer_x8_mono_ports[] =
+        {
+            PORTS_MONO_PLUGIN,
+            EQ_COMMON(filter_select_8, 8),
+            CHANNEL_ANALYSIS("", ""),
+            EQ_MONO_PORTS,
+            EQ_FILTER_MONO(0, 8, 16.0f),
+            EQ_FILTER_MONO(1, 8, 40.0f),
+            EQ_FILTER_MONO(2, 8, 100.0f),
+            EQ_FILTER_MONO(3, 8, 250.0f),
+            EQ_FILTER_MONO(4, 8, 630.0f),
+            EQ_FILTER_MONO(5, 8, 1600.0f),
+            EQ_FILTER_MONO(6, 8, 4000.0f),
+            EQ_FILTER_MONO(7, 8, 10000.0f),
+
+            PORTS_END
+        };
 
         static const port_t para_equalizer_x16_mono_ports[] =
         {
             PORTS_MONO_PLUGIN,
             EQ_COMMON(filter_select_16, 16),
+            CHANNEL_ANALYSIS("", ""),
             EQ_MONO_PORTS,
             EQ_FILTER_MONO(0, 16, 16.0f),
             EQ_FILTER_MONO(1, 16, 25.0f),
@@ -281,6 +308,7 @@ namespace lsp
         {
             PORTS_MONO_PLUGIN,
             EQ_COMMON(filter_select_32, 32),
+            CHANNEL_ANALYSIS("", ""),
             EQ_MONO_PORTS,
             EQ_FILTER_MONO(0, 32, 16.0f),
             EQ_FILTER_MONO(1, 32, 20.0f),
@@ -318,10 +346,31 @@ namespace lsp
             PORTS_END
         };
 
+        static const port_t para_equalizer_x8_stereo_ports[] =
+        {
+            PORTS_STEREO_PLUGIN,
+            EQ_COMMON(filter_select_8, 8),
+            CHANNEL_ANALYSIS("_l", " Left"),
+            CHANNEL_ANALYSIS("_r", " Right"),
+            EQ_STEREO_PORTS,
+            EQ_FILTER_MONO(0, 8, 16.0f),
+            EQ_FILTER_MONO(1, 8, 40.0f),
+            EQ_FILTER_MONO(2, 8, 100.0f),
+            EQ_FILTER_MONO(3, 8, 250.0f),
+            EQ_FILTER_MONO(4, 8, 630.0f),
+            EQ_FILTER_MONO(5, 8, 1600.0f),
+            EQ_FILTER_MONO(6, 8, 4000.0f),
+            EQ_FILTER_MONO(7, 8, 10000.0f),
+
+            PORTS_END
+        };
+
         static const port_t para_equalizer_x16_stereo_ports[] =
         {
             PORTS_STEREO_PLUGIN,
             EQ_COMMON(filter_select_16, 16),
+            CHANNEL_ANALYSIS("_l", " Left"),
+            CHANNEL_ANALYSIS("_r", " Right"),
             EQ_STEREO_PORTS,
             EQ_FILTER_STEREO(0, 16, 16.0f),
             EQ_FILTER_STEREO(1, 16, 25.0f),
@@ -347,6 +396,8 @@ namespace lsp
         {
             PORTS_STEREO_PLUGIN,
             EQ_COMMON(filter_select_32, 32),
+            CHANNEL_ANALYSIS("_l", " Left"),
+            CHANNEL_ANALYSIS("_r", " Right"),
             EQ_STEREO_PORTS,
             EQ_FILTER_STEREO(0, 32, 16.0f),
             EQ_FILTER_STEREO(1, 32, 20.0f),
@@ -384,10 +435,31 @@ namespace lsp
             PORTS_END
         };
 
+        static const port_t para_equalizer_x8_lr_ports[] =
+        {
+            PORTS_STEREO_PLUGIN,
+            EQ_COMMON(filter_select_8lr, 16),
+            CHANNEL_ANALYSIS("_l", " Left"),
+            CHANNEL_ANALYSIS("_r", " Right"),
+            EQ_LR_PORTS,
+            EQ_FILTER_LR(0, 8, 16.0f),
+            EQ_FILTER_LR(1, 8, 40.0f),
+            EQ_FILTER_LR(2, 8, 100.0f),
+            EQ_FILTER_LR(3, 8, 250.0f),
+            EQ_FILTER_LR(4, 8, 630.0f),
+            EQ_FILTER_LR(5, 8, 1600.0f),
+            EQ_FILTER_LR(6, 8, 4000.0f),
+            EQ_FILTER_LR(7, 8, 10000.0f),
+
+            PORTS_END
+        };
+
         static const port_t para_equalizer_x16_lr_ports[] =
         {
             PORTS_STEREO_PLUGIN,
             EQ_COMMON(filter_select_16lr, 32),
+            CHANNEL_ANALYSIS("_l", " Left"),
+            CHANNEL_ANALYSIS("_r", " Right"),
             EQ_LR_PORTS,
             EQ_FILTER_LR(0, 16, 16.0f),
             EQ_FILTER_LR(1, 16, 25.0f),
@@ -413,6 +485,8 @@ namespace lsp
         {
             PORTS_STEREO_PLUGIN,
             EQ_COMMON(filter_select_32lr, 64),
+            CHANNEL_ANALYSIS("_l", " Left"),
+            CHANNEL_ANALYSIS("_r", " Right"),
             EQ_LR_PORTS,
             EQ_FILTER_LR(0, 32, 16.0f),
             EQ_FILTER_LR(1, 32, 20.0f),
@@ -450,10 +524,31 @@ namespace lsp
             PORTS_END
         };
 
+        static const port_t para_equalizer_x8_ms_ports[] =
+        {
+            PORTS_STEREO_PLUGIN,
+            EQ_COMMON(filter_select_8ms, 16),
+            CHANNEL_ANALYSIS("_m", " Mid"),
+            CHANNEL_ANALYSIS("_s", " Side"),
+            EQ_MS_PORTS,
+            EQ_FILTER_MS(0, 8, 16.0f),
+            EQ_FILTER_MS(1, 8, 40.0f),
+            EQ_FILTER_MS(2, 8, 100.0f),
+            EQ_FILTER_MS(3, 8, 250.0f),
+            EQ_FILTER_MS(4, 8, 630.0f),
+            EQ_FILTER_MS(5, 8, 1600.0f),
+            EQ_FILTER_MS(6, 8, 4000.0f),
+            EQ_FILTER_MS(7, 8, 10000.0f),
+
+            PORTS_END
+        };
+
         static const port_t para_equalizer_x16_ms_ports[] =
         {
             PORTS_STEREO_PLUGIN,
             EQ_COMMON(filter_select_16ms, 32),
+            CHANNEL_ANALYSIS("_m", " Mid"),
+            CHANNEL_ANALYSIS("_s", " Side"),
             EQ_MS_PORTS,
             EQ_FILTER_MS(0, 16, 16.0f),
             EQ_FILTER_MS(1, 16, 25.0f),
@@ -479,6 +574,8 @@ namespace lsp
         {
             PORTS_STEREO_PLUGIN,
             EQ_COMMON(filter_select_32ms, 64),
+            CHANNEL_ANALYSIS("_m", " Mid"),
+            CHANNEL_ANALYSIS("_s", " Side"),
             EQ_MS_PORTS,
             EQ_FILTER_MS(0, 32, 16.0f),
             EQ_FILTER_MS(1, 32, 20.0f),
@@ -525,9 +622,35 @@ namespace lsp
             "This plugin allows one to perform parametric equalization of input signal.\nUp to 16 or 32 different filters are simultaneously available for processing."
         };
 
+        const meta::plugin_t para_equalizer_x8_mono =
+        {
+            "Parametrischer Entzerrer x8 Mono",
+            "Parametric Equalizer x8 Mono",
+            "Parametric Equalizer x8 Mono",
+            "PE8M",
+            &developers::v_sadovnikov,
+            "para_equalizer_x8_mono",
+            LSP_LV2_URI("para_equalizer_x8_mono"),
+            LSP_LV2UI_URI("para_equalizer_x8_mono"),
+            "dh38",
+            LSP_LADSPA_PARA_EQUALIZER_X8 + 0,
+            LSP_LADSPA_URI("para_equalizer_x8_mono"),
+            LSP_CLAP_URI("para_equalizer_x8_mono"),
+            LSP_PLUGINS_PARA_EQUALIZER_VERSION,
+            plugin_classes,
+            clap_features_mono,
+            E_INLINE_DISPLAY | E_DUMP_STATE,
+            para_equalizer_x8_mono_ports,
+            "equalizer/parametric/mono.xml",
+            "equalizer/parametric/mono",
+            mono_plugin_port_groups,
+            &para_equalizer_bundle
+        };
+
         const meta::plugin_t para_equalizer_x16_mono =
         {
             "Parametrischer Entzerrer x16 Mono",
+            "Parametric Equalizer x16 Mono",
             "Parametric Equalizer x16 Mono",
             "PE16M",
             &developers::v_sadovnikov,
@@ -553,6 +676,7 @@ namespace lsp
         {
             "Parametrischer Entzerrer x32 Mono",
             "Parametric Equalizer x32 Mono",
+            "Parametric Equalizer x32 Mono",
             "PE32M",
             &developers::v_sadovnikov,
             "para_equalizer_x32_mono",
@@ -573,9 +697,35 @@ namespace lsp
             &para_equalizer_bundle
         };
 
+        const meta::plugin_t para_equalizer_x8_stereo =
+        {
+            "Parametrischer Entzerrer x8 Stereo",
+            "Parametric Equalizer x8 Stereo",
+            "Parametric Equalizer x8 Stereo",
+            "PE8S",
+            &developers::v_sadovnikov,
+            "para_equalizer_x8_stereo",
+            LSP_LV2_URI("para_equalizer_x8_stereo"),
+            LSP_LV2UI_URI("para_equalizer_x8_stereo"),
+            "a5e8",
+            LSP_LADSPA_PARA_EQUALIZER_X8 + 1,
+            LSP_LADSPA_URI("para_equalizer_x8_stereo"),
+            LSP_CLAP_URI("para_equalizer_x8_stereo"),
+            LSP_PLUGINS_PARA_EQUALIZER_VERSION,
+            plugin_classes,
+            clap_features_stereo,
+            E_INLINE_DISPLAY | E_DUMP_STATE,
+            para_equalizer_x8_stereo_ports,
+            "equalizer/parametric/stereo.xml",
+            "equalizer/parametric/stereo",
+            stereo_plugin_port_groups,
+            &para_equalizer_bundle
+        };
+
         const meta::plugin_t para_equalizer_x16_stereo =
         {
             "Parametrischer Entzerrer x16 Stereo",
+            "Parametric Equalizer x16 Stereo",
             "Parametric Equalizer x16 Stereo",
             "PE16S",
             &developers::v_sadovnikov,
@@ -601,6 +751,7 @@ namespace lsp
         {
             "Parametrischer Entzerrer x32 Stereo",
             "Parametric Equalizer x32 Stereo",
+            "Parametric Equalizer x32 Stereo",
             "PE32S",
             &developers::v_sadovnikov,
             "para_equalizer_x32_stereo",
@@ -621,10 +772,36 @@ namespace lsp
             &para_equalizer_bundle
         };
 
+        const meta::plugin_t para_equalizer_x8_lr =
+        {
+            "Parametrischer Entzerrer x8 LeftRight",
+            "Parametric Equalizer x8 LeftRight",
+            "Parametric Equalizer x8 L/R",
+            "PE8LR",
+            &developers::v_sadovnikov,
+            "para_equalizer_x8_lr",
+            LSP_LV2_URI("para_equalizer_x8_lr"),
+            LSP_LV2UI_URI("para_equalizer_x8_lr"),
+            "4ke8",
+            LSP_LADSPA_PARA_EQUALIZER_X8 + 2,
+            LSP_LADSPA_URI("para_equalizer_x8_lr"),
+            LSP_CLAP_URI("para_equalizer_x8_lr"),
+            LSP_PLUGINS_PARA_EQUALIZER_VERSION,
+            plugin_classes,
+            clap_features_stereo,
+            E_INLINE_DISPLAY | E_DUMP_STATE,
+            para_equalizer_x8_lr_ports,
+            "equalizer/parametric/lr.xml",
+            "equalizer/parametric/lr",
+            stereo_plugin_port_groups,
+            &para_equalizer_bundle
+        };
+
         const meta::plugin_t para_equalizer_x16_lr =
         {
             "Parametrischer Entzerrer x16 LeftRight",
             "Parametric Equalizer x16 LeftRight",
+            "Parametric Equalizer x16 L/R",
             "PE16LR",
             &developers::v_sadovnikov,
             "para_equalizer_x16_lr",
@@ -649,6 +826,7 @@ namespace lsp
         {
             "Parametrischer Entzerrer x32 LeftRight",
             "Parametric Equalizer x32 LeftRight",
+            "Parametric Equalizer x32 L/R",
             "PE32LR",
             &developers::v_sadovnikov,
             "para_equalizer_x32_lr",
@@ -669,10 +847,36 @@ namespace lsp
             &para_equalizer_bundle
         };
 
+        const meta::plugin_t para_equalizer_x8_ms =
+        {
+            "Parametrischer Entzerrer x8 MidSide",
+            "Parametric Equalizer x8 MidSide",
+            "Parametric Equalizer x8 M/S",
+            "PE8MS",
+            &developers::v_sadovnikov,
+            "para_equalizer_x8_ms",
+            LSP_LV2_URI("para_equalizer_x8_ms"),
+            LSP_LV2UI_URI("para_equalizer_x8_ms"),
+            "opj8",
+            LSP_LADSPA_PARA_EQUALIZER_X8 + 3,
+            LSP_LADSPA_URI("para_equalizer_x8_ms"),
+            LSP_CLAP_URI("para_equalizer_x8_ms"),
+            LSP_PLUGINS_PARA_EQUALIZER_VERSION,
+            plugin_classes,
+            clap_features_stereo,
+            E_INLINE_DISPLAY | E_DUMP_STATE,
+            para_equalizer_x8_ms_ports,
+            "equalizer/parametric/ms.xml",
+            "equalizer/parametric/ms",
+            stereo_plugin_port_groups,
+            &para_equalizer_bundle
+        };
+
         const meta::plugin_t para_equalizer_x16_ms =
         {
             "Parametrischer Entzerrer x16 MidSide",
             "Parametric Equalizer x16 MidSide",
+            "Parametric Equalizer x16 M/S",
             "PE16MS",
             &developers::v_sadovnikov,
             "para_equalizer_x16_ms",
@@ -697,6 +901,7 @@ namespace lsp
         {
             "Parametrischer Entzerrer x32 MidSide",
             "Parametric Equalizer x32 MidSide",
+            "Parametric Equalizer x32 M/S",
             "PE32MS",
             &developers::v_sadovnikov,
             "para_equalizer_x32_ms",

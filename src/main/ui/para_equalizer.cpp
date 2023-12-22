@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-para-equalizer
  * Created on: 2 авг. 2021 г.
@@ -23,6 +23,7 @@
 #include <lsp-plug.in/dsp-units/units.h>
 #include <lsp-plug.in/fmt/RoomEQWizard.h>
 #include <lsp-plug.in/plug-fw/meta/func.h>
+#include <lsp-plug.in/stdlib/locale.h>
 #include <lsp-plug.in/stdlib/string.h>
 #include <lsp-plug.in/tk/tk.h>
 
@@ -37,6 +38,10 @@ namespace lsp
         // Plugin UI factory
         static const meta::plugin_t *plugin_uis[] =
         {
+            &meta::para_equalizer_x8_mono,
+            &meta::para_equalizer_x8_stereo,
+            &meta::para_equalizer_x8_lr,
+            &meta::para_equalizer_x8_ms,
             &meta::para_equalizer_x16_mono,
             &meta::para_equalizer_x16_stereo,
             &meta::para_equalizer_x16_lr,
@@ -52,7 +57,7 @@ namespace lsp
             return new para_equalizer_ui(meta);
         }
 
-        static ui::Factory factory(ui_factory, plugin_uis, 8);
+        static ui::Factory factory(ui_factory, plugin_uis, 12);
 
         static const tk::tether_t dot_menu_tether_list[] =
         {
@@ -99,6 +104,7 @@ namespace lsp
         para_equalizer_ui::para_equalizer_ui(const meta::plugin_t *meta): ui::Module(meta)
         {
             pRewPath        = NULL;
+            pRewFileType    = NULL;
             pInspect        = NULL;
             pAutoInspect    = NULL;
             pSelector       = NULL;
@@ -118,20 +124,28 @@ namespace lsp
             wFilterMute     = NULL;
             wFilterSwitch   = NULL;
 
-            if ((!strcmp(meta->uid, meta::para_equalizer_x16_lr.uid)) ||
+            if ((!strcmp(meta->uid, meta::para_equalizer_x8_lr.uid)) ||
+                (!strcmp(meta->uid, meta::para_equalizer_x16_lr.uid)) ||
                 (!strcmp(meta->uid, meta::para_equalizer_x32_lr.uid)))
             {
                 fmtStrings      = fmt_strings_lr;
                 nSplitChannels  = 2;
             }
-            else if ((!strcmp(meta->uid, meta::para_equalizer_x16_ms.uid)) ||
+            else if (
+                    (!strcmp(meta->uid, meta::para_equalizer_x8_ms.uid)) ||
+                    (!strcmp(meta->uid, meta::para_equalizer_x16_ms.uid)) ||
                  (!strcmp(meta->uid, meta::para_equalizer_x32_ms.uid)))
             {
                 fmtStrings      = fmt_strings_ms;
                 nSplitChannels  = 2;
             }
 
-            nFilters        = 16;
+            nFilters        = 8;
+            if ((!strcmp(meta->uid, meta::para_equalizer_x16_lr.uid)) ||
+                (!strcmp(meta->uid, meta::para_equalizer_x16_mono.uid)) ||
+                (!strcmp(meta->uid, meta::para_equalizer_x16_ms.uid)) ||
+                (!strcmp(meta->uid, meta::para_equalizer_x16_stereo.uid)))
+                nFilters       = 16;
             if ((!strcmp(meta->uid, meta::para_equalizer_x32_lr.uid)) ||
                 (!strcmp(meta->uid, meta::para_equalizer_x32_mono.uid)) ||
                 (!strcmp(meta->uid, meta::para_equalizer_x32_ms.uid)) ||
@@ -216,25 +230,40 @@ namespace lsp
         status_t para_equalizer_ui::slot_fetch_rew_path(tk::Widget *sender, void *ptr, void *data)
         {
             para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
-            if ((_this == NULL) || (_this->pRewPath == NULL))
+            if (_this == NULL)
                 return STATUS_BAD_STATE;
 
-            _this->pRewImport->path()->set_raw(_this->pRewPath->buffer<char>());
+            if (_this->pRewPath != NULL)
+                _this->pRewImport->path()->set_raw(_this->pRewPath->buffer<char>());
+            if (_this->pRewFileType != NULL)
+            {
+                size_t filter = _this->pRewFileType->value();
+                _this->pRewImport->selected_filter()->set(filter);
+            }
+
             return STATUS_OK;
         }
 
         status_t para_equalizer_ui::slot_commit_rew_path(tk::Widget *sender, void *ptr, void *data)
         {
             para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
-            if ((_this == NULL) || (_this->pRewPath == NULL))
+            if (_this == NULL)
                 return STATUS_BAD_STATE;
 
-            LSPString path;
-            if (_this->pRewImport->path()->format(&path) == STATUS_OK)
+            if (_this->pRewPath != NULL)
             {
-                const char *u8path = path.get_utf8();
-                _this->pRewPath->write(u8path, ::strlen(u8path));
-                _this->pRewPath->notify_all(ui::PORT_USER_EDIT);
+                LSPString path;
+                if (_this->pRewImport->path()->format(&path) == STATUS_OK)
+                {
+                    const char *u8path = path.get_utf8();
+                    _this->pRewPath->write(u8path, ::strlen(u8path));
+                    _this->pRewPath->notify_all(ui::PORT_USER_EDIT);
+                }
+            }
+            if (_this->pRewFileType != NULL)
+            {
+                _this->pRewFileType->set_value(_this->pRewImport->selected_filter()->get());
+                _this->pRewFileType->notify_all(ui::PORT_USER_EDIT);
             }
 
             return STATUS_OK;
@@ -566,6 +595,14 @@ namespace lsp
                 return;
             }
 
+            // Get the gain
+            float gain = (f->pGain != NULL) ? f->pGain->value() : -1.0f;
+            if (gain < 0.0f)
+            {
+                f->wNote->visibility()->set(false);
+                return;
+            }
+
             // Check that filter is enabled
             ssize_t type = (f->pType != NULL) ? ssize_t(f->pType->value()) : meta::para_equalizer_metadata::EQF_OFF;
             if (type == meta::para_equalizer_metadata::EQF_OFF)
@@ -582,10 +619,11 @@ namespace lsp
                 tk::prop::String lc_string;
                 LSPString text;
                 lc_string.bind(f->wNote->style(), pDisplay->dictionary());
+                SET_LOCALE_SCOPED(LC_NUMERIC, "C");
 
-                // Frequency
-                text.fmt_ascii("%.2f", freq);
-                params.set_string("frequency", &text);
+                // Frequency and gain
+                params.set_float("frequency", freq);
+                params.set_float("gain", dspu::gain_to_db(gain));
 
                 // Filter number and audio channel
                 text.set_ascii(f->pType->id());
@@ -636,10 +674,10 @@ namespace lsp
                         text.fmt_ascii(" + %02d", note_cents);
                     params.set_string("cents", &text);
 
-                    f->wNote->text()->set("lists.notes.display.full", &params);
+                    f->wNote->text()->set("lists.para_eq.display.full", &params);
                 }
                 else
-                    f->wNote->text()->set("lists.notes.display.unknown", &params);
+                    f->wNote->text()->set("lists.para_eq.display.unknown", &params);
             }
         }
 
@@ -924,7 +962,8 @@ namespace lsp
                 create_filter_menu();
 
             // Find REW port
-            pRewPath            = pWrapper->port(UI_CONFIG_PORT_PREFIX UI_DLG_REW_PATH_ID);
+            pRewPath            = pWrapper->port(REW_PATH_PORT);
+            pRewFileType        = pWrapper->port(REW_FTYPE_PORT);
             pInspect            = pWrapper->port("insp_id");
             if (pInspect != NULL)
                 pInspect->bind(this);

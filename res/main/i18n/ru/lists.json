@@ -1,5 +1,10 @@
 {
 	"para_eq": {
+		"display": {
+			"full": "{@filter}\n{@filter_type}\n{@frequency%.2f} Гц\n{@note}{@octave}{@cents}\n{@gain%.2f} дБ",
+			"unknown": "{@filter}\n{@filter_type}\n{@frequency%.2f} Гц\n{@gain%.2f} дБ"
+		},
+		
 		"flt_0:7": "Фильтры 0-7",
 		"flt_16:23": "Фильтры 16-23",
 		"flt_24:31": "Фильтры 24-31",
