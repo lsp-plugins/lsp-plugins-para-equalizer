@@ -97,10 +97,11 @@ namespace lsp
                     float               fPitch;         // Frequency shift
                     eq_filter_t        *vFilters;       // List of filters
                     float              *vDryBuf;        // Dry buffer
-                    float              *vBuffer;        // Buffer for temporary data
+                    float              *vInBuffer;      // Input buffer (input signal passed to) analyzer
+                    float              *vOutBuffer;     // Output buffer
                     float              *vIn;            // Input buffer
                     float              *vOut;           // Output buffer
-                    float              *vAnalyzer;      // Buffer for analyzer
+                    float              *vInPtr;         // Actual pointer to input data (for eliminatioon of unnecessary memory copies)
                     size_t              nSync;          // Chart state
                     bool                bHasSolo;       // Channel has soloing filter
 
