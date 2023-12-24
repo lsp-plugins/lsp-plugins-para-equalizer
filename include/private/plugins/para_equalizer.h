@@ -67,7 +67,7 @@ namespace lsp
                 {
                     float              *vTrRe;          // Transfer function (real part)
                     float              *vTrIm;          // Transfer function (imaginary part)
-                    size_t              nSync;          // Chart state
+                    uint32_t            nSync;          // Chart state
                     bool                bSolo;          // Soloing filter
                     dspu::filter_params_t sOldFP;       // Old filter parameters
                     dspu::filter_params_t sFP;          // Filter parameters
@@ -91,18 +91,18 @@ namespace lsp
                     dspu::Bypass        sBypass;        // Bypass
                     dspu::Delay         sDryDelay;      // Dry delay
 
-                    size_t              nLatency;       // Latency of the channel
+                    uint32_t            nLatency;       // Latency of the channel
                     float               fInGain;        // Input gain
                     float               fOutGain;       // Output gain
                     float               fPitch;         // Frequency shift
                     eq_filter_t        *vFilters;       // List of filters
                     float              *vDryBuf;        // Dry buffer
-                    float              *vInBuffer;      // Input buffer (input signal passed to) analyzer
+                    float              *vInBuffer;      // Input buffer (input signal passed to analyzer)
                     float              *vOutBuffer;     // Output buffer
                     float              *vIn;            // Input buffer
                     float              *vOut;           // Output buffer
                     float              *vInPtr;         // Actual pointer to input data (for eliminatioon of unnecessary memory copies)
-                    size_t              nSync;          // Chart state
+                    uint32_t            nSync;          // Chart state
                     bool                bHasSolo;       // Channel has soloing filter
 
                     float              *vTrRe;          // Transfer function (real part)
@@ -124,8 +124,8 @@ namespace lsp
 
             protected:
                 dspu::Analyzer      sAnalyzer;              // Analyzer
-                size_t              nFilters;               // Number of filters
-                size_t              nMode;                  // Operating mode
+                uint32_t            nFilters;               // Number of filters
+                uint32_t            nMode;                  // Operating mode
                 eq_channel_t       *vChannels;              // List of channels
                 float              *vFreqs;                 // Frequency list
                 uint32_t           *vIndexes;               // FFT indexes
