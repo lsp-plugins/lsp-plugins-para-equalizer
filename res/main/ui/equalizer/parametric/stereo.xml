@@ -186,69 +186,71 @@
 		</cell>
 
 		<!-- EQ params -->
-		<cell cols="1" bg.bright="1">
+		<cell cols="1">
 			<!-- TODO: Dim panel with the color of the active point -->
-			<hbox bcolor="bg_schema">
+			<hbox bg.color="bg">
 				<void hexpand="true"/>
 
 				<ui:for id="ch" first="0" count=":num_filters">
-					<vbox padding="5" width="128" pad.l="20" pad.r="40" visibility="${ch} ieq :current_filter and :ft_${ch} igt 0">
-						<hbox>
-							<label text="Type" />
-							<combo ui:id="filter_type_${ch}" id="ft_${ch}" fill="false" pad.l="6" pad.r="6" pad.b="6"/>
-						</hbox>
-						<hbox>
-							<label text="Slope" />
-							<hbox hspacing="1" pad.b="6">
-								<button text="x1" id="s_${ch}" value="0" />
-								<button text="x2" id="s_${ch}" value="1" />
-								<button text="x3" id="s_${ch}" value="2" />
-								<button text="x4" id="s_${ch}" value="3" />
+					<ui:with visibility="${ch} ieq :current_filter and :ft_${ch} igt 0" bg.color="bg_schema" skip.bg.color.hue=":hue_${ch}">
+						<vbox padding="5" width="128" pad.l="20" pad.r="40">
+							<hbox>
+								<label text="Type" />
+								<combo ui:id="filter_type_${ch}" id="ft_${ch}" fill="false" pad.l="6" pad.r="6" pad.b="6"/>
 							</hbox>
-						</hbox>
-					</vbox>
+							<hbox>
+								<label text="Slope" />
+								<hbox hspacing="1" pad.b="6">
+									<button text="x1" id="s_${ch}" value="0" />
+									<button text="x2" id="s_${ch}" value="1" />
+									<button text="x3" id="s_${ch}" value="2" />
+									<button text="x4" id="s_${ch}" value="3" />
+								</hbox>
+							</hbox>
+						</vbox>
 
-					<!---->
+						<!---->
 
-					<grid rows="3" cols="3" vspacing="2" hspacing="50" transpose="true" visibility="${ch} ieq :current_filter and :ft_${ch} igt 0">
-						<label text="Frequency" />
-						<knob ui:id="filter_freq_${ch}" id="f_${ch}" scolor="blue" size="40" pad.t="6"/>
-						<value id="f_${ch}" width.min="40" sline="true" detailed="true" precision="1" pad.t="3" pad.b="6" />
+						<grid rows="3" cols="3" vspacing="2" hspacing="50" transpose="true">
+							<label text="Frequency" />
+							<knob ui:id="filter_freq_${ch}" id="f_${ch}" scolor="blue" size="40" pad.t="6"/>
+							<value id="f_${ch}" width.min="40" sline="true" detailed="true" precision="1" pad.t="3" pad.b="6" />
 
-						<label text="Gain" />
-						<knob ui:id="filter_gain_${ch}" id="g_${ch}" scolor="red" size="60" pad.t="6"/>
-						<value id="g_${ch}" width.min="40" sline="true" detailed="true" pad.t="3" pad.b="6"/>
+							<label text="Gain" />
+							<knob ui:id="filter_gain_${ch}" id="g_${ch}" scolor="red" size="60" pad.t="6"/>
+							<value id="g_${ch}" width.min="40" sline="true" detailed="true" pad.t="3" pad.b="6"/>
 
-						<label text="Q" />
-						<knob ui:id="filter_q_${ch}" value.z="0.5" id="q_${ch}" scolor="cyan" size="40" pad.t="6"/>
-						<value id="q_${ch}" width.min="40" sline="true" detailed="true" pad.t="3" pad.b="6"/>
-					</grid>
-
-					<vbox pad.l="40" pad.r="20" visibility="${ch} ieq :current_filter and :ft_${ch} igt 0">
-						<hbox spacing="4">
-							<button ui:id="filter_inspect_${ch}" text="Listen" ui:inject="Button_orange_8" />
-							<button ui:id="filter_solo_${ch}" id="xs_${ch}" text="Solo" ui:inject="Button_green_8" />
-							<button ui:id="filter_mute_${ch}" id="xm_${ch}" text="Mute" ui:inject="Button_red_8" />
-							<button id="ft_${ch}" value="0" text="x" ui:inject="Button_red_8" />
-						</hbox>
-						<hbox pad.t="10">
-							<label text="Mode" />
-							<combo ui:id="filter_mode_${ch}" id="fm_${ch}" fill="false" pad.h="6" expand="false" pad.b="6"/>
-						</hbox>
-
-						<void vexpand="true"/>
-
-						<grid rows="3" cols="2" transpose="true">
-							<label visibility=":ft_${ch} igt 8" text="Width" />
-							<knob visibility=":ft_${ch} igt 8" ui:id="filter_width_${ch}" id="w_${ch}" scolor="yellow" size="20" pad.t="6"/>
-							<value visibility=":ft_${ch} igt 8" id="w_${ch}" bright="(:ft_${ch} igt 8) ? 1 : 0.75" width.min="20" detailed="false" pad.t="3" />
-
-							<!-- TODO: Show when any of the dots is listening or auto-listening is enabled -->
-							<label bright=":insp_on ? 1 : 0.75" text="Listen range" />
-							<knob bright=":insp_on ? 1 : 0.75" id="insp_r" scale.size="3" scolor="orange" size="20" pad.t="6"/>
-							<value bright=":insp_on ? 1 : 0.75" id="insp_r" width.min="20" pad.t="3" sline="true" />
+							<label text="Q" />
+							<knob ui:id="filter_q_${ch}" value.z="0.5" id="q_${ch}" scolor="cyan" size="40" pad.t="6"/>
+							<value id="q_${ch}" width.min="40" sline="true" detailed="true" pad.t="3" pad.b="6"/>
 						</grid>
-					</vbox>
+
+						<vbox pad.l="40" pad.r="20">
+							<hbox spacing="4">
+								<button ui:id="filter_inspect_${ch}" text="Listen" ui:inject="Button_orange_8" />
+								<button ui:id="filter_solo_${ch}" id="xs_${ch}" text="Solo" ui:inject="Button_green_8" />
+								<button ui:id="filter_mute_${ch}" id="xm_${ch}" text="Mute" ui:inject="Button_red_8" />
+								<button id="ft_${ch}" value="0" text="x" ui:inject="Button_red_8" />
+							</hbox>
+							<hbox pad.t="10">
+								<label text="Mode" />
+								<combo ui:id="filter_mode_${ch}" id="fm_${ch}" fill="false" pad.h="6" expand="false" pad.b="6"/>
+							</hbox>
+
+							<void vexpand="true"/>
+
+							<grid rows="3" cols="2" transpose="true">
+								<label visibility=":ft_${ch} igt 8" text="Width" />
+								<knob visibility=":ft_${ch} igt 8" ui:id="filter_width_${ch}" id="w_${ch}" scolor="yellow" size="20" pad.t="6"/>
+								<value visibility=":ft_${ch} igt 8" id="w_${ch}" bright="(:ft_${ch} igt 8) ? 1 : 0.75" width.min="20" detailed="false" pad.t="3" />
+
+								<!-- TODO: Show when any of the dots is listening or auto-listening is enabled -->
+								<label bright=":insp_on ? 1 : 0.75" text="Listen range" />
+								<knob bright=":insp_on ? 1 : 0.75" id="insp_r" scale.size="3" scolor="orange" size="20" pad.t="6"/>
+								<value bright=":insp_on ? 1 : 0.75" id="insp_r" width.min="20" pad.t="3" sline="true" />
+							</grid>
+						</vbox>
+					</ui:with>
 				</ui:for>
 
 
@@ -305,7 +307,7 @@
 
 				<void hexpand="true"/>
 
-				<label text="Spectrum:"/>
+				<label text="EQ Algorithm:"/>
 				<combo id="mode" />
 			</hbox>
 		</cell>
