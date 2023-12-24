@@ -1137,6 +1137,10 @@ namespace lsp
 
         void para_equalizer::perform_analysis(size_t samples)
         {
+            // Do not do anything if analyzer is inactive
+            if (!sAnalyzer.activity())
+                return;
+
             // Prepare processing
             size_t channels     = (nMode == EQ_MONO) ? 1 : 2;
 
