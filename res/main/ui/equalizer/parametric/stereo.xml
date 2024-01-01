@@ -80,6 +80,8 @@
 							hover.size="1 + 3*:_ui_filter_point_thickness"
 							color=":xm_${i} ? 'gray_inactive' : 'graph_marker_cycle'"
 							color.hue=":hue_${i}"
+							border.size=":current_filter ieq ${i} ? 10 : 5"
+							hover.border.size=":current_filter ieq ${i} ? 10 : 5"
 							hover.color=":xm_${i} ? 'gray_inactive' : 'graph_marker_cycle'"
 							hover.color.hue=":hue_${i}"
 							bcolor=":xm_${i} ? 'gray_inactive' : 'graph_marker_cycle'"
