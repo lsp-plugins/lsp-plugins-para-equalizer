@@ -72,6 +72,7 @@ namespace lsp
                 ui::IPort          *pAutoInspect;       // Automatically inspect the filter
                 ui::IPort          *pSelector;          // Filter selector
                 ui::IPort          *pCurrentFilter;     // Current filter
+                ui::IPort          *pIsInspecting;       // Is inspecting mode activated (on a filter or automatically)
                 tk::FileDialog     *pRewImport;
                 tk::Graph          *wGraph;
                 tk::Button         *wInspectReset;      // Inspect reset button

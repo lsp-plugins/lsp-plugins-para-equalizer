@@ -37,6 +37,9 @@ namespace lsp
     {
         static const meta::port_t current_filter_port =
             INT_CONTROL_RANGE("current_filter", "Current Filter", U_NONE, 0.0f, 64.0f, 0.0f, 1.0f);
+
+        static const meta::port_t is_inspecting_port =
+            SWITCH("is_inspecting", "Is Inspecting", 0.0f);
     } /* namespace meta */
 
     namespace plugins
@@ -976,6 +979,7 @@ namespace lsp
                 return res;
 
             pCurrentFilter = create_control_port(&meta::current_filter_port);
+            pIsInspecting = create_control_port(&meta::is_inspecting_port);
 
             return STATUS_OK;
         }
@@ -1439,6 +1443,12 @@ namespace lsp
             if ((pCurrDot == f) && (wFilterInspect != NULL))
                 wFilterInspect->checked()->set((inspect >= 0) && (inspect == index));
 
+            if (pIsInspecting != NULL)
+            {
+                pIsInspecting->set_value((inspect >= 0) ? 1.0f : 0.0f);
+                pIsInspecting->notify_all(ui::PORT_USER_EDIT);
+            }
+
             // Make the frequency and note visible
             update_filter_note_text();
         }
@@ -1453,6 +1463,7 @@ namespace lsp
 
             ssize_t curr    = pInspect->value();
             ssize_t index   = vFilters.index_of(f);
+
 
             if (curr == index)
                 select_inspected_filter(NULL, true);

@@ -244,10 +244,11 @@
 								<knob visibility=":ft_${ch} igt 8" ui:id="filter_width_${ch}" id="w_${ch}" scolor="yellow" size="20" pad.t="6"/>
 								<value visibility=":ft_${ch} igt 8" id="w_${ch}" bright="(:ft_${ch} igt 8) ? 1 : 0.75" width.min="20" detailed="false" pad.t="3" />
 
-								<!-- TODO: Show when any of the dots is listening or auto-listening is enabled -->
-								<label bright=":insp_on ? 1 : 0.75" text="Listen range" />
-								<knob bright=":insp_on ? 1 : 0.75" id="insp_r" scale.size="3" scolor="orange" size="20" pad.t="6"/>
-								<value bright=":insp_on ? 1 : 0.75" id="insp_r" width.min="20" pad.t="3" sline="true" />
+								<ui:with visibility=":is_inspecting or :insp_on">
+									<label text="Listen range" />
+									<knob id="insp_r" scale.size="3" scolor="orange" size="20" pad.t="6"/>
+									<value id="insp_r" width.min="20" pad.t="3" sline="true" />
+								</ui:with>
 							</grid>
 						</vbox>
 					</ui:with>
@@ -265,48 +266,14 @@
 
 				<void hexpand="true"/>
 
-				<label text="FFT: " />
+				<label text="Analyzer: " />
 				<group text.show="false" border.size="1" embed="true">
 					<hbox spacing="12">
 						<label text="Show:" halign="0"/>
 						<combo id="fft" fill="true"/>
-						<!-- TODO: Maybe allow to adjust these params -->
-						<!-- <ui:if test="false">
-							<ui:with down.color.saturation="0" border.down.color.saturation="0" text.down.color.saturation="0">
-								<label text="Show Input:"/>
-								<button id="ife_l" text="labels.chan.L_eft" size="19" ui:inject="Button_left_8" />
-								<button id="ife_r" text="labels.chan.R_ight" size="19" ui:inject="Button_right_8"/>
-
-								<label text="Show Output:" halign="0" />
-								<button id="ofe_l" text="labels.chan.L_eft" size="19" ui:inject="Button_left_8"/>
-								<button id="ofe_r" text="labels.chan.R_ight" size="19" ui:inject="Button_right_8"/>
-							</ui:with>
-						</ui:if> -->
-
-						<combo id="fftsp" fill="true"/>
 
 						<label text="Speed:" halign="0"/>
-						<ui:with id="react">
-							<button value="0.0" text="Slower" visibility=":react >= 1.0 and :react <= 2.0" />
-							<button value="0.02" text="Fastest" visibility=":react >= 0.0 and :react < 0.019" />
-							<button value="0.1" text="Faster" visibility=":react >= 0.019 and :react < 0.1" />
-							<button value="0.2" text="Fast" visibility=":react >= 0.1 and :react < 0.2" />
-							<button value="0.5" text="Normal" visibility=":react >= 0.2 and :react < 0.5" />
-							<button value="1.0" text="Slow" visibility=":react >= 0.5 and :react < 1.0" />
-							<!-- TODO: Add this option -->
-							<!-- <button value="2.0" text="Slowest" visibility=":react eq 1.0" /> -->
-							<!--
-								TODO: Replace with combo box:
-								Fastest - 0ms
-								Faster - 0.025ms
-								Fast - 0.1ms
-							Normal - 0.2ms
-								Slow - 0.5ms
-								Slower - 1ms
-								Slowest - 2ms
-								Custom? // Open prompt dialog
-							-->
-						</ui:with>
+						<combo id="fftsp" fill="true"/>
 					</hbox>
 				</group>
 

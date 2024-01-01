@@ -114,13 +114,13 @@ namespace lsp
 
         static const port_item_t equalizer_fft_speed[] =
         {
-            { "Slowest",      "Slowest" },
-            { "Slower",       "Slower" },
-            { "Slow",         "Slow" },
-            { "Normal",       "Normal" },
-            { "Fast",         "Fast" },
-            { "Faster",       "Faster" },
-            { "Fastest",      "Fastest" },
+            { "Slowest",      "metering.fft.speed.slowest" },
+            { "Slower",       "metering.fft.speed.slower" },
+            { "Slow",         "metering.fft.speed.slow" },
+            { "Normal",       "metering.fft.speed.normal" },
+            { "Fast",         "metering.fft.speed.fast" },
+            { "Faster",       "metering.fft.speed.faster" },
+            { "Fastest",      "metering.fft.speed.fastest" },
             { NULL, NULL }
         };
 

@@ -873,9 +873,22 @@ namespace lsp
             sAnalyzer.set_activity(n_an_channels > 0);
             // sAnalyzer.set_reactivity(pReactivity->value());
 
-            fft_speed_t pos = fft_speed_t(pFftSpeed->value());
+            fft_speed_t speed = fft_speed_t(pFftSpeed->value());
 
-            sAnalyzer.set_reactivity(pReactivity->value());
+            switch (speed)
+            {
+                case FFTS_SLOWEST: sAnalyzer.set_reactivity(2.0f); break;
+                case FFTS_SLOWER:  sAnalyzer.set_reactivity(1.0f); break;
+                case FFTS_SLOW:    sAnalyzer.set_reactivity(0.5f); break;
+                case FFTS_NORMAL:  sAnalyzer.set_reactivity(0.2f); break;
+                case FFTS_FAST:    sAnalyzer.set_reactivity(0.1f); break;
+                case FFTS_FASTER:  sAnalyzer.set_reactivity(0.025f); break;
+                case FFTS_FASTEST: sAnalyzer.set_reactivity(0.0f); break;
+                default:
+                    break;
+            }
+
+            // sAnalyzer.set_reactivity(pReactivity->value());
 
             // Update shift gain
             if (pShiftGain != NULL)
