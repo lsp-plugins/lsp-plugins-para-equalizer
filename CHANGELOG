@@ -2,12 +2,16 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.22 ===
+* Implemented Bypass::process_wet method for better performance.
+
 === 1.0.21 ===
 * Implemented separate input and output signal spectrum analysis.
 * Implemented automatic scale of spectrum graph switch.
 * Updated zoom fader.
 * Added support of variable size of filter dots.
 * Implemented x8 versions.
+* Updated build scripts and dependencies.
 
 === 1.0.20 ===
 * Updated build scripts and dependencies.
