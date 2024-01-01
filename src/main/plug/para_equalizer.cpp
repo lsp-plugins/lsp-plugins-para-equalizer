@@ -102,6 +102,7 @@ namespace lsp
             fZoom           = 1.0f;
             bListen         = false;
             bSmoothMode     = false;
+            nFftPosition    = FFTP_BOTH;
             pIDisplay       = NULL;
 
             pBypass         = NULL;
@@ -452,6 +453,7 @@ namespace lsp
             // Initialize global parameters
             fGainIn             = 1.0f;
             bListen             = false;
+            nFftPosition        = FFTP_BOTH;
 
             // Allocate indexes
             vIndexes            = new uint32_t[meta::para_equalizer_metadata::MESH_POINTS];
@@ -501,6 +503,7 @@ namespace lsp
                 c->pInGain          = NULL;
                 c->pTrAmp           = NULL;
                 c->pPitch           = NULL;
+                c->pFft             = NULL;
                 c->pFftInSwitch     = NULL;
                 c->pFftOutSwitch    = NULL;
                 c->pFftInMesh       = NULL;
@@ -588,6 +591,7 @@ namespace lsp
             pGainIn                 = trace_port(ports[port_id++]);
             pGainOut                = trace_port(ports[port_id++]);
             pEqMode                 = trace_port(ports[port_id++]);
+            pFftMode                = trace_port(ports[port_id++]);
             pReactivity             = trace_port(ports[port_id++]);
             pShiftGain              = trace_port(ports[port_id++]);
             pZoom                   = trace_port(ports[port_id++]);
@@ -839,8 +843,35 @@ namespace lsp
             for (size_t i=0; i<channels; ++i)
             {
                 eq_channel_t *c     = &vChannels[i];
-                bool in_fft         = c->pFftInSwitch->value() >= 0.5f;
-                bool out_fft        = c->pFftOutSwitch->value() >= 0.5f;
+                // bool in_fft         = c->pFftInSwitch->value() >= 0.5f;
+                // bool out_fft        = c->pFftOutSwitch->value() >= 0.5f;
+                bool in_fft         = false;
+                bool out_fft        = false;
+
+                fft_position_t pos = fft_position_t(pFftMode->value());
+                if (pos != nFftPosition)
+                {
+                    nFftPosition    = pos;
+                    sAnalyzer.reset();
+                }
+
+                switch (nFftPosition)
+                {
+                    case FFTP_BOTH:
+                        in_fft      = true;
+                        out_fft     = true;
+                        break;
+                    case FFTP_PRE:
+                        in_fft      = true;
+                        out_fft     = false;
+                        break;
+                    case FFTP_POST:
+                        in_fft      = false;
+                        out_fft     = true;
+                        break;
+                    default:
+                        break;
+                }
 
                 // channel:        0     1     2      3
                 // designation: in_l out_l  in_r  out_r
@@ -1613,6 +1644,7 @@ namespace lsp
                 v->write("pInGain", c->pInGain);
                 v->write("pTrAmp", c->pTrAmp);
                 v->write("pPitch", c->pPitch);
+                v->write("pFft", c->pFft);
                 v->write("pFftInSwitch", c->pFftInSwitch);
                 v->write("pFftOutSwitch", c->pFftOutSwitch);
                 v->write("pFftInMesh", c->pFftInMesh);

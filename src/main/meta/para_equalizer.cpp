@@ -178,6 +178,16 @@ namespace lsp
             { NULL, NULL }
         };
 
+        static const port_item_t equalizer_fft_mode[] =
+        {
+            { "Off",            "metering.fft.off" },
+            { "Post-eq",        "metering.fft.post_eq" },
+            { "Pre-eq",         "metering.fft.pre_eq" },
+            { "Both",           "metering.fft.both" },
+            { NULL, NULL }
+        };
+
+
         #define EQ_FILTER(id, label, x, total, f) \
                 COMBO("ft" id "_" #x, "Filter type " label #x, 0, filter_types), \
                 COMBO("fm" id "_" #x, "Filter mode " label #x, 0, filter_modes), \
@@ -202,6 +212,7 @@ namespace lsp
                 AMP_GAIN("g_in", "Input gain", para_equalizer_metadata::IN_GAIN_DFL, 10.0f), \
                 AMP_GAIN("g_out", "Output gain", para_equalizer_metadata::OUT_GAIN_DFL, 10.0f), \
                 COMBO("mode", "Equalizer mode", 0, equalizer_eq_modes), \
+                COMBO("fft", "FFT analysis", 3, equalizer_fft_mode), \
                 LOG_CONTROL("react", "FFT reactivity", U_MSEC, para_equalizer_metadata::REACT_TIME), \
                 AMP_GAIN("shift", "Shift gain", 1.0f, 100.0f), \
                 LOG_CONTROL("zoom", "Graph zoom", U_GAIN_AMP, para_equalizer_metadata::ZOOM), \

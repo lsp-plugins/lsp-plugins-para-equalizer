@@ -60,7 +60,8 @@ namespace lsp
                 {
                     FFTP_NONE,
                     FFTP_POST,
-                    FFTP_PRE
+                    FFTP_PRE,
+                    FFTP_BOTH,
                 };
 
                 typedef struct eq_filter_t
@@ -112,6 +113,7 @@ namespace lsp
                     plug::IPort        *pInGain;        // Input gain
                     plug::IPort        *pTrAmp;         // Amplitude chart
                     plug::IPort        *pPitch;         // Frequency shift
+                    plug::IPort        *pFft;           // FFT input/output switch
                     plug::IPort        *pFftInSwitch;   // FFT input switch
                     plug::IPort        *pFftOutSwitch;  // FFT output switch
                     plug::IPort        *pFftInMesh;     // FFT input mesh
@@ -133,10 +135,12 @@ namespace lsp
                 bool                bListen;                // Listen mode (only for MS para_equalizer)
                 bool                bSmoothMode;            // Smooth mode for the equalizer
                 core::IDBuffer     *pIDisplay;              // Inline display buffer
+                fft_position_t      nFftPosition;           // FFT input/output switch
 
                 plug::IPort        *pBypass;                // Bypass port
                 plug::IPort        *pGainIn;                // Input gain port
                 plug::IPort        *pGainOut;               // Output gain port
+                plug::IPort        *pFftMode;               // FFT mode
                 plug::IPort        *pReactivity;            // FFT reactivity
                 plug::IPort        *pListen;                // Listen mode (only for MS equalizer)
                 plug::IPort        *pShiftGain;             // Shift gain

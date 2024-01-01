@@ -268,16 +268,20 @@
 				<label text="FFT: " />
 				<group text.show="false" border.size="1" embed="true">
 					<hbox spacing="12">
-						<!-- TODO: Combo box [Show: Pre-EQ|Post-EQ|>Both<] -->
-						<ui:with down.color.saturation="0" border.down.color.saturation="0" text.down.color.saturation="0">
-							<label text="Show Input:"/>
-							<button id="ife_l" text="labels.chan.L_eft" size="19" ui:inject="Button_left_8" />
-							<button id="ife_r" text="labels.chan.R_ight" size="19" ui:inject="Button_right_8"/>
+						<label text="Show:" halign="0"/>
+						<combo id="fft" fill="true"/>
+						<!-- TODO: Maybe allow to adjust these params -->
+						<!-- <ui:if test="false">
+							<ui:with down.color.saturation="0" border.down.color.saturation="0" text.down.color.saturation="0">
+								<label text="Show Input:"/>
+								<button id="ife_l" text="labels.chan.L_eft" size="19" ui:inject="Button_left_8" />
+								<button id="ife_r" text="labels.chan.R_ight" size="19" ui:inject="Button_right_8"/>
 
-							<label text="Show Output:" halign="0" />
-							<button id="ofe_l" text="labels.chan.L_eft" size="19" ui:inject="Button_left_8"/>
-							<button id="ofe_r" text="labels.chan.R_ight" size="19" ui:inject="Button_right_8"/>
-						</ui:with>
+								<label text="Show Output:" halign="0" />
+								<button id="ofe_l" text="labels.chan.L_eft" size="19" ui:inject="Button_left_8"/>
+								<button id="ofe_r" text="labels.chan.R_ight" size="19" ui:inject="Button_right_8"/>
+							</ui:with>
+						</ui:if> -->
 
 						<label text="Speed:" halign="0"/>
 						<ui:with id="react">
