@@ -108,6 +108,7 @@ namespace lsp
             pBypass         = NULL;
             pGainIn         = NULL;
             pGainOut        = NULL;
+            pFftSpeed       = NULL;
             pReactivity     = NULL;
             pListen         = NULL;
             pShiftGain      = NULL;
@@ -591,6 +592,7 @@ namespace lsp
             pGainOut                = trace_port(ports[port_id++]);
             pEqMode                 = trace_port(ports[port_id++]);
             pFftMode                = trace_port(ports[port_id++]);
+            pFftSpeed               = trace_port(ports[port_id++]);
             pReactivity             = trace_port(ports[port_id++]);
             pShiftGain              = trace_port(ports[port_id++]);
             pZoom                   = trace_port(ports[port_id++]);
@@ -882,6 +884,10 @@ namespace lsp
 
             // Update reactivity
             sAnalyzer.set_activity(n_an_channels > 0);
+            // sAnalyzer.set_reactivity(pReactivity->value());
+
+            fft_speed_t pos = fft_speed_t(pFftSpeed->value());
+
             sAnalyzer.set_reactivity(pReactivity->value());
 
             // Update shift gain
@@ -1687,6 +1693,7 @@ namespace lsp
             v->write("pBypass", pBypass);
             v->write("pGainIn", pGainIn);
             v->write("pGainOut", pGainOut);
+            v->write("pFftSpeed", pFftSpeed);
             v->write("pReactivity", pReactivity);
             v->write("pListen", pListen);
             v->write("pShiftGain", pShiftGain);

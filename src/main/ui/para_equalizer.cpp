@@ -46,6 +46,8 @@ namespace lsp
         static const meta::plugin_t *plugin_uis[] =
         {
             &meta::para_equalizer_x8_mono,
+
+
             &meta::para_equalizer_x8_stereo,
             &meta::para_equalizer_x8_lr,
             &meta::para_equalizer_x8_ms,

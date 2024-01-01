@@ -283,6 +283,8 @@
 							</ui:with>
 						</ui:if> -->
 
+						<combo id="fftsp" fill="true"/>
+
 						<label text="Speed:" halign="0"/>
 						<ui:with id="react">
 							<button value="0.0" text="Slower" visibility=":react >= 1.0 and :react <= 2.0" />

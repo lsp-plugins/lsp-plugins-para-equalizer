@@ -187,6 +187,18 @@ namespace lsp
             { NULL, NULL }
         };
 
+        static const port_item_t equalizer_fft_speed[] =
+        {
+            { "Slowest",      "Slowest" },
+            { "Slower",       "Slower" },
+            { "Slow",         "Slow" },
+            { "Normal",       "Normal" },
+            { "Fast",         "Fast" },
+            { "Faster",       "Faster" },
+            { "Fastest",      "Fastest" },
+            { NULL, NULL }
+        };
+
 
         #define EQ_FILTER(id, label, x, total, f) \
                 COMBO("ft" id "_" #x, "Filter type " label #x, 0, filter_types), \
@@ -213,6 +225,7 @@ namespace lsp
                 AMP_GAIN("g_out", "Output gain", para_equalizer_metadata::OUT_GAIN_DFL, 10.0f), \
                 COMBO("mode", "Equalizer mode", 0, equalizer_eq_modes), \
                 COMBO("fft", "FFT analysis", 3, equalizer_fft_mode), \
+                COMBO("fftsp", "FFT speed", 3, equalizer_fft_speed), \
                 LOG_CONTROL("react", "FFT reactivity", U_MSEC, para_equalizer_metadata::REACT_TIME), \
                 AMP_GAIN("shift", "Shift gain", 1.0f, 100.0f), \
                 LOG_CONTROL("zoom", "Graph zoom", U_GAIN_AMP, para_equalizer_metadata::ZOOM), \
