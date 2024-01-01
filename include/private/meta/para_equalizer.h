@@ -120,18 +120,8 @@ namespace lsp
             };
         };
 
-        extern const meta::plugin_t para_equalizer_x8_mono;
-        extern const meta::plugin_t para_equalizer_x8_stereo;
-        extern const meta::plugin_t para_equalizer_x8_lr;
-        extern const meta::plugin_t para_equalizer_x8_ms;
-        extern const meta::plugin_t para_equalizer_x16_mono;
-        extern const meta::plugin_t para_equalizer_x16_stereo;
-        extern const meta::plugin_t para_equalizer_x16_lr;
-        extern const meta::plugin_t para_equalizer_x16_ms;
         extern const meta::plugin_t para_equalizer_x32_mono;
         extern const meta::plugin_t para_equalizer_x32_stereo;
-        extern const meta::plugin_t para_equalizer_x32_lr;
-        extern const meta::plugin_t para_equalizer_x32_ms;
 
     } /* namespace meta */
 } /* namespace lsp */

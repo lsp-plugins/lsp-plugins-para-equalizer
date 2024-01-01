@@ -45,20 +45,8 @@ namespace lsp
         // Plugin UI factory
         static const meta::plugin_t *plugin_uis[] =
         {
-            &meta::para_equalizer_x8_mono,
-
-
-            &meta::para_equalizer_x8_stereo,
-            &meta::para_equalizer_x8_lr,
-            &meta::para_equalizer_x8_ms,
-            &meta::para_equalizer_x16_mono,
-            &meta::para_equalizer_x16_stereo,
-            &meta::para_equalizer_x16_lr,
-            &meta::para_equalizer_x16_ms,
             &meta::para_equalizer_x32_mono,
             &meta::para_equalizer_x32_stereo,
-            &meta::para_equalizer_x32_lr,
-            &meta::para_equalizer_x32_ms
         };
 
         static ui::Module *ui_factory(const meta::plugin_t *meta)
@@ -66,7 +54,7 @@ namespace lsp
             return new para_equalizer_ui(meta);
         }
 
-        static ui::Factory factory(ui_factory, plugin_uis, 12);
+        static ui::Factory factory(ui_factory, plugin_uis, 2);
 
         static const tk::tether_t dot_menu_tether_list[] =
         {
@@ -135,33 +123,7 @@ namespace lsp
             wFilterMute     = NULL;
             wFilterSwitch   = NULL;
 
-            if ((!strcmp(meta->uid, meta::para_equalizer_x8_lr.uid)) ||
-                (!strcmp(meta->uid, meta::para_equalizer_x16_lr.uid)) ||
-                (!strcmp(meta->uid, meta::para_equalizer_x32_lr.uid)))
-            {
-                fmtStrings      = fmt_strings_lr;
-                nSplitChannels  = 2;
-            }
-            else if (
-                    (!strcmp(meta->uid, meta::para_equalizer_x8_ms.uid)) ||
-                    (!strcmp(meta->uid, meta::para_equalizer_x16_ms.uid)) ||
-                 (!strcmp(meta->uid, meta::para_equalizer_x32_ms.uid)))
-            {
-                fmtStrings      = fmt_strings_ms;
-                nSplitChannels  = 2;
-            }
-
-            nFilters        = 8;
-            if ((!strcmp(meta->uid, meta::para_equalizer_x16_lr.uid)) ||
-                (!strcmp(meta->uid, meta::para_equalizer_x16_mono.uid)) ||
-                (!strcmp(meta->uid, meta::para_equalizer_x16_ms.uid)) ||
-                (!strcmp(meta->uid, meta::para_equalizer_x16_stereo.uid)))
-                nFilters       = 16;
-            if ((!strcmp(meta->uid, meta::para_equalizer_x32_lr.uid)) ||
-                (!strcmp(meta->uid, meta::para_equalizer_x32_mono.uid)) ||
-                (!strcmp(meta->uid, meta::para_equalizer_x32_ms.uid)) ||
-                (!strcmp(meta->uid, meta::para_equalizer_x32_stereo.uid)))
-                nFilters       = 32;
+            nFilters       = 32;
         }
 
         para_equalizer_ui::~para_equalizer_ui()

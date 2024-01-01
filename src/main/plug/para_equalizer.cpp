@@ -48,34 +48,14 @@ namespace lsp
 
         static const meta::plugin_t *plugins[] =
         {
-            &meta::para_equalizer_x8_mono,
-            &meta::para_equalizer_x8_stereo,
-            &meta::para_equalizer_x8_lr,
-            &meta::para_equalizer_x8_ms,
-            &meta::para_equalizer_x16_mono,
-            &meta::para_equalizer_x16_stereo,
-            &meta::para_equalizer_x16_lr,
-            &meta::para_equalizer_x16_ms,
             &meta::para_equalizer_x32_mono,
             &meta::para_equalizer_x32_stereo,
-            &meta::para_equalizer_x32_lr,
-            &meta::para_equalizer_x32_ms
         };
 
         static const plugin_settings_t plugin_settings[] =
         {
-            { &meta::para_equalizer_x8_mono,     8, para_equalizer::EQ_MONO         },
-            { &meta::para_equalizer_x8_stereo,   8, para_equalizer::EQ_STEREO       },
-            { &meta::para_equalizer_x8_lr,       8, para_equalizer::EQ_LEFT_RIGHT   },
-            { &meta::para_equalizer_x8_ms,       8, para_equalizer::EQ_MID_SIDE     },
-            { &meta::para_equalizer_x16_mono,   16, para_equalizer::EQ_MONO         },
-            { &meta::para_equalizer_x16_stereo, 16, para_equalizer::EQ_STEREO       },
-            { &meta::para_equalizer_x16_lr,     16, para_equalizer::EQ_LEFT_RIGHT   },
-            { &meta::para_equalizer_x16_ms,     16, para_equalizer::EQ_MID_SIDE     },
             { &meta::para_equalizer_x32_mono,   32, para_equalizer::EQ_MONO         },
             { &meta::para_equalizer_x32_stereo, 32, para_equalizer::EQ_STEREO       },
-            { &meta::para_equalizer_x32_lr,     32, para_equalizer::EQ_LEFT_RIGHT   },
-            { &meta::para_equalizer_x32_ms,     32, para_equalizer::EQ_MID_SIDE     },
 
             { NULL, 0, false }
         };
@@ -88,7 +68,7 @@ namespace lsp
             return NULL;
         }
 
-        static plug::Factory factory(plugin_factory, plugins, 12);
+        static plug::Factory factory(plugin_factory, plugins, 2);
 
         //-------------------------------------------------------------------------
         para_equalizer::para_equalizer(const meta::plugin_t *metadata, size_t filters, size_t mode): plug::Module(metadata)
@@ -578,50 +558,57 @@ namespace lsp
             // Bind ports
             size_t port_id          = 0;
 
+            #define BIND_PORT(name) name = ports[port_id++]; lsp_trace("Binding port %s to %s", name->metadata()->id, #name)
+            #define SKIP_PORT(name) lsp_trace("Skipping port %s (%s)", ports[port_id++]->metadata()->id, #name)
+
             // Bind audio ports
             lsp_trace("Binding audio ports");
-            for (size_t i=0; i<channels; ++i)
-                vChannels[i].pIn        =   trace_port(ports[port_id++]);
-            for (size_t i=0; i<channels; ++i)
-                vChannels[i].pOut       =   trace_port(ports[port_id++]);
+
+            for (size_t i=0; i<channels; ++i) {
+                eq_channel_t *c = &vChannels[i];
+                BIND_PORT(c->pIn);
+            }
+            for (size_t i=0; i<channels; ++i) {
+                eq_channel_t *c = &vChannels[i];
+                BIND_PORT(c->pOut);
+            }
 
             // Bind common ports
             lsp_trace("Binding common ports");
-            pBypass                 = trace_port(ports[port_id++]);
-            pGainIn                 = trace_port(ports[port_id++]);
-            pGainOut                = trace_port(ports[port_id++]);
-            pEqMode                 = trace_port(ports[port_id++]);
-            pFftMode                = trace_port(ports[port_id++]);
-            pFftSpeed               = trace_port(ports[port_id++]);
-            pReactivity             = trace_port(ports[port_id++]);
-            pShiftGain              = trace_port(ports[port_id++]);
-            pZoom                   = trace_port(ports[port_id++]);
-            trace_port(ports[port_id++]); // Skip filter selector
-            pInspect                = trace_port(ports[port_id++]);
-            pInspectRange           = trace_port(ports[port_id++]);
-            trace_port(ports[port_id++]); // Skip auto inspect switch
+            BIND_PORT(pBypass);
+            BIND_PORT(pGainIn);
+            BIND_PORT(pGainOut);
+            BIND_PORT(pEqMode);
+            BIND_PORT(pFftMode);
+            BIND_PORT(pFftSpeed);
+            BIND_PORT(pReactivity);
+            BIND_PORT(pShiftGain);
+            BIND_PORT(pZoom);
+            BIND_PORT(pInspect);
+            BIND_PORT(pInspectRange);
+            SKIP_PORT("Auto inspect switch");            // Skip auto inspect switch
 
             // Meters
             for (size_t i=0; i<channels; ++i)
             {
                 eq_channel_t *c     = &vChannels[i];
 
-                c->pFftInSwitch         = trace_port(ports[port_id++]);
-                c->pFftOutSwitch        = trace_port(ports[port_id++]);
-                c->pFftInMesh           = trace_port(ports[port_id++]);
-                c->pFftOutMesh          = trace_port(ports[port_id++]);
+                BIND_PORT(c->pFftInSwitch);
+                BIND_PORT(c->pFftOutSwitch);
+                BIND_PORT(c->pFftInMesh);
+                BIND_PORT(c->pFftOutMesh);
             }
 
             // Balance
             if (channels > 1)
-                pBalance                = trace_port(ports[port_id++]);
+                BIND_PORT(pBalance);
 
             // Listen port
             if (nMode == EQ_MID_SIDE)
             {
-                pListen                 = trace_port(ports[port_id++]);
-                vChannels[0].pInGain    = trace_port(ports[port_id++]);
-                vChannels[1].pInGain    = trace_port(ports[port_id++]);
+                BIND_PORT(pListen);
+                BIND_PORT(vChannels[0].pInGain);
+                BIND_PORT(vChannels[1].pInGain);
             }
 
             for (size_t i=0; i<channels; ++i)
@@ -633,11 +620,11 @@ namespace lsp
                 }
                 else
                 {
-                    vChannels[i].pTrAmp     = trace_port(ports[port_id++]);
-                    vChannels[i].pPitch     = trace_port(ports[port_id++]);
+                    BIND_PORT(vChannels[i].pTrAmp);
+                    BIND_PORT(vChannels[i].pPitch);
                 }
-                vChannels[i].pInMeter   =   trace_port(ports[port_id++]);
-                vChannels[i].pOutMeter  =   trace_port(ports[port_id++]);
+                BIND_PORT(vChannels[i].pInMeter);
+                BIND_PORT(vChannels[i].pOutMeter);
 
                 if ((nMode == EQ_LEFT_RIGHT) || (nMode == EQ_MID_SIDE))
                     vChannels[i].pVisible   = trace_port(ports[port_id++]); // Skip eq curve visibility
@@ -673,18 +660,18 @@ namespace lsp
                     else
                     {
                         // 1 port controls 1 filter
-                        f->pType        = trace_port(ports[port_id++]);
-                        f->pMode        = trace_port(ports[port_id++]);
-                        f->pSlope       = trace_port(ports[port_id++]);
-                        f->pSolo        = trace_port(ports[port_id++]);
-                        f->pMute        = trace_port(ports[port_id++]);
-                        f->pFreq        = trace_port(ports[port_id++]);
-                        f->pWidth       = trace_port(ports[port_id++]);
-                        f->pGain        = trace_port(ports[port_id++]);
-                        f->pQuality     = trace_port(ports[port_id++]);
-                        trace_port(ports[port_id++]); // Skip hue
-                        f->pActivity    = trace_port(ports[port_id++]);
-                        f->pTrAmp       = trace_port(ports[port_id++]);
+                        BIND_PORT(f->pType);
+                        BIND_PORT(f->pMode);
+                        BIND_PORT(f->pSlope);
+                        BIND_PORT(f->pSolo);
+                        BIND_PORT(f->pMute);
+                        BIND_PORT(f->pFreq);
+                        BIND_PORT(f->pWidth);
+                        BIND_PORT(f->pGain);
+                        BIND_PORT(f->pQuality);
+                        SKIP_PORT("Hue"); // Skip hue
+                        BIND_PORT(f->pActivity);
+                        BIND_PORT(f->pTrAmp);
                     }
                 }
             }

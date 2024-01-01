@@ -64,6 +64,17 @@ namespace lsp
                     FFTP_BOTH,
                 };
 
+                enum fft_speed_t
+                {
+                    FFTS_SLOWEST,
+                    FFTS_SLOWER,
+                    FFTS_SLOW,
+                    FFTS_NORMAL,
+                    FFTS_FAST,
+                    FFTS_FASTER,
+                    FFTS_FASTEST
+                };
+
                 typedef struct eq_filter_t
                 {
                     float              *vTrRe;          // Transfer function (real part)
@@ -142,6 +153,7 @@ namespace lsp
                 plug::IPort        *pGainIn;                // Input gain port
                 plug::IPort        *pGainOut;               // Output gain port
                 plug::IPort        *pFftMode;               // FFT mode
+                plug::IPort        *pFftSpeed;              // FFT mode
                 plug::IPort        *pReactivity;            // FFT reactivity
                 plug::IPort        *pListen;                // Listen mode (only for MS equalizer)
                 plug::IPort        *pShiftGain;             // Shift gain
