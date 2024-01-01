@@ -1382,6 +1382,7 @@ namespace lsp
             size_t mask         = 1 << channel;
 
             // Set-up parameters
+            // TODO: Show "Double click to create %s filter here" message on the graph
             size_t filter_type =
                 (freq <= 100.0f)    ? meta::para_equalizer_metadata::EQF_HIPASS     :
                 (freq <= 300.0f)    ? meta::para_equalizer_metadata::EQF_LOSHELF    :
@@ -1400,6 +1401,13 @@ namespace lsp
             set_filter_quality(fid, mask, filter_quality);
             set_filter_enabled(fid, mask, true);
             set_filter_solo(fid, mask, false);
+
+            // Make the filter current
+            if (pCurrentFilter != NULL)
+            {
+                pCurrentFilter->set_value(fid);
+                pCurrentFilter->notify_all(ui::PORT_USER_EDIT);
+            }
         }
 
         bool para_equalizer_ui::filter_inspect_can_be_enabled(filter_t *f)
