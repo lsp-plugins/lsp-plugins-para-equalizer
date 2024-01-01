@@ -685,9 +685,9 @@ namespace lsp
 
         const meta::plugin_t para_equalizer_x32_mono =
         {
-            "Parametrischer Entzerrer x32 Mono",
-            "Parametric Equalizer x32 Mono",
-            "Parametric Equalizer x32 Mono",
+            "LSP EQ (Mono)",
+            "EQ (Mono)",
+            "LSP EQ (Mono)",
             "PE32M",
             &developers::v_sadovnikov,
             "para_equalizer_x32_mono",
@@ -760,9 +760,9 @@ namespace lsp
 
         const meta::plugin_t para_equalizer_x32_stereo =
         {
-            "Parametrischer Entzerrer x32 Stereo",
-            "Parametric Equalizer x32 Stereo",
-            "Parametric Equalizer x32 Stereo",
+            "LSP EQ",
+            "EQ",
+            "LSP EQ",
             "PE32S",
             &developers::v_sadovnikov,
             "para_equalizer_x32_stereo",
