@@ -204,7 +204,7 @@
 				<void hexpand="true"/>
 
 				<ui:for id="ch" first="0" count=":num_filters">
-					<ui:with visibility="${ch} ieq :current_filter and :ft_${ch} igt 0" bg.color="bg_schema" skip.bg.color.hue=":hue_${ch}">
+					<ui:with visibility="${ch} ieq :current_filter and :ft_${ch} igt 0" bg.color="#272120" bg.color.hue=":hue_${ch}">
 						<grid rows="3" cols="2" padding="5" width="128" pad.l="20" pad.r="40">
 							<label text="Type" />
 							<combo ui:id="filter_type_${ch}" id="ft_${ch}" fill="false" pad.l="6" pad.r="6" pad.b="6"/>
