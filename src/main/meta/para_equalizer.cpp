@@ -125,6 +125,7 @@ namespace lsp
                 COMBO("mode", "Equalizer mode", 0, equalizer_eq_modes), \
                 COMBO("fft", "FFT analysis", 3, equalizer_fft_mode), \
                 COMBO("fftsp", "FFT speed", 3, equalizer_fft_speed), \
+                { "env", "FFT Envelope", U_ENUM, R_CONTROL, F_IN, 0, 0, para_equalizer_metadata::FFT_ENVELOPE, 0, fft_envelopes }, \
                 LOG_CONTROL("react", "FFT reactivity", U_MSEC, para_equalizer_metadata::REACT_TIME), \
                 AMP_GAIN("shift", "Shift gain", 1.0f, 100.0f), \
                 LOG_CONTROL("zoom", "Graph zoom", U_GAIN_AMP, para_equalizer_metadata::ZOOM), \

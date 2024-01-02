@@ -154,6 +154,7 @@ namespace lsp
                 plug::IPort        *pGainOut;               // Output gain port
                 plug::IPort        *pFftMode;               // FFT mode
                 plug::IPort        *pFftSpeed;              // FFT mode
+                plug::IPort        *pFftEnv;                // FFT envelope (tilt)
                 plug::IPort        *pReactivity;            // FFT reactivity
                 plug::IPort        *pListen;                // Listen mode (only for MS equalizer)
                 plug::IPort        *pShiftGain;             // Shift gain

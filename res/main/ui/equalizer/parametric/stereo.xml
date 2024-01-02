@@ -10,7 +10,7 @@
 
 	<grid rows="4" cols="3" spacing="4">
 		<!-- Graph -->
-		<hbox spacing="4" expand="true">
+		<hbox spacing="4" expand="true" vexpand="true">
 			<!-- TODO: Add tooltip -->
 			<fader id="shift" angle="1" vexpand="true" ui:inject="Fader_prophessor_thin" bg.inherit="true" flat="true" />
 			<graph ui:id="para_eq_graph" width.min="640" height.min="340" expand="true">
@@ -199,7 +199,6 @@
 
 		<!-- EQ params -->
 		<cell cols="1">
-			<!-- TODO: Dim panel with the color of the active point -->
 			<hbox bg.color="bg">
 				<void hexpand="true"/>
 
@@ -207,7 +206,7 @@
 					<ui:with visibility="${ch} ieq :current_filter and :ft_${ch} igt 0" bg.color="#272120" bg.color.hue=":hue_${ch}">
 						<grid rows="3" cols="2" padding="5" width="128" pad.l="20" pad.r="40">
 							<label text="Type" />
-							<combo ui:id="filter_type_${ch}" id="ft_${ch}" fill="false" pad.l="6" pad.r="6" pad.b="6"/>
+							<combo ui:id="filter_type_${ch}" id="ft_${ch}" fill="true" pad.l="6" pad.r="6" pad.b="6"/>
 
 							<label text="Slope" />
 							<hbox hspacing="1" pad.b="6">
@@ -218,7 +217,7 @@
 							</hbox>
 
 							<label text="Mode" />
-							<combo ui:id="filter_mode_${ch}" id="fm_${ch}" fill="false" pad.h="6" expand="false" pad.b="6"/>
+							<combo ui:id="filter_mode_${ch}" id="fm_${ch}" fill="true" pad.h="6" expand="false" pad.b="6"/>
 						</grid>
 
 						<!---->
@@ -281,6 +280,9 @@
 
 						<label text="Speed:" halign="0"/>
 						<combo id="fftsp" fill="true"/>
+
+						<label text="labels.fft.envelope" />
+						<combo id="env" pad.r="15" />
 					</hbox>
 				</group>
 

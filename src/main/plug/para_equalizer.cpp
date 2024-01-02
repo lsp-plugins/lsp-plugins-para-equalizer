@@ -89,6 +89,7 @@ namespace lsp
             pGainIn         = NULL;
             pGainOut        = NULL;
             pFftSpeed       = NULL;
+            pFftEnv         = NULL;
             pReactivity     = NULL;
             pListen         = NULL;
             pShiftGain      = NULL;
@@ -581,6 +582,7 @@ namespace lsp
             BIND_PORT(pEqMode);
             BIND_PORT(pFftMode);
             BIND_PORT(pFftSpeed);
+            BIND_PORT(pFftEnv);
             BIND_PORT(pReactivity);
             BIND_PORT(pShiftGain);
             BIND_PORT(pZoom);
@@ -868,6 +870,7 @@ namespace lsp
 
             // Update reactivity
             sAnalyzer.set_activity(n_an_channels > 0);
+            sAnalyzer.set_envelope(pFftEnv->value());
             // sAnalyzer.set_reactivity(pReactivity->value());
 
             fft_speed_t speed = fft_speed_t(pFftSpeed->value());
@@ -1164,7 +1167,7 @@ namespace lsp
             sAnalyzer.set_sample_rate(sr);
             sAnalyzer.set_rank(meta::para_equalizer_metadata::FFT_RANK);
             sAnalyzer.set_activity(false);
-            sAnalyzer.set_envelope(meta::para_equalizer_metadata::FFT_ENVELOPE);
+            sAnalyzer.set_envelope(pFftEnv->value());
             sAnalyzer.set_window(meta::para_equalizer_metadata::FFT_WINDOW);
             sAnalyzer.set_rate(meta::para_equalizer_metadata::REFRESH_RATE);
         }
@@ -1691,6 +1694,7 @@ namespace lsp
             v->write("pGainIn", pGainIn);
             v->write("pGainOut", pGainOut);
             v->write("pFftSpeed", pFftSpeed);
+            v->write("pFftSpeed", pFftEnv);
             v->write("pReactivity", pReactivity);
             v->write("pListen", pListen);
             v->write("pShiftGain", pShiftGain);
