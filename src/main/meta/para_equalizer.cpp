@@ -62,30 +62,6 @@ namespace lsp
             { NULL, NULL }
         };
 
-        static const port_item_t filter_types[] =
-        {
-            { "Off",            "eq.flt.off" },
-            { "Bell",           "eq.flt.bell" },
-            { "Hi-pass",        "eq.flt.hipass" },
-            { "Hi-shelf",       "eq.flt.hishelf" },
-            { "Lo-pass",        "eq.flt.lopass" },
-            { "Lo-shelf",       "eq.flt.loshelf" },
-            { "Notch",          "eq.flt.notch" },
-            { "Resonance",      "eq.flt.resonance" },
-            { "Allpass",        "eq.flt.allpass" },
-            { "Bandpass",       "eq.flt.bandpass" },
-            { "Ladder-pass",    "eq.flt.ladpass" },
-            { "Ladder-rej",     "eq.flt.ladrej" },
-
-            // Additional stuff
-        #ifdef LSP_USE_EXPERIMENTAL
-            { "Allpass2",       "eq.flt.allpass2" },
-            { "Envelope",       "eq.flt.envelope" },
-            { "LUFS",           "eq.flt.lufs" },
-        #endif /* LSP_USE_EXPERIMENTAL */
-            { NULL, NULL }
-        };
-
         static const port_item_t filter_modes[] =
         {
             { "RLC (BT)",       "eq.mode.rlc_bt" },

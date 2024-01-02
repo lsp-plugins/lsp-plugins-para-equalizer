@@ -72,7 +72,8 @@ namespace lsp
                 ui::IPort          *pAutoInspect;       // Automatically inspect the filter
                 ui::IPort          *pSelector;          // Filter selector
                 ui::IPort          *pCurrentFilter;     // Current filter
-                ui::IPort          *pIsInspecting;       // Is inspecting mode activated (on a filter or automatically)
+                ui::IPort          *pIsInspecting;      // Is inspecting mode activated (on a filter or automatically)
+                ui::IPort          *pFutureFilterType;  // Type of the filter to be created in this position
                 tk::FileDialog     *pRewImport;
                 tk::Graph          *wGraph;
                 tk::Button         *wInspectReset;      // Inspect reset button
@@ -103,6 +104,8 @@ namespace lsp
                 static status_t slot_fetch_rew_path(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_commit_rew_path(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_graph_dbl_click(tk::Widget *sender, void *ptr, void *data);
+                static status_t slot_graph_mouse_move(tk::Widget *sender, void *ptr, void *data);
+                static status_t slot_graph_mouse_out(tk::Widget *sender, void *ptr, void *data);
 
                 static status_t slot_filter_menu_submit(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_filter_dot_click(tk::Widget *sender, void *ptr, void *data);
@@ -129,6 +132,8 @@ namespace lsp
                     lltl::parray<tk::MenuItem> *items, const meta::port_t *port);
                 void            set_menu_items_checked(lltl::parray<tk::MenuItem> *list, ui::IPort *port);
 
+                size_t          get_future_filter_type(size_t freq);
+
                 template <class T>
                 T              *find_filter_widget(const char *fmt, const char *base, size_t id);
 
@@ -138,6 +143,8 @@ namespace lsp
                 ssize_t         find_axis(const char *id);
 
                 void            on_graph_dbl_click(ssize_t x, ssize_t y);
+                void            on_graph_mouse_move(ssize_t x, ssize_t y);
+                void            on_graph_mouse_out(ssize_t x, ssize_t y);
 
                 void            on_filter_dot_right_click(tk::Widget *sender, ssize_t x, ssize_t y);
                 void            on_filter_dot_mouse_down(tk::Widget *sender, ssize_t x, ssize_t y);

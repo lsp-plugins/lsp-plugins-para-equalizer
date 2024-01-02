@@ -830,9 +830,6 @@ namespace lsp
             size_t n_an_channels = 0;
             for (size_t i=0; i<channels; ++i)
             {
-                eq_channel_t *c     = &vChannels[i];
-                // bool in_fft         = c->pFftInSwitch->value() >= 0.5f;
-                // bool out_fft        = c->pFftOutSwitch->value() >= 0.5f;
                 bool in_fft         = false;
                 bool out_fft        = false;
 

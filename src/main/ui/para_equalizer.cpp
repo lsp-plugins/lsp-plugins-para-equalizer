@@ -35,11 +35,24 @@ namespace lsp
 {
     namespace meta
     {
+        /**
+         * Current filter (last clicked one)
+        */
         static const meta::port_t current_filter_port =
             INT_CONTROL_RANGE("current_filter", "Current Filter", U_NONE, 0.0f, 64.0f, 0.0f, 1.0f);
 
+        /**
+         * Is any filter currently inspected
+         * Needed to display inspection-related widgets
+        */
         static const meta::port_t is_inspecting_port =
             SWITCH("is_inspecting", "Is Inspecting", 0.0f);
+
+        /**
+         * Filter type that will be created on double click on this position
+        */
+        static const meta::port_t future_filter_type_port =
+            COMBO("future_filter_type", "Future Filter Type", 0, meta::filter_types);
     } /* namespace meta */
 
     namespace plugins
@@ -71,20 +84,6 @@ namespace lsp
         static const char *fmt_strings[] =
         {
             "%s_%d",
-            NULL
-        };
-
-        static const char *fmt_strings_lr[] =
-        {
-            "%sl_%d",
-            "%sr_%d",
-            NULL
-        };
-
-        static const char *fmt_strings_ms[] =
-        {
-            "%sm_%d",
-            "%ss_%d",
             NULL
         };
 
@@ -253,6 +252,30 @@ namespace lsp
 
             ws::event_t *ev = static_cast<ws::event_t *>(data);
             _this->on_graph_dbl_click(ev->nLeft, ev->nTop);
+
+            return STATUS_OK;
+        }
+
+        status_t para_equalizer_ui::slot_graph_mouse_move(tk::Widget *sender, void *ptr, void *data)
+        {
+            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+            if (_this == NULL)
+                return STATUS_BAD_STATE;
+
+            ws::event_t *ev = static_cast<ws::event_t *>(data);
+            _this->on_graph_mouse_move(ev->nLeft, ev->nTop);
+
+            return STATUS_OK;
+        }
+
+        status_t para_equalizer_ui::slot_graph_mouse_out(tk::Widget *sender, void *ptr, void *data)
+        {
+            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+            if (_this == NULL)
+                return STATUS_BAD_STATE;
+
+            ws::event_t *ev = static_cast<ws::event_t *>(data);
+            _this->on_graph_mouse_out(ev->nLeft, ev->nTop);
 
             return STATUS_OK;
         }
@@ -980,6 +1003,7 @@ namespace lsp
 
             pCurrentFilter = create_control_port(&meta::current_filter_port);
             pIsInspecting = create_control_port(&meta::is_inspecting_port);
+            pFutureFilterType = create_control_port(&meta::future_filter_type_port);
 
             return STATUS_OK;
         }
@@ -1033,11 +1057,13 @@ namespace lsp
                 menu->add(child);
             }
 
-            // Bind double-click handler
+            // Bind graph handlers
             wGraph              = wnd->widgets()->get<tk::Graph>("para_eq_graph");
             if (wGraph != NULL)
             {
                 wGraph->slots()->bind(tk::SLOT_MOUSE_DBL_CLICK, slot_graph_dbl_click, this);
+                wGraph->slots()->bind(tk::SLOT_MOUSE_MOVE, slot_graph_mouse_move, this);
+                wGraph->slots()->bind(tk::SLOT_MOUSE_OUT, slot_graph_mouse_out, this);
                 nXAxisIndex         = find_axis("para_eq_ox");
                 nYAxisIndex         = find_axis("para_eq_oy");
             }
@@ -1304,6 +1330,16 @@ namespace lsp
             wFilterMenu->show(pCurrDot->wDot->graph(), &r);
         }
 
+        size_t para_equalizer_ui::get_future_filter_type(size_t freq) {
+            return
+                (freq <= 60.0f)    ? meta::para_equalizer_metadata::EQF_HIPASS     :
+                (freq <= 200.0f)    ? meta::para_equalizer_metadata::EQF_LOSHELF    :
+                (freq <= 7000.0f)   ? meta::para_equalizer_metadata::EQF_BELL       :
+                (freq <= 12000.0f)  ? meta::para_equalizer_metadata::EQF_HISHELF    :
+                (freq <= 20000.0f)  ? meta::para_equalizer_metadata::EQF_LOPASS    :
+                                      meta::para_equalizer_metadata::EQF_OFF;
+        }
+
         void para_equalizer_ui::on_graph_dbl_click(ssize_t x, ssize_t y)
         {
             if ((wGraph == NULL) || (nXAxisIndex < 0) || (nYAxisIndex < 0))
@@ -1350,13 +1386,7 @@ namespace lsp
             size_t mask         = 1 << channel;
 
             // Set-up parameters
-            // TODO: Show "Double click to create %s filter here" message on the graph
-            size_t filter_type =
-                (freq <= 100.0f)    ? meta::para_equalizer_metadata::EQF_HIPASS     :
-                (freq <= 300.0f)    ? meta::para_equalizer_metadata::EQF_LOSHELF    :
-                (freq <= 7000.0f)   ? meta::para_equalizer_metadata::EQF_BELL       :
-                (freq <= 15000.0f)  ? meta::para_equalizer_metadata::EQF_HISHELF    :
-                                      meta::para_equalizer_metadata::EQF_LOPASS;
+            size_t filter_type = get_future_filter_type(freq);
 
             float filter_quality = (filter_type == meta::para_equalizer_metadata::EQF_BELL) ? 2.0f : 0.5f;
 
@@ -1375,6 +1405,39 @@ namespace lsp
             {
                 pCurrentFilter->set_value(fid);
                 pCurrentFilter->notify_all(ui::PORT_USER_EDIT);
+            }
+        }
+
+        void para_equalizer_ui::on_graph_mouse_move(ssize_t x, ssize_t y)
+        {
+            if ((wGraph == NULL) || (nXAxisIndex < 0) || (nYAxisIndex < 0))
+                return;
+
+            float freq = 0.0f;
+            if (wGraph->xy_to_axis(nXAxisIndex, &freq, x, y) != STATUS_OK)
+                return;
+
+            // lsp_trace("Graph mouse move: x=%d, y=%d, freq=%.2f",x, y, freq);
+
+
+            size_t filter_type = get_future_filter_type(freq);
+
+
+            // Set future filter type
+            if (pFutureFilterType != NULL)
+            {
+                pFutureFilterType->set_value(filter_type);
+                pFutureFilterType->notify_all(ui::PORT_USER_EDIT);
+            }
+        }
+
+        void para_equalizer_ui::on_graph_mouse_out(ssize_t x, ssize_t y)
+        {
+            // Clear future filter type
+            if (pFutureFilterType != NULL)
+            {
+                pFutureFilterType->set_value(0.0f);
+                pFutureFilterType->notify_all(ui::PORT_USER_EDIT);
             }
         }
 

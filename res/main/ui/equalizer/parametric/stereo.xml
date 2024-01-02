@@ -80,8 +80,8 @@
 							hover.size="1 + 3*:_ui_filter_point_thickness"
 							color=":xm_${i} ? 'gray_inactive' : 'graph_marker_cycle'"
 							color.hue=":hue_${i}"
-							border.size=":current_filter ieq ${i} ? 10 : 5"
-							hover.border.size=":current_filter ieq ${i} ? 10 : 5"
+							border.size=":current_filter ieq ${i} ? 15 : 5"
+							hover.border.size=":current_filter ieq ${i} ? 15 : 5"
 							hover.color=":xm_${i} ? 'gray_inactive' : 'graph_marker_cycle'"
 							hover.color.hue=":hue_${i}"
 							bcolor=":xm_${i} ? 'gray_inactive' : 'graph_marker_cycle'"
@@ -123,9 +123,19 @@
 					<text x="20000" text="graph.values.x_k" text:value="20"/>
 				</ui:with>
 
+				<text y="1" ox="0" oy="2" valign="-1" halign="1" pgroup="0" priority="12" text="Double click here to create" />
+
 				<ui:with x="10" halign="1" pgroup="0" priority="10">
 					<text y="0 db" text="0" valign="1" priority="0" />
 					<text y="1" ox="0" oy="2" text="graph.units.db" valign="-1" priority="0" />
+
+					<text y="4" x="13" text="graph.future_filter_type_msg" visibility=":future_filter_type != 0"
+						text:value="
+							(:future_filter_type ieq 1) ? 'Bell' :
+							(:future_filter_type ieq 2) ? 'Lo-cut' :
+							(:future_filter_type ieq 3) ? 'Hi-shelf' :
+							(:future_filter_type ieq 4) ? 'Hi-cut' : 'Lo-shelf'"
+						text.eval="true" color="blue" font.size="10" valign="-1" priority="-1" />
 
 					<ui:for id="g" counter="i" list="+36;+24;+12;-12;-24;-36">
 						<text y="${g} db" text="${g}" valign="-1" />
@@ -195,21 +205,21 @@
 
 				<ui:for id="ch" first="0" count=":num_filters">
 					<ui:with visibility="${ch} ieq :current_filter and :ft_${ch} igt 0" bg.color="bg_schema" skip.bg.color.hue=":hue_${ch}">
-						<vbox padding="5" width="128" pad.l="20" pad.r="40">
-							<hbox>
-								<label text="Type" />
-								<combo ui:id="filter_type_${ch}" id="ft_${ch}" fill="false" pad.l="6" pad.r="6" pad.b="6"/>
+						<grid rows="3" cols="2" padding="5" width="128" pad.l="20" pad.r="40">
+							<label text="Type" />
+							<combo ui:id="filter_type_${ch}" id="ft_${ch}" fill="false" pad.l="6" pad.r="6" pad.b="6"/>
+
+							<label text="Slope" />
+							<hbox hspacing="1" pad.b="6">
+								<button text="x1" id="s_${ch}" value="0" />
+								<button text="x2" id="s_${ch}" value="1" />
+								<button text="x3" id="s_${ch}" value="2" />
+								<button text="x4" id="s_${ch}" value="3" />
 							</hbox>
-							<hbox>
-								<label text="Slope" />
-								<hbox hspacing="1" pad.b="6">
-									<button text="x1" id="s_${ch}" value="0" />
-									<button text="x2" id="s_${ch}" value="1" />
-									<button text="x3" id="s_${ch}" value="2" />
-									<button text="x4" id="s_${ch}" value="3" />
-								</hbox>
-							</hbox>
-						</vbox>
+
+							<label text="Mode" />
+							<combo ui:id="filter_mode_${ch}" id="fm_${ch}" fill="false" pad.h="6" expand="false" pad.b="6"/>
+						</grid>
 
 						<!---->
 
@@ -233,10 +243,6 @@
 								<button ui:id="filter_solo_${ch}" id="xs_${ch}" text="Solo" ui:inject="Button_green_8" />
 								<button ui:id="filter_mute_${ch}" id="xm_${ch}" text="Mute" ui:inject="Button_red_8" />
 								<button id="ft_${ch}" value="0" text="x" ui:inject="Button_red_8" />
-							</hbox>
-							<hbox pad.t="10">
-								<label text="Mode" />
-								<combo ui:id="filter_mode_${ch}" id="fm_${ch}" fill="false" pad.h="6" expand="false" pad.b="6"/>
 							</hbox>
 
 							<void vexpand="true"/>
@@ -268,10 +274,9 @@
 
 				<void hexpand="true"/>
 
-				<label text="Analyzer: " />
 				<group text.show="false" border.size="1" embed="true">
 					<hbox spacing="12">
-						<label text="Show:" halign="0"/>
+						<label text="Analyzer:" halign="0"/>
 						<combo id="fft" fill="true"/>
 
 						<label text="Speed:" halign="0"/>
@@ -282,7 +287,7 @@
 
 				<void hexpand="true"/>
 
-				<label text="EQ Algorithm:"/>
+				<label text="Algorithm:"/>
 				<combo id="mode" />
 			</hbox>
 		</cell>
