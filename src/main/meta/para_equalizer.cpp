@@ -126,7 +126,8 @@ namespace lsp
                 COMBO("fft", "FFT analysis", 3, equalizer_fft_mode), \
                 COMBO("fftsp", "FFT speed", 3, equalizer_fft_speed), \
                 { "env", "FFT Envelope", U_ENUM, R_CONTROL, F_IN, 0, 0, para_equalizer_metadata::FFT_ENVELOPE, 0, fft_envelopes }, \
-                LOG_CONTROL("react", "FFT reactivity", U_MSEC, para_equalizer_metadata::REACT_TIME), \
+                SWITCH("mtrack", "Track maximum values", 1), \
+                TRIGGER("mreset", "Reset maximum values"), \
                 AMP_GAIN("shift", "Shift gain", 1.0f, 100.0f), \
                 LOG_CONTROL("zoom", "Graph zoom", U_GAIN_AMP, para_equalizer_metadata::ZOOM), \
                 INT_CONTROL_RANGE("insp_id", "Inspected filter identifier", U_NONE, -1, (filters-1), -1, 1), \
@@ -135,6 +136,7 @@ namespace lsp
 
         #define EQ_MONO_PORTS \
                 MESH("ag", "Amplitude graph", 2, para_equalizer_metadata::MESH_POINTS), \
+                MESH("mg", "Accumulated graph", 2, para_equalizer_metadata::MESH_POINTS + 2), \
                 CONTROL("frqs", "Frequency shift", U_SEMITONES, para_equalizer_metadata::PITCH), \
                 METER_GAIN("im", "Input signal meter", GAIN_AMP_P_12_DB), \
                 METER_GAIN("sm", "Output signal meter", GAIN_AMP_P_12_DB)
@@ -142,6 +144,7 @@ namespace lsp
         #define EQ_STEREO_PORTS \
                 PAN_CTL("bal", "Output balance", 0.0f), \
                 MESH("ag", "Amplitude graph", 2, para_equalizer_metadata::MESH_POINTS), \
+                MESH("mg", "Accumulated graph", 2, para_equalizer_metadata::MESH_POINTS + 2), \
                 CONTROL("frqs", "Frequency shift", U_SEMITONES, para_equalizer_metadata::PITCH), \
                 METER_GAIN("iml", "Input signal meter Left", GAIN_AMP_P_12_DB), \
                 METER_GAIN("sml", "Output signal meter Left", GAIN_AMP_P_12_DB), \

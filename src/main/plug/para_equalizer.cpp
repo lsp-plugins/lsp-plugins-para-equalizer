@@ -77,11 +77,14 @@ namespace lsp
             nMode           = mode;
             vChannels       = NULL;
             vFreqs          = NULL;
+            vMaxValues      = NULL;
+            vTmpValues      = NULL;
             vIndexes        = NULL;
             fGainIn         = 1.0f;
             fZoom           = 1.0f;
             bListen         = false;
             bSmoothMode     = false;
+            bAccumEnabled   = false;
             nFftPosition    = FFTP_BOTH;
             pIDisplay       = NULL;
 
@@ -90,7 +93,8 @@ namespace lsp
             pGainOut        = NULL;
             pFftSpeed       = NULL;
             pFftEnv         = NULL;
-            pReactivity     = NULL;
+            pAccum          = NULL;
+            pResetAccum     = NULL;
             pListen         = NULL;
             pShiftGain      = NULL;
             pZoom           = NULL;
@@ -444,7 +448,7 @@ namespace lsp
 
             // Calculate amount of bulk data to allocate
             size_t allocate     = (2 * meta::para_equalizer_metadata::MESH_POINTS * (nFilters + 2) + EQ_BUFFER_SIZE * 3) * channels +
-                                  meta::para_equalizer_metadata::MESH_POINTS;
+                                  meta::para_equalizer_metadata::MESH_POINTS * 3;
             float *abuf         = new float[allocate];
             if (abuf == NULL)
                 return;
@@ -455,6 +459,13 @@ namespace lsp
 
             // Frequency list buffer
             vFreqs              = abuf;
+            abuf               += meta::para_equalizer_metadata::MESH_POINTS;
+
+            // Max values buffer
+            vMaxValues          = abuf;
+            abuf               += meta::para_equalizer_metadata::MESH_POINTS;
+
+            vTmpValues          = abuf;
             abuf               += meta::para_equalizer_metadata::MESH_POINTS;
 
             // Initialize each channel
@@ -483,6 +494,7 @@ namespace lsp
                 c->pOut             = NULL;
                 c->pInGain          = NULL;
                 c->pTrAmp           = NULL;
+                c->pTrMax           = NULL;
                 c->pPitch           = NULL;
                 c->pFft             = NULL;
                 c->pFftInSwitch     = NULL;
@@ -560,7 +572,7 @@ namespace lsp
             size_t port_id          = 0;
 
             #define BIND_PORT(name) name = ports[port_id++]; lsp_trace("Binding port %s to %s", name->metadata()->id, #name)
-            #define SKIP_PORT(name) lsp_trace("Skipping port %s (%s)", ports[port_id++]->metadata()->id, #name)
+            #define SKIP_PORT(name) lsp_trace("Skipping port %s (%s)", ports[port_id]->metadata()->id, #name); ++port_id
 
             // Bind audio ports
             lsp_trace("Binding audio ports");
@@ -583,7 +595,8 @@ namespace lsp
             BIND_PORT(pFftMode);
             BIND_PORT(pFftSpeed);
             BIND_PORT(pFftEnv);
-            BIND_PORT(pReactivity);
+            BIND_PORT(pAccum);
+            BIND_PORT(pResetAccum);
             BIND_PORT(pShiftGain);
             BIND_PORT(pZoom);
             BIND_PORT(pInspect);
@@ -618,11 +631,13 @@ namespace lsp
                 if ((nMode == EQ_STEREO) && (i > 0))
                 {
                     vChannels[i].pTrAmp     = NULL;
+                    vChannels[i].pTrMax     = NULL;
                     vChannels[i].pPitch     = vChannels[i-1].pPitch;
                 }
                 else
                 {
                     BIND_PORT(vChannels[i].pTrAmp);
+                    BIND_PORT(vChannels[i].pTrMax);
                     BIND_PORT(vChannels[i].pPitch);
                 }
                 BIND_PORT(vChannels[i].pInMeter);
@@ -822,6 +837,10 @@ namespace lsp
                 bal[1]         *= out_gain;
             }
 
+            if (pResetAccum->value() >= 0.5f)
+                dsp::fill_zero(vMaxValues, meta::para_equalizer_metadata::MESH_POINTS);
+
+
             // Listen
             if (pListen != NULL)
                 bListen     = pListen->value() >= 0.5f;
@@ -871,7 +890,6 @@ namespace lsp
             // Update reactivity
             sAnalyzer.set_activity(n_an_channels > 0);
             sAnalyzer.set_envelope(pFftEnv->value());
-            // sAnalyzer.set_reactivity(pReactivity->value());
 
             fft_speed_t speed = fft_speed_t(pFftSpeed->value());
 
@@ -888,7 +906,6 @@ namespace lsp
                     break;
             }
 
-            // sAnalyzer.set_reactivity(pReactivity->value());
 
             // Update shift gain
             if (pShiftGain != NULL)
@@ -929,6 +946,7 @@ namespace lsp
             bool bypass                     = pBypass->value() >= 0.5f;
             bool mode_changed               = false;
             bSmoothMode                     = false;
+            bAccumEnabled                   = pAccum->value() >= 0.5f;
 
             // For each channel
             for (size_t i=0; i<channels; ++i)
@@ -1191,6 +1209,15 @@ namespace lsp
 
             // Perform FFT analysis
             sAnalyzer.process(bufs, samples);
+
+            if (bAccumEnabled)
+            {
+                for (size_t i=0; i < channels; ++i)
+                {
+                    sAnalyzer.get_spectrum(i*2 + 1, vTmpValues, vIndexes, meta::para_equalizer_metadata::MESH_POINTS);
+                    dsp::pmax2(vMaxValues, vTmpValues, meta::para_equalizer_metadata::MESH_POINTS);
+                }
+            }
         }
 
         void para_equalizer::process_channel(eq_channel_t *c, size_t start, size_t samples)
@@ -1468,6 +1495,33 @@ namespace lsp
                     if (pWrapper != NULL)
                         pWrapper->query_display_draw();
                 }
+
+                // Output accumulated curve
+                if ((c->pTrMax != NULL) && bAccumEnabled)
+                {
+                    // Sync mesh
+                    plug::mesh_t *mesh  = c->pTrMax->buffer<plug::mesh_t>();
+                    if ((mesh != NULL) && (mesh->isEmpty()))
+                    {
+                        float *f = mesh->pvData[0];
+                        float *a = mesh->pvData[1];
+
+                        dsp::copy(&f[1], vFreqs, meta::para_equalizer_metadata::MESH_POINTS);
+                        dsp::copy(&a[1], vMaxValues, meta::para_equalizer_metadata::MESH_POINTS);
+
+                        f[0]    = f[1];
+                        f[meta::para_equalizer_metadata::MESH_POINTS + 1] = f[meta::para_equalizer_metadata::MESH_POINTS];
+
+                        a[0]    = 0.0f;
+                        a[meta::para_equalizer_metadata::MESH_POINTS + 1] = 0.0f;
+
+                        mesh->data(2, meta::para_equalizer_metadata::MESH_POINTS + 2);
+                    }
+
+                    // Request for redraw
+                    if (pWrapper != NULL)
+                        pWrapper->query_display_draw();
+                }
             }
 
             // Reset smooth mode
@@ -1654,6 +1708,7 @@ namespace lsp
                 v->write("pOut", c->pOut);
                 v->write("pInGain", c->pInGain);
                 v->write("pTrAmp", c->pTrAmp);
+                v->write("pTrMax", c->pTrMax);
                 v->write("pPitch", c->pPitch);
                 v->write("pFft", c->pFft);
                 v->write("pFftInSwitch", c->pFftInSwitch);
@@ -1695,7 +1750,8 @@ namespace lsp
             v->write("pGainOut", pGainOut);
             v->write("pFftSpeed", pFftSpeed);
             v->write("pFftSpeed", pFftEnv);
-            v->write("pReactivity", pReactivity);
+            v->write("pAccum", pAccum);
+            v->write("pResetAccum", pResetAccum);
             v->write("pListen", pListen);
             v->write("pShiftGain", pShiftGain);
             v->write("pZoom", pZoom);

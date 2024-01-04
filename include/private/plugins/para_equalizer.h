@@ -124,6 +124,7 @@ namespace lsp
                     plug::IPort        *pOut;           // Output port
                     plug::IPort        *pInGain;        // Input gain
                     plug::IPort        *pTrAmp;         // Amplitude chart
+                    plug::IPort        *pTrMax;         // Accumulated chart
                     plug::IPort        *pPitch;         // Frequency shift
                     plug::IPort        *pFft;           // FFT input/output switch
                     plug::IPort        *pFftInSwitch;   // FFT input switch
@@ -141,11 +142,14 @@ namespace lsp
                 uint32_t            nMode;                  // Operating mode
                 eq_channel_t       *vChannels;              // List of channels
                 float              *vFreqs;                 // Frequency list
+                float              *vMaxValues;             // Maximum values (for accumulation)
+                float              *vTmpValues;             // Temporary values (for accumulation)
                 uint32_t           *vIndexes;               // FFT indexes
                 float               fGainIn;                // Input gain
                 float               fZoom;                  // Zoom gain
                 bool                bListen;                // Listen mode (only for MS para_equalizer)
                 bool                bSmoothMode;            // Smooth mode for the equalizer
+                bool                bAccumEnabled;          // Accumulation enabled
                 core::IDBuffer     *pIDisplay;              // Inline display buffer
                 fft_position_t      nFftPosition;           // FFT input/output switch
 
@@ -155,7 +159,8 @@ namespace lsp
                 plug::IPort        *pFftMode;               // FFT mode
                 plug::IPort        *pFftSpeed;              // FFT mode
                 plug::IPort        *pFftEnv;                // FFT envelope (tilt)
-                plug::IPort        *pReactivity;            // FFT reactivity
+                plug::IPort        *pAccum;                 // FFT accumulation (max values)
+                plug::IPort        *pResetAccum;            // Reset FFT accumulation (max values)
                 plug::IPort        *pListen;                // Listen mode (only for MS equalizer)
                 plug::IPort        *pShiftGain;             // Shift gain
                 plug::IPort        *pZoom;                  // Graph zoom
