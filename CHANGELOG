@@ -4,6 +4,7 @@
 
 === 1.0.22 ===
 * Implemented Bypass::process_wet method for better performance.
+* Updated build scripts and dependencies.
 
 === 1.0.21 ===
 * Implemented separate input and output signal spectrum analysis.
