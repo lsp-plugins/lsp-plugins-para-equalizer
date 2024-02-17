@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-para-equalizer
  * Created on: 2 авг. 2021 г.
@@ -122,7 +122,7 @@ namespace lsp
             do_destroy();
         }
 
-        inline void para_equalizer::decode_filter(size_t *ftype, size_t *slope, size_t mode)
+        inline void para_equalizer::decode_filter(uint32_t *ftype, uint32_t *slope, size_t mode)
         {
             #define EQF(x) meta::para_equalizer_metadata::EQF_ ## x
             #define EQS(k, t, ks) case meta::para_equalizer_metadata::EFM_ ## k:    \

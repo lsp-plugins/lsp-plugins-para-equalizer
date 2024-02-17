@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-para-equalizer
  * Created on: 2 авг. 2021 г.
@@ -149,7 +149,7 @@ namespace lsp
 
             protected:
                 static inline dspu::equalizer_mode_t get_eq_mode(ssize_t mode);
-                static inline void  decode_filter(size_t *ftype, size_t *slope, size_t mode);
+                static inline void  decode_filter(uint32_t *ftype, uint32_t *slope, size_t mode);
                 static inline bool  adjust_gain(size_t filter_type);
                 static bool         filter_inspect_can_be_enabled(eq_channel_t *c, eq_filter_t *f);
                 static bool         filter_has_width(size_t type);
