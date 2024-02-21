@@ -69,7 +69,7 @@
 						<ui:with pointer="drag" color="graph_marker_cycle" hover.color="graph_marker_cycle" bcolor="graph_marker_cycle" hover.bcolor="graph_marker_cycle" x.editable="true" y.editable="true" z.editable="true">
 							<dot
 								ui:id="filter_dot_${i}"
-								x.id="f_${i}" y.id="g_${i}" z.id="q_${i}" 
+								x.id="f_${i}" y.id="g_${i}" z.id="q_${i}"
 								size="1 + 2*:_ui_filter_point_thickness"
 								hover.size="1 + 2*:_ui_filter_point_thickness"
 								color.hue=":hue_${i}"
@@ -114,7 +114,7 @@
 					<ui:with x="10" halign="1" pgroup="0" priority="10">
 						<text y="0 db" text="0" valign="1" priority="0" />
 						<text y="1" ox="0" oy="2" text="graph.units.db" valign="-1" priority="0" />
-						
+
 						<ui:for id="g" counter="i" list="+36;+24;+12;-12;-24;-36">
 							<text y="${g} db" text="${g}" valign="-1" />
 						</ui:for>
@@ -245,7 +245,7 @@
 		</vbox>
 
 		<cell cols="3">
-			<cgroup id="fsel">
+			<cgroup id="fsel" pointer="${(:num_filters igt 8) ? 'hand' : 'arrow'}">
 				<!-- 4 blocks of filters -->
 				<ui:for id="f" first="0" last=":num_blocks - 1">
 					<grid ui:group="filters" transpose="true" rows="9" cols="25" spacing="0">
