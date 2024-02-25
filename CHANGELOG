@@ -3,6 +3,7 @@
 *******************************************************************************
 
 === 1.0.22 ===
+* Fixed bug in smoothing mode when parameters of filters change.
 * Implemented Bypass::process_wet method for better performance.
 * Updated build scripts and dependencies.
 
