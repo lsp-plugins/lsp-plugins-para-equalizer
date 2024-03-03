@@ -153,7 +153,7 @@
 		<!-- Zoom Fader -->
 		<hbox spacing="4" bg.color="bg">
 			<vbox vexpand="true" bg.color="bg_schema">
-				<label font.name="lsp-icons" font.size="12" font.antialias="true" text="E" color="text_icon" pad.b="4" pad.t="4"/>
+				<label font.name="lsp-icons" font.size="12" font.antialias="true" text="icons.main.zoom" color="text_icon" pad.b="4" pad.t="4"/>
 				<fader id="zoom" angle="1" vexpand="true" bg.inherit="true" flat="true"/>
 				<value id="zoom" width="40"/>
 			</vbox>
