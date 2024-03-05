@@ -2,6 +2,9 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.23 ===
+
+
 === 1.0.22 ===
 * Fixed bug in smoothing mode when parameters of filters change.
 * Implemented Bypass::process_wet method for better performance.
