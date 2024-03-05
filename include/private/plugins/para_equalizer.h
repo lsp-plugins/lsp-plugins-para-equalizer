@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-para-equalizer
  * Created on: 2 авг. 2021 г.
@@ -67,7 +67,7 @@ namespace lsp
                 {
                     float              *vTrRe;          // Transfer function (real part)
                     float              *vTrIm;          // Transfer function (imaginary part)
-                    size_t              nSync;          // Chart state
+                    uint32_t            nSync;          // Chart state
                     bool                bSolo;          // Soloing filter
                     dspu::filter_params_t sOldFP;       // Old filter parameters
                     dspu::filter_params_t sFP;          // Filter parameters
@@ -91,17 +91,18 @@ namespace lsp
                     dspu::Bypass        sBypass;        // Bypass
                     dspu::Delay         sDryDelay;      // Dry delay
 
-                    size_t              nLatency;       // Latency of the channel
+                    uint32_t            nLatency;       // Latency of the channel
                     float               fInGain;        // Input gain
                     float               fOutGain;       // Output gain
                     float               fPitch;         // Frequency shift
                     eq_filter_t        *vFilters;       // List of filters
                     float              *vDryBuf;        // Dry buffer
-                    float              *vBuffer;        // Buffer for temporary data
+                    float              *vInBuffer;      // Input buffer (input signal passed to analyzer)
+                    float              *vOutBuffer;     // Output buffer
                     float              *vIn;            // Input buffer
                     float              *vOut;           // Output buffer
-                    float              *vAnalyzer;      // Buffer for analyzer
-                    size_t              nSync;          // Chart state
+                    float              *vInPtr;         // Actual pointer to input data (for eliminatioon of unnecessary memory copies)
+                    uint32_t            nSync;          // Chart state
                     bool                bHasSolo;       // Channel has soloing filter
 
                     float              *vTrRe;          // Transfer function (real part)
@@ -123,8 +124,8 @@ namespace lsp
 
             protected:
                 dspu::Analyzer      sAnalyzer;              // Analyzer
-                size_t              nFilters;               // Number of filters
-                size_t              nMode;                  // Operating mode
+                uint32_t            nFilters;               // Number of filters
+                uint32_t            nMode;                  // Operating mode
                 eq_channel_t       *vChannels;              // List of channels
                 float              *vFreqs;                 // Frequency list
                 uint32_t           *vIndexes;               // FFT indexes
@@ -148,7 +149,7 @@ namespace lsp
 
             protected:
                 static inline dspu::equalizer_mode_t get_eq_mode(ssize_t mode);
-                static inline void  decode_filter(size_t *ftype, size_t *slope, size_t mode);
+                static inline void  decode_filter(uint32_t *ftype, uint32_t *slope, size_t mode);
                 static inline bool  adjust_gain(size_t filter_type);
                 static bool         filter_inspect_can_be_enabled(eq_channel_t *c, eq_filter_t *f);
                 static bool         filter_has_width(size_t type);
@@ -156,7 +157,7 @@ namespace lsp
             protected:
                 void                do_destroy();
                 void                perform_analysis(size_t samples);
-                void                process_channel(eq_channel_t *c, size_t start, size_t samples);
+                void                process_channel(eq_channel_t *c, size_t start, size_t samples, size_t total_samples);
 
                 void                dump_channel(dspu::IStateDumper *v, const eq_channel_t *c) const;
                 static void         dump_filter(dspu::IStateDumper *v, const eq_filter_t *f);

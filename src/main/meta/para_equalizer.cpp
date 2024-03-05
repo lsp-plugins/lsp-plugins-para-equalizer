@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-para-equalizer
  * Created on: 2 авг. 2021 г.
@@ -25,7 +25,7 @@
 
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MAJOR         1
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MINOR         0
-#define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MICRO         21
+#define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MICRO         22
 
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION  \
     LSP_MODULE_VERSION( \
@@ -186,9 +186,9 @@ namespace lsp
                 SWITCH("xm" id "_" #x, "Filter mute " label #x, 0.0f), \
                 LOG_CONTROL_DFL("f" id "_" #x, "Frequency " label #x, U_HZ, para_equalizer_metadata::FREQ, f), \
                 CONTROL("w" id "_" #x, "Filter Width " label #x, U_OCTAVES, para_equalizer_metadata::WIDTH), \
-                { "g" id "_" #x, "Gain " label # x, U_GAIN_AMP, R_CONTROL, F_IN | F_LOG | F_UPPER | F_LOWER | F_STEP, GAIN_AMP_M_36_DB, GAIN_AMP_P_36_DB, GAIN_AMP_0_DB, 0.01, NULL, NULL }, \
-                { "q" id "_" #x, "Quality factor " label #x, U_NONE, R_CONTROL, F_IN | F_UPPER | F_LOWER | F_STEP, 0.0f, 100.0f, 0.0f, 0.025f, NULL        }, \
-                { "hue" id "_" #x, "Hue " label #x, U_NONE, R_CONTROL, F_IN | F_UPPER | F_LOWER | F_STEP | F_CYCLIC, 0.0f, 1.0f, (float(x) / float(total)), 0.25f/360.0f, NULL     }, \
+                { "g" id "_" #x, "Gain " label # x, U_GAIN_AMP, R_CONTROL, F_LOG | F_UPPER | F_LOWER | F_STEP, GAIN_AMP_M_36_DB, GAIN_AMP_P_36_DB, GAIN_AMP_0_DB, 0.01, NULL, NULL }, \
+                { "q" id "_" #x, "Quality factor " label #x, U_NONE, R_CONTROL, F_UPPER | F_LOWER | F_STEP, 0.0f, 100.0f, 0.0f, 0.025f, NULL        }, \
+                { "hue" id "_" #x, "Hue " label #x, U_NONE, R_CONTROL, F_UPPER | F_LOWER | F_STEP | F_CYCLIC, 0.0f, 1.0f, (float(x) / float(total)), 0.25f/360.0f, NULL     }, \
                 BLINK("fv" id "_" #x, "Filter visibility " label #x), \
                 MESH("agf" id "_" #x, "Amplitude graph " label #x, 2, para_equalizer_metadata::FILTER_MESH_POINTS)
 
@@ -633,6 +633,8 @@ namespace lsp
             LSP_LV2_URI("para_equalizer_x8_mono"),
             LSP_LV2UI_URI("para_equalizer_x8_mono"),
             "dh38",
+            LSP_VST3_UID("pe8m    dh38"),
+            LSP_VST3UI_UID("pe8m    dh38"),
             LSP_LADSPA_PARA_EQUALIZER_X8 + 0,
             LSP_LADSPA_URI("para_equalizer_x8_mono"),
             LSP_CLAP_URI("para_equalizer_x8_mono"),
@@ -658,6 +660,8 @@ namespace lsp
             LSP_LV2_URI("para_equalizer_x16_mono"),
             LSP_LV2UI_URI("para_equalizer_x16_mono"),
             "dh3y",
+            LSP_VST3_UID("pe16m   dh3y"),
+            LSP_VST3UI_UID("pe16m   dh3y"),
             LSP_LADSPA_PARA_EQUALIZER_BASE + 0,
             LSP_LADSPA_URI("para_equalizer_x16_mono"),
             LSP_CLAP_URI("para_equalizer_x16_mono"),
@@ -683,6 +687,8 @@ namespace lsp
             LSP_LV2_URI("para_equalizer_x32_mono"),
             LSP_LV2UI_URI("para_equalizer_x32_mono"),
             "i0px",
+            LSP_VST3_UID("pe32m   i0px"),
+            LSP_VST3UI_UID("pe32m   i0px"),
             LSP_LADSPA_PARA_EQUALIZER_BASE + 1,
             LSP_LADSPA_URI("para_equalizer_x32_mono"),
             LSP_CLAP_URI("para_equalizer_x32_mono"),
@@ -708,6 +714,8 @@ namespace lsp
             LSP_LV2_URI("para_equalizer_x8_stereo"),
             LSP_LV2UI_URI("para_equalizer_x8_stereo"),
             "a5e8",
+            LSP_VST3_UID("pe8s    a5e8"),
+            LSP_VST3UI_UID("pe8s    a5e8"),
             LSP_LADSPA_PARA_EQUALIZER_X8 + 1,
             LSP_LADSPA_URI("para_equalizer_x8_stereo"),
             LSP_CLAP_URI("para_equalizer_x8_stereo"),
@@ -733,6 +741,8 @@ namespace lsp
             LSP_LV2_URI("para_equalizer_x16_stereo"),
             LSP_LV2UI_URI("para_equalizer_x16_stereo"),
             "a5er",
+            LSP_VST3_UID("pe16s   a5er"),
+            LSP_VST3UI_UID("pe16s   a5er"),
             LSP_LADSPA_PARA_EQUALIZER_BASE + 2,
             LSP_LADSPA_URI("para_equalizer_x16_stereo"),
             LSP_CLAP_URI("para_equalizer_x16_stereo"),
@@ -758,6 +768,8 @@ namespace lsp
             LSP_LV2_URI("para_equalizer_x32_stereo"),
             LSP_LV2UI_URI("para_equalizer_x32_stereo"),
             "s2nz",
+            LSP_VST3_UID("pe32s   s2nz"),
+            LSP_VST3UI_UID("pe32s   s2nz"),
             LSP_LADSPA_PARA_EQUALIZER_BASE + 3,
             LSP_LADSPA_URI("para_equalizer_x32_stereo"),
             LSP_CLAP_URI("para_equalizer_x32_stereo"),
@@ -783,6 +795,8 @@ namespace lsp
             LSP_LV2_URI("para_equalizer_x8_lr"),
             LSP_LV2UI_URI("para_equalizer_x8_lr"),
             "4ke8",
+            LSP_VST3_UID("pe8lr   4ke8"),
+            LSP_VST3UI_UID("pe8lr   4ke8"),
             LSP_LADSPA_PARA_EQUALIZER_X8 + 2,
             LSP_LADSPA_URI("para_equalizer_x8_lr"),
             LSP_CLAP_URI("para_equalizer_x8_lr"),
@@ -808,6 +822,8 @@ namespace lsp
             LSP_LV2_URI("para_equalizer_x16_lr"),
             LSP_LV2UI_URI("para_equalizer_x16_lr"),
             "4kef",
+            LSP_VST3_UID("pe16lr  4kef"),
+            LSP_VST3UI_UID("pe16lr  4kef"),
             LSP_LADSPA_PARA_EQUALIZER_BASE + 4,
             LSP_LADSPA_URI("para_equalizer_x16_lr"),
             LSP_CLAP_URI("para_equalizer_x16_lr"),
@@ -833,6 +849,8 @@ namespace lsp
             LSP_LV2_URI("para_equalizer_x32_lr"),
             LSP_LV2UI_URI("para_equalizer_x32_lr"),
             "ilqj",
+            LSP_VST3_UID("pe32lr  ilqj"),
+            LSP_VST3UI_UID("pe32lr  ilqj"),
             LSP_LADSPA_PARA_EQUALIZER_BASE + 5,
             LSP_LADSPA_URI("para_equalizer_x32_lr"),
             LSP_CLAP_URI("para_equalizer_x32_lr"),
@@ -858,6 +876,8 @@ namespace lsp
             LSP_LV2_URI("para_equalizer_x8_ms"),
             LSP_LV2UI_URI("para_equalizer_x8_ms"),
             "opj8",
+            LSP_VST3_UID("pe8ms   opj8"),
+            LSP_VST3UI_UID("pe8ms   opj8"),
             LSP_LADSPA_PARA_EQUALIZER_X8 + 3,
             LSP_LADSPA_URI("para_equalizer_x8_ms"),
             LSP_CLAP_URI("para_equalizer_x8_ms"),
@@ -883,6 +903,8 @@ namespace lsp
             LSP_LV2_URI("para_equalizer_x16_ms"),
             LSP_LV2UI_URI("para_equalizer_x16_ms"),
             "opjs",
+            LSP_VST3_UID("pe16ms  opjs"),
+            LSP_VST3UI_UID("pe16ms  opjs"),
             LSP_LADSPA_PARA_EQUALIZER_BASE + 6,
             LSP_LADSPA_URI("para_equalizer_x16_ms"),
             LSP_CLAP_URI("para_equalizer_x16_ms"),
@@ -908,6 +930,8 @@ namespace lsp
             LSP_LV2_URI("para_equalizer_x32_ms"),
             LSP_LV2UI_URI("para_equalizer_x32_ms"),
             "lgz9",
+            LSP_VST3_UID("pe32ms  lgz9"),
+            LSP_VST3UI_UID("pe32ms  lgz9"),
             LSP_LADSPA_PARA_EQUALIZER_BASE + 7,
             LSP_LADSPA_URI("para_equalizer_x32_ms"),
             LSP_CLAP_URI("para_equalizer_x32_ms"),
