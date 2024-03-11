@@ -1,6 +1,6 @@
 #
-# Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
-#           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+# Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+#           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
 #
 # This file is part of lsp-plugins-para-equalizer
 #
@@ -61,3 +61,10 @@ vmajor                  = $(shell echo "$(strip $1)" | sed -E 's/([0-9]+)\.([0-9
 vminor                  = $(shell echo "$(strip $1)" | sed -E 's/([0-9]+)\.([0-9]+)\.([0-9]+)(-(.*))?/\2/')
 vmicro                  = $(shell echo "$(strip $1)" | sed -E 's/([0-9]+)\.([0-9]+)\.([0-9]+)(-(.*))?/\3/')
 vbranch                 = $(shell echo "$(strip $1)" | sed -E 's/([0-9]+)\.([0-9]+)\.([0-9]+)(-(.*))?/\5/')
+
+ifeq ("$(MSYSTEM)","")
+  pathconv                = $1
+else
+  pathconv                = $(shell cygpath -w "$1")
+endif
+

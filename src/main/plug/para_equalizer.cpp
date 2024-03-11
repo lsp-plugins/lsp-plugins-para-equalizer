@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-para-equalizer
  * Created on: 2 авг. 2021 г.
@@ -30,13 +30,14 @@
 
 #include <private/plugins/para_equalizer.h>
 
-#define EQ_BUFFER_SIZE          0x400U
-#define EQ_RANK                 12
-
 namespace lsp
 {
     namespace plugins
     {
+        constexpr static size_t EQ_BUFFER_SIZE      = 0x400U;
+        constexpr static size_t EQ_RANK             = 12;
+        constexpr static size_t EQ_SMOOTH_STEP      = 32;
+
         //-------------------------------------------------------------------------
         // Plugin factory
         typedef struct plugin_settings_t
@@ -109,7 +110,7 @@ namespace lsp
             do_destroy();
         }
 
-        inline void para_equalizer::decode_filter(size_t *ftype, size_t *slope, size_t mode)
+        inline void para_equalizer::decode_filter(uint32_t *ftype, uint32_t *slope, size_t mode)
         {
             #define EQF(x) meta::para_equalizer_metadata::EQF_ ## x
             #define EQS(k, t, ks) case meta::para_equalizer_metadata::EFM_ ## k:    \
@@ -1217,35 +1218,38 @@ namespace lsp
             }
         }
 
-        void para_equalizer::process_channel(eq_channel_t *c, size_t start, size_t samples)
+        void para_equalizer::process_channel(eq_channel_t *c, size_t start, size_t samples, size_t total_samples)
         {
             // Process the signal by the equalizer
             if (bSmoothMode)
             {
-                float den   = 1.0f / samples;
+                dspu::filter_params_t fp;
+                const float den   = 1.0f / total_samples;
 
                 // In smooth mode, we need to update filter parameters for each sample
-                for (size_t offset=0; offset<samples; ++offset)
+                for (size_t offset=0; offset<samples; )
                 {
-                    // Tune the filters
-                    float k                     = float(start + offset) * den;
+                    const size_t count          = lsp_min(samples - offset, EQ_SMOOTH_STEP);
+                    const float k               = float(start + offset) * den;
+
+                    // Tune filters
                     for (size_t j=0; j<=nFilters; ++j)
                     {
                         eq_filter_t *f              = &c->vFilters[j];
-                        dspu::filter_params_t fp;
 
                         fp.nType                    = f->sFP.nType;
-                        fp.fFreq                    = f->sOldFP.fFreq * expf(logf(f->sFP.fFreq/f->sOldFP.fFreq)*k);
-                        fp.fFreq2                   = f->sOldFP.fFreq2 * expf(logf(f->sFP.fFreq2/f->sOldFP.fFreq2)*k);
+                        fp.fFreq                    = f->sOldFP.fFreq * expf(logf(f->sFP.fFreq / f->sOldFP.fFreq)*k);
+                        fp.fFreq2                   = f->sOldFP.fFreq2 * expf(logf(f->sFP.fFreq2 / f->sOldFP.fFreq2)*k);
                         fp.nSlope                   = f->sFP.nSlope;
-                        fp.fGain                    = f->sOldFP.fGain * expf(logf(f->sFP.fGain/f->sOldFP.fGain)*k);
-                        fp.fQuality                 = f->sOldFP.fQuality + (f->sFP.fQuality -f->sOldFP.fQuality)*k;
+                        fp.fGain                    = f->sOldFP.fGain * expf(logf(f->sFP.fGain / f->sOldFP.fGain)*k);
+                        fp.fQuality                 = f->sOldFP.fQuality + (f->sFP.fQuality - f->sOldFP.fQuality)*k;
 
                         c->sEqualizer.set_params(j, &fp);
                     }
 
                     // Apply processing
-                    c->sEqualizer.process(&c->vOutBuffer[offset], &c->vInPtr[offset], 1);
+                    c->sEqualizer.process(&c->vOutBuffer[offset], &c->vInPtr[offset], count);
+                    offset                     += count;
                 }
             }
             else
@@ -1335,7 +1339,7 @@ namespace lsp
 
                 // Process each channel individually
                 for (size_t i=0; i<channels; ++i)
-                    process_channel(&vChannels[i], offset, to_process);
+                    process_channel(&vChannels[i], offset, to_process, samples);
 
                 // Call analyzer
                 perform_analysis(to_process);

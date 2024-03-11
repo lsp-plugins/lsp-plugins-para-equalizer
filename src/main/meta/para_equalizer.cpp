@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-para-equalizer
  * Created on: 2 авг. 2021 г.
@@ -25,7 +25,7 @@
 
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MAJOR         1
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MINOR         0
-#define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MICRO         22
+#define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MICRO         23
 
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION  \
     LSP_MODULE_VERSION( \
@@ -109,9 +109,9 @@ namespace lsp
                 SWITCH("xm" id "_" #x, "Filter mute " label #x, 0.0f), \
                 LOG_CONTROL_DFL("f" id "_" #x, "Frequency " label #x, U_HZ, para_equalizer_metadata::FREQ, f), \
                 CONTROL("w" id "_" #x, "Filter Width " label #x, U_OCTAVES, para_equalizer_metadata::WIDTH), \
-                { "g" id "_" #x, "Gain " label # x, U_GAIN_AMP, R_CONTROL, F_IN | F_LOG | F_UPPER | F_LOWER | F_STEP, GAIN_AMP_M_36_DB, GAIN_AMP_P_36_DB, GAIN_AMP_0_DB, 0.01, NULL, NULL }, \
-                { "q" id "_" #x, "Quality factor " label #x, U_NONE, R_CONTROL, F_IN | F_UPPER | F_LOWER | F_STEP, 0.0f, 100.0f, 0.0f, 0.025f, NULL        }, \
-                { "hue" id "_" #x, "Hue " label #x, U_NONE, R_CONTROL, F_IN | F_UPPER | F_LOWER | F_STEP | F_CYCLIC, 0.0f, 1.0f, (float(x) / float(8)), 0.25f/360.0f, NULL     }, \
+                { "g" id "_" #x, "Gain " label # x, U_GAIN_AMP, R_CONTROL, F_LOG | F_UPPER | F_LOWER | F_STEP, GAIN_AMP_M_36_DB, GAIN_AMP_P_36_DB, GAIN_AMP_0_DB, 0.01, NULL, NULL }, \
+                { "q" id "_" #x, "Quality factor " label #x, U_NONE, R_CONTROL, F_UPPER | F_LOWER | F_STEP, 0.0f, 100.0f, 0.0f, 0.025f, NULL        }, \
+                { "hue" id "_" #x, "Hue " label #x, U_NONE, R_CONTROL, F_UPPER | F_LOWER | F_STEP | F_CYCLIC, 0.0f, 1.0f, (float(x) / float(total)), 0.25f/360.0f, NULL     }, \
                 BLINK("fv" id "_" #x, "Filter visibility " label #x), \
                 MESH("agf" id "_" #x, "Amplitude graph " label #x, 2, para_equalizer_metadata::FILTER_MESH_POINTS)
 
@@ -257,12 +257,14 @@ namespace lsp
             "LSP EQ (Mono)",
             "EQ (Mono)",
             "LSP EQ (Mono)",
-            "PE32M",
+            "EQM",
             &developers::v_sadovnikov,
             "eq_mono",
             LSP_LV2_URI("eq_mono"),
             LSP_LV2UI_URI("eq_mono"),
             "i0px",
+            LSP_VST3_UID("eqm   i0px"),
+            LSP_VST3UI_UID("eqm   i0px"),
             LSP_LADSPA_PARA_EQUALIZER_BASE + 1,
             LSP_LADSPA_URI("eq_mono"),
             LSP_CLAP_URI("eq_mono"),
@@ -282,12 +284,14 @@ namespace lsp
             "LSP EQ",
             "EQ",
             "LSP EQ",
-            "PE32S",
+            "EQS",
             &developers::v_sadovnikov,
             "eq_stereo",
             LSP_LV2_URI("eq_stereo"),
             LSP_LV2UI_URI("eq_stereo"),
             "s2nz",
+            LSP_VST3_UID("eqs   s2nz"),
+            LSP_VST3UI_UID("eqs   s2nz"),
             LSP_LADSPA_PARA_EQUALIZER_BASE + 3,
             LSP_LADSPA_URI("eq_stereo"),
             LSP_CLAP_URI("eq_stereo"),
