@@ -110,6 +110,7 @@ namespace lsp
             pCurrentFilter  = NULL;
             pRewImport      = NULL;
             wGraph          = NULL;
+            wCurve          = NULL;
             wInspectReset   = NULL;
             fmtStrings      = fmt_strings;
             nSplitChannels  = 1;
@@ -276,6 +277,22 @@ namespace lsp
 
             ws::event_t *ev = static_cast<ws::event_t *>(data);
             _this->on_graph_mouse_out(ev->nLeft, ev->nTop);
+
+            return STATUS_OK;
+        }
+
+        status_t para_equalizer_ui::slot_curve_mouse_down(tk::Widget *sender, void *ptr, void *data)
+        {
+            lsp_trace("para_equalizer_ui::slot_curve_mouse_down");
+            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+            if (_this == NULL)
+                return STATUS_BAD_STATE;
+
+            lsp_trace("para_equalizer_ui::slot_curve_mouse_down: _this=%p", _this);
+
+            ws::event_t *ev = static_cast<ws::event_t *>(data);
+            lsp_trace("para_equalizer_ui::slot_curve_mouse_down: ev=%p", ev);
+            _this->on_curve_mouse_down(ev->nLeft, ev->nTop);
 
             return STATUS_OK;
         }
@@ -1068,6 +1085,12 @@ namespace lsp
                 nYAxisIndex         = find_axis("para_eq_oy");
             }
 
+            wCurve              = wnd->widgets()->get<tk::GraphMesh>("para_eq_curve");
+            if (wCurve != NULL)
+            {
+                wCurve->slots()->bind(tk::SLOT_MOUSE_DOWN, slot_curve_mouse_down, this);
+            }
+
             wInspectReset       = wnd->widgets()->get<tk::Button>("filter_inspect_reset");
             if (wInspectReset != NULL)
                 wInspectReset->slots()->bind(tk::SLOT_SUBMIT, slot_filter_inspect_submit, this);
@@ -1438,6 +1461,79 @@ namespace lsp
             {
                 pFutureFilterType->set_value(0.0f);
                 pFutureFilterType->notify_all(ui::PORT_USER_EDIT);
+            }
+        }
+
+        void para_equalizer_ui::on_curve_mouse_down(ssize_t x, ssize_t y)
+        {
+            lsp_trace("Curve mouse down: x=%d, y=%d", x, y);
+            if ((wGraph == NULL) || (nXAxisIndex < 0) || (nYAxisIndex < 0))
+                return;
+
+            lsp_trace("Gate passed");
+
+            float freq = 0.0f, gain = 0.0f;
+            if (wGraph->xy_to_axis(nXAxisIndex, &freq, x, y) != STATUS_OK)
+                return;
+            if (wGraph->xy_to_axis(nYAxisIndex, &gain, x, y) != STATUS_OK)
+                return;
+
+            lsp_trace("Coords passed");
+
+            lsp_trace("Double click: x=%d, y=%d, freq=%.2f, gain=%.4f (%.2f db)",
+                x, y, freq, gain, dspu::gain_to_db(gain));
+
+            // Obtain which port set (left/right/mid/side) should be updated
+            ssize_t channel     = (pSelector != NULL) ? size_t(pSelector->value()) % nSplitChannels : 0;
+            if (channel < 0)
+            {
+                lsp_trace("Could not allocate channel");
+                return;
+            }
+
+            // Allocate new port index
+            ssize_t fid         = -1;
+            for (size_t i=0; i<32; ++i)
+            {
+                ssize_t type = get_filter_type(i, channel);
+                if (type == meta::para_equalizer_metadata::EQF_OFF)
+                {
+                    fid             = i;
+                    break;
+                }
+                else if (type < 0)
+                    break;
+            }
+
+            if (fid < 0)
+            {
+                lsp_trace("Could not allocate new equalizer band");
+                return;
+            }
+
+            // Equalizer band has been allocated, do the stuff
+            size_t mask         = 1 << channel;
+
+            // Set-up parameters
+            size_t filter_type = get_future_filter_type(freq);
+
+            float filter_quality = (filter_type == meta::para_equalizer_metadata::EQF_BELL) ? 2.0f : 0.5f;
+
+            // Set-up filter type
+            set_filter_mode(fid, mask, meta::para_equalizer_metadata::EFM_RLC_BT);
+            set_filter_type(fid, mask, filter_type);
+            set_filter_frequency(fid, mask, freq);
+            set_filter_slope(fid, mask, 1);
+            set_filter_gain(fid, mask, gain);
+            set_filter_quality(fid, mask, filter_quality);
+            set_filter_enabled(fid, mask, true);
+            set_filter_solo(fid, mask, false);
+
+            // Make the filter current
+            if (pCurrentFilter != NULL)
+            {
+                pCurrentFilter->set_value(fid);
+                pCurrentFilter->notify_all(ui::PORT_USER_EDIT);
             }
         }
 

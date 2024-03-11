@@ -76,6 +76,7 @@ namespace lsp
                 ui::IPort          *pFutureFilterType;  // Type of the filter to be created in this position
                 tk::FileDialog     *pRewImport;
                 tk::Graph          *wGraph;
+                tk::GraphMesh      *wCurve;             // EQ curve graph mesh
                 tk::Button         *wInspectReset;      // Inspect reset button
                 tk::Timer           sEditTimer;         // Edit timer
                 const char        **fmtStrings;
@@ -106,6 +107,7 @@ namespace lsp
                 static status_t slot_graph_dbl_click(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_graph_mouse_move(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_graph_mouse_out(tk::Widget *sender, void *ptr, void *data);
+                static status_t slot_curve_mouse_down(tk::Widget *sender, void *ptr, void *data);
 
                 static status_t slot_filter_menu_submit(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_filter_dot_click(tk::Widget *sender, void *ptr, void *data);
@@ -145,6 +147,7 @@ namespace lsp
                 void            on_graph_dbl_click(ssize_t x, ssize_t y);
                 void            on_graph_mouse_move(ssize_t x, ssize_t y);
                 void            on_graph_mouse_out(ssize_t x, ssize_t y);
+                void            on_curve_mouse_down(ssize_t x, ssize_t y);
 
                 void            on_filter_dot_right_click(tk::Widget *sender, ssize_t x, ssize_t y);
                 void            on_filter_dot_mouse_down(tk::Widget *sender, ssize_t x, ssize_t y);
