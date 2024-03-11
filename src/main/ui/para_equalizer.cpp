@@ -61,8 +61,8 @@ namespace lsp
         // Plugin UI factory
         static const meta::plugin_t *plugin_uis[] =
         {
-            &meta::para_equalizer_x32_mono,
-            &meta::para_equalizer_x32_stereo,
+            &meta::eq_mono,
+            &meta::eq_stereo,
         };
 
         static ui::Module *ui_factory(const meta::plugin_t *meta)

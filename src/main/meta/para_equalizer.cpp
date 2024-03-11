@@ -158,7 +158,7 @@ namespace lsp
             MESH("ofg" id, "Output FFT graph" label, 2, para_equalizer_metadata::MESH_POINTS)
 
 
-        static const port_t para_equalizer_x32_mono_ports[] =
+        static const port_t eq_ports[] =
         {
             PORTS_MONO_PLUGIN,
             EQ_COMMON(32),
@@ -200,7 +200,7 @@ namespace lsp
             PORTS_END
         };
 
-        static const port_t para_equalizer_x32_stereo_ports[] =
+        static const port_t eqo_ports[] =
         {
             PORTS_STEREO_PLUGIN,
             EQ_COMMON(32),
@@ -243,7 +243,7 @@ namespace lsp
             PORTS_END
         };
 
-        const meta::bundle_t para_equalizer_bundle =
+        const meta::bundle_t eq_bundle =
         {
             "para_equalizer",
             "Parametric Equalizer",
@@ -252,54 +252,54 @@ namespace lsp
             "This plugin allows one to perform parametric equalization of input signal.\nUp to 32 different filters are simultaneously available for processing."
         };
 
-        const meta::plugin_t para_equalizer_x32_mono =
+        const meta::plugin_t eq_mono =
         {
             "LSP EQ (Mono)",
             "EQ (Mono)",
             "LSP EQ (Mono)",
             "PE32M",
             &developers::v_sadovnikov,
-            "para_equalizer_x32_mono",
-            LSP_LV2_URI("para_equalizer_x32_mono"),
-            LSP_LV2UI_URI("para_equalizer_x32_mono"),
+            "eq_mono",
+            LSP_LV2_URI("eq_mono"),
+            LSP_LV2UI_URI("eq_mono"),
             "i0px",
             LSP_LADSPA_PARA_EQUALIZER_BASE + 1,
-            LSP_LADSPA_URI("para_equalizer_x32_mono"),
-            LSP_CLAP_URI("para_equalizer_x32_mono"),
+            LSP_LADSPA_URI("eq_mono"),
+            LSP_CLAP_URI("eq_mono"),
             LSP_PLUGINS_PARA_EQUALIZER_VERSION,
             plugin_classes,
             clap_features_mono,
             E_INLINE_DISPLAY | E_DUMP_STATE,
-            para_equalizer_x32_mono_ports,
+            eq_ports,
             "equalizer/parametric/stereo.xml",
             "equalizer/parametric/stereo",
             mono_plugin_port_groups,
-            &para_equalizer_bundle
+            &eq_bundle
         };
 
-        const meta::plugin_t para_equalizer_x32_stereo =
+        const meta::plugin_t eq_stereo =
         {
             "LSP EQ",
             "EQ",
             "LSP EQ",
             "PE32S",
             &developers::v_sadovnikov,
-            "para_equalizer_x32_stereo",
-            LSP_LV2_URI("para_equalizer_x32_stereo"),
-            LSP_LV2UI_URI("para_equalizer_x32_stereo"),
+            "eq_stereo",
+            LSP_LV2_URI("eq_stereo"),
+            LSP_LV2UI_URI("eq_stereo"),
             "s2nz",
             LSP_LADSPA_PARA_EQUALIZER_BASE + 3,
-            LSP_LADSPA_URI("para_equalizer_x32_stereo"),
-            LSP_CLAP_URI("para_equalizer_x32_stereo"),
+            LSP_LADSPA_URI("eq_stereo"),
+            LSP_CLAP_URI("eq_stereo"),
             LSP_PLUGINS_PARA_EQUALIZER_VERSION,
             plugin_classes,
             clap_features_stereo,
             E_INLINE_DISPLAY | E_DUMP_STATE,
-            para_equalizer_x32_stereo_ports,
+            eqo_ports,
             "equalizer/parametric/stereo.xml",
             "equalizer/parametric/stereo",
             stereo_plugin_port_groups,
-            &para_equalizer_bundle
+            &eq_bundle
         };
     } /* namespace meta */
 } /* namespace lsp */

@@ -144,8 +144,8 @@ namespace lsp
             { NULL, NULL }
         };
 
-        extern const meta::plugin_t para_equalizer_x32_mono;
-        extern const meta::plugin_t para_equalizer_x32_stereo;
+        extern const meta::plugin_t eq_mono;
+        extern const meta::plugin_t eq_stereo;
 
     } /* namespace meta */
 } /* namespace lsp */

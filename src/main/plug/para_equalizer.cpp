@@ -48,14 +48,14 @@ namespace lsp
 
         static const meta::plugin_t *plugins[] =
         {
-            &meta::para_equalizer_x32_mono,
-            &meta::para_equalizer_x32_stereo,
+            &meta::eq_mono,
+            &meta::eq_stereo,
         };
 
         static const plugin_settings_t plugin_settings[] =
         {
-            { &meta::para_equalizer_x32_mono,   32, para_equalizer::EQ_MONO         },
-            { &meta::para_equalizer_x32_stereo, 32, para_equalizer::EQ_STEREO       },
+            { &meta::eq_mono,   32, para_equalizer::EQ_MONO         },
+            { &meta::eq_stereo, 32, para_equalizer::EQ_STEREO       },
 
             { NULL, 0, false }
         };
@@ -570,9 +570,6 @@ namespace lsp
 
             // Bind ports
             size_t port_id          = 0;
-
-            #define BIND_PORT(name) name = ports[port_id++]; lsp_trace("Binding port %s to %s", name->metadata()->id, #name)
-            #define SKIP_PORT(name) lsp_trace("Skipping port %s (%s)", ports[port_id]->metadata()->id, #name); ++port_id
 
             // Bind audio ports
             lsp_trace("Binding audio ports");
