@@ -57,6 +57,7 @@
 				</ui:with>
 
 				<!-- Meshes -->
+				<!-- Filters inner color fill -->
 				<ui:for id="i" first="0" last=":num_filters - 1">
 					<marker id="f_${i}" ox="0" oy="1" color="graph_marker_cycle" color.hue=":hue_${i}" color.a="0.5" visibility=":fv_${i}"/>
 					<marker id="g_${i}" ox="1" oy="0" color="graph_marker_cycle" color.hue=":hue_${i}" color.a="0.5" visibility=":fv_${i}"/>
@@ -65,16 +66,19 @@
 					<mesh id="agf_${i}" width="2" color="graph_mesh_cycle" color.hue=":hue_${i}" fill="true" fcolor="graph_mesh_cycle" fcolor.hue=":hue_${i}" color.a="0.3" fcolor.a="0.9" visibility=":fv_${i}" smooth="true"/>
 				</ui:for>
 
-				<mesh id="ifg_l" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="0" color="left_in" color.a="0.8" fcolor.a="0.8" fill="true" fcolor="left_in" visibility=":ife_l"/>
-				<mesh id="ifg_r" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="0" color="right_in" color.a="0.8" fcolor.a="0.8" fill="true" fcolor="right_in" visibility=":ife_r"/>
+				<!-- Input spectrum -->
+				<mesh id="ifg_l" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="0" color="left_in" color.a="0.8" fcolor.a="0.8" fill="true" fcolor="left_in" visibility=":ife_l" smooth="true" />
+				<mesh id="ifg_r" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="0" color="right_in" color.a="0.8" fcolor.a="0.8" fill="true" fcolor="right_in" visibility=":ife_r" smooth="true" />
 
+				<!-- History spectrum -->
 				<mesh id="mg" fcolor.a="0.8" fill="true" width="0" color="bright_pink" fcolor="gray" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" smooth="true" visibility=":mtrack" />
 
-				<mesh id="ofg_l" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="2" color="left" visibility=":ofe_l"/>
-				<mesh id="ofg_r" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="2" color="right" visibility=":ofe_r"/>
+				<!-- Output spectrum -->
+				<mesh id="ofg_l" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="2" color="left" visibility=":ofe_l" smooth="true" />
+				<mesh id="ofg_r" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="2" color="right" visibility=":ofe_r" smooth="true" />
 
-				<mesh id="ag" width="3" color="bright_cyan" smooth="true"/>
-
+				<!-- EQ curve -->
+				<mesh id="ag" editable="true" ui:id="para_eq_curve" width="3" color="bright_cyan" smooth="true"/>
 
 
 				<ui:for id="i" first="0" last=":num_filters - 1">
