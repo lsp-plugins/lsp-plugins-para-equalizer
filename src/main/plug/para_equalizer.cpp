@@ -1385,18 +1385,18 @@ namespace lsp
                 plug::mesh_t *mesh          = c->pFftInMesh->buffer<plug::mesh_t>();
                 if ((mesh != NULL) && (mesh->isEmpty()))
                 {
-                    // Add extra points
+                    // Add extra points to fill the mesh
                     mesh->pvData[0][0] = SPEC_FREQ_MIN * 0.5f;
-                    mesh->pvData[0][meta::para_equalizer_metadata::MESH_POINTS+1] = SPEC_FREQ_MAX * 2.0f;
+                    mesh->pvData[0][meta::para_equalizer_metadata::MESH_POINTS + 1] = SPEC_FREQ_MAX * 2.0f;
                     mesh->pvData[1][0] = 0.0f;
-                    mesh->pvData[1][meta::para_equalizer_metadata::MESH_POINTS+1] = 0.0f;
+                    mesh->pvData[1][meta::para_equalizer_metadata::MESH_POINTS + 1] = 0.0f;
 
                     // Copy frequency points
                     dsp::copy(&mesh->pvData[0][1], vFreqs, meta::para_equalizer_metadata::MESH_POINTS);
                     sAnalyzer.get_spectrum(i*2, &mesh->pvData[1][1], vIndexes, meta::para_equalizer_metadata::MESH_POINTS);
 
                     // Mark mesh containing data
-                    mesh->data(2, meta::para_equalizer_metadata::MESH_POINTS+2);
+                    mesh->data(2, meta::para_equalizer_metadata::MESH_POINTS + 2);
                 }
 
                 // Output FFT mesh
@@ -1404,8 +1404,14 @@ namespace lsp
                 if ((mesh != NULL) && (mesh->isEmpty()))
                 {
                     // Copy frequency points
-                    dsp::copy(mesh->pvData[0], vFreqs, meta::para_equalizer_metadata::MESH_POINTS);
-                    sAnalyzer.get_spectrum(i*2+1, mesh->pvData[1], vIndexes, meta::para_equalizer_metadata::MESH_POINTS);
+                    dsp::copy(&mesh->pvData[0][0], vFreqs, meta::para_equalizer_metadata::MESH_POINTS);
+                    sAnalyzer.get_spectrum(i*2+1, &mesh->pvData[1][0], vIndexes, meta::para_equalizer_metadata::MESH_POINTS);
+
+                    // Turn edges to zero to avoid visual artifacts while filling the mesh
+                    mesh->pvData[0][0] = SPEC_FREQ_MIN * 0.5f;
+                    mesh->pvData[0][meta::para_equalizer_metadata::MESH_POINTS - 1] = SPEC_FREQ_MAX * 2.0f;
+                    mesh->pvData[1][0] = 0.0f;
+                    mesh->pvData[1][meta::para_equalizer_metadata::MESH_POINTS - 1] = 0.0f;
 
                     // Mark mesh containing data
                     mesh->data(2, meta::para_equalizer_metadata::MESH_POINTS);
