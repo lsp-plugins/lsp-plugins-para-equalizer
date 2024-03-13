@@ -125,7 +125,7 @@ namespace lsp
                 COMBO("mode", "Equalizer mode", 0, equalizer_eq_modes), \
                 COMBO("fft", "FFT analysis", 3, equalizer_fft_mode), \
                 COMBO("fftsp", "FFT speed", 3, equalizer_fft_speed), \
-                { "env", "FFT Envelope", U_ENUM, R_CONTROL, F_IN, 0, 0, para_equalizer_metadata::FFT_ENVELOPE, 0, fft_envelopes }, \
+                { "env", "FFT Envelope", U_ENUM, R_CONTROL, 0, 0, 0, para_equalizer_metadata::FFT_ENVELOPE, 0, fft_envelopes }, \
                 SWITCH("mtrack", "Track maximum values", 1), \
                 TRIGGER("mreset", "Reset maximum values"), \
                 AMP_GAIN("shift", "Shift gain", 1.0f, 100.0f), \
