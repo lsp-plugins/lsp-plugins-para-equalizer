@@ -71,8 +71,12 @@ namespace lsp
                 ui::IPort          *pInspect;           // Inspected filter index
                 ui::IPort          *pAutoInspect;       // Automatically inspect the filter
                 ui::IPort          *pSelector;          // Filter selector
+                ui::IPort          *pCurrentFilter;     // Current filter
+                ui::IPort          *pIsInspecting;      // Is inspecting mode activated (on a filter or automatically)
+                ui::IPort          *pFutureFilterType;  // Type of the filter to be created in this position
                 tk::FileDialog     *pRewImport;
                 tk::Graph          *wGraph;
+                tk::GraphMesh      *wCurve;             // EQ curve graph mesh
                 tk::Button         *wInspectReset;      // Inspect reset button
                 tk::Timer           sEditTimer;         // Edit timer
                 const char        **fmtStrings;
@@ -80,6 +84,7 @@ namespace lsp
                 ssize_t             nYAxisIndex;
                 ssize_t             nSplitChannels;
                 size_t              nFilters;
+                size_t              nCurrentFilter;
 
                 filter_t           *pCurrDot;           // Current filter associated with dot
                 filter_t           *pCurrNote;          // Current filter note
@@ -100,9 +105,15 @@ namespace lsp
                 static status_t slot_fetch_rew_path(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_commit_rew_path(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_graph_dbl_click(tk::Widget *sender, void *ptr, void *data);
+                static status_t slot_graph_mouse_move(tk::Widget *sender, void *ptr, void *data);
+                static status_t slot_graph_mouse_out(tk::Widget *sender, void *ptr, void *data);
+                static status_t slot_curve_mouse_down(tk::Widget *sender, void *ptr, void *data);
 
                 static status_t slot_filter_menu_submit(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_filter_dot_click(tk::Widget *sender, void *ptr, void *data);
+                static status_t slot_filter_dot_mouse_down(tk::Widget *sender, void *ptr, void *data);
+                static status_t slot_filter_dot_mouse_scroll(tk::Widget *sender, void *ptr, void *data);
+                static status_t slot_filter_dot_mouse_dbl_click(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_filter_inspect_submit(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_filter_begin_edit(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_filter_change(tk::Widget *sender, void *ptr, void *data);
@@ -123,6 +134,8 @@ namespace lsp
                     lltl::parray<tk::MenuItem> *items, const meta::port_t *port);
                 void            set_menu_items_checked(lltl::parray<tk::MenuItem> *list, ui::IPort *port);
 
+                size_t          get_future_filter_type(size_t freq);
+
                 template <class T>
                 T              *find_filter_widget(const char *fmt, const char *base, size_t id);
 
@@ -132,8 +145,13 @@ namespace lsp
                 ssize_t         find_axis(const char *id);
 
                 void            on_graph_dbl_click(ssize_t x, ssize_t y);
+                void            on_graph_mouse_move(ssize_t x, ssize_t y);
+                void            on_graph_mouse_out(ssize_t x, ssize_t y);
+                void            on_curve_mouse_down(ssize_t x, ssize_t y);
 
-                void            on_filter_dot_right_click(tk::Widget *dot, ssize_t x, ssize_t y);
+                void            on_filter_dot_right_click(tk::Widget *sender, ssize_t x, ssize_t y);
+                void            on_filter_dot_mouse_down(tk::Widget *sender, ssize_t x, ssize_t y);
+                void            on_filter_dot_mouse_scroll(tk::Widget *sender, const ws::event_t *ev);
                 void            on_filter_menu_item_submit(tk::MenuItem *mi);
                 void            on_filter_menu_item_selected(lltl::parray<tk::MenuItem> *list, ui::IPort *port, tk::MenuItem *mi);
                 void            on_filter_inspect_submit(tk::Widget *button);
@@ -143,12 +161,14 @@ namespace lsp
                 void            on_end_filter_edit(tk::Widget *w);
                 void            on_filter_mouse_in(filter_t *f);
                 void            on_filter_mouse_out();
+                void            on_filter_mouse_dbl_click(tk::Widget *sender);
 
                 void            on_main_grid_realized(tk::Widget *w);
                 void            on_main_grid_mouse_in(tk::Widget *w, ssize_t x, ssize_t y);
                 void            on_main_grid_mouse_out(tk::Widget *w, ssize_t x, ssize_t y);
                 void            on_main_grid_mouse_move(tk::Widget *w, ssize_t x, ssize_t y);
 
+                void            set_current_filter(size_t id);
                 void            set_filter_mode(size_t id, size_t mask, size_t value);
                 void            set_filter_type(size_t id, size_t mask, size_t value);
                 void            set_filter_frequency(size_t id, size_t mask, float value);
@@ -181,6 +201,8 @@ namespace lsp
             public:
                 explicit para_equalizer_ui(const meta::plugin_t *meta);
                 virtual ~para_equalizer_ui() override;
+
+                virtual status_t    init(ui::IWrapper *wrapper, tk::Display *dpy) override;
 
                 virtual status_t    post_init() override;
                 virtual status_t    pre_destroy() override;

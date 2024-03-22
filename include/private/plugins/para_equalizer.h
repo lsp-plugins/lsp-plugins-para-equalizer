@@ -60,7 +60,19 @@ namespace lsp
                 {
                     FFTP_NONE,
                     FFTP_POST,
-                    FFTP_PRE
+                    FFTP_PRE,
+                    FFTP_BOTH,
+                };
+
+                enum fft_speed_t
+                {
+                    FFTS_SLOWEST,
+                    FFTS_SLOWER,
+                    FFTS_SLOW,
+                    FFTS_NORMAL,
+                    FFTS_FAST,
+                    FFTS_FASTER,
+                    FFTS_FASTEST
                 };
 
                 typedef struct eq_filter_t
@@ -112,7 +124,9 @@ namespace lsp
                     plug::IPort        *pOut;           // Output port
                     plug::IPort        *pInGain;        // Input gain
                     plug::IPort        *pTrAmp;         // Amplitude chart
+                    plug::IPort        *pTrMax;         // Accumulated chart
                     plug::IPort        *pPitch;         // Frequency shift
+                    plug::IPort        *pFft;           // FFT input/output switch
                     plug::IPort        *pFftInSwitch;   // FFT input switch
                     plug::IPort        *pFftOutSwitch;  // FFT output switch
                     plug::IPort        *pFftInMesh;     // FFT input mesh
@@ -128,17 +142,25 @@ namespace lsp
                 uint32_t            nMode;                  // Operating mode
                 eq_channel_t       *vChannels;              // List of channels
                 float              *vFreqs;                 // Frequency list
+                float              *vMaxValues;             // Maximum values (for accumulation)
+                float              *vTmpValues;             // Temporary values (for accumulation)
                 uint32_t           *vIndexes;               // FFT indexes
                 float               fGainIn;                // Input gain
                 float               fZoom;                  // Zoom gain
                 bool                bListen;                // Listen mode (only for MS para_equalizer)
                 bool                bSmoothMode;            // Smooth mode for the equalizer
+                bool                bAccumEnabled;          // Accumulation enabled
                 core::IDBuffer     *pIDisplay;              // Inline display buffer
+                fft_position_t      nFftPosition;           // FFT input/output switch
 
                 plug::IPort        *pBypass;                // Bypass port
                 plug::IPort        *pGainIn;                // Input gain port
                 plug::IPort        *pGainOut;               // Output gain port
-                plug::IPort        *pReactivity;            // FFT reactivity
+                plug::IPort        *pFftMode;               // FFT mode
+                plug::IPort        *pFftSpeed;              // FFT mode
+                plug::IPort        *pFftEnv;                // FFT envelope (tilt)
+                plug::IPort        *pAccum;                 // FFT accumulation (max values)
+                plug::IPort        *pResetAccum;            // Reset FFT accumulation (max values)
                 plug::IPort        *pListen;                // Listen mode (only for MS equalizer)
                 plug::IPort        *pShiftGain;             // Shift gain
                 plug::IPort        *pZoom;                  // Graph zoom
