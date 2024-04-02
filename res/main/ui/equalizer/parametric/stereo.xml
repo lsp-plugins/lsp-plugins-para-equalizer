@@ -9,189 +9,186 @@
 	<ui:eval id="num_blocks" value="(ex :ft_16) ? 4 : ((ex :ft_8) ? 2 : 1)"/>
 
 	<grid rows="4" cols="3" spacing="4">
-		<!-- Graph -->
-		<hbox spacing="4" expand="true" vexpand="true">
-			<!-- TODO: Add tooltip -->
-			<fader id="shift" angle="1" vexpand="true" ui:inject="Fader_prophessor_thin" bg.inherit="true" flat="true" />
-			<graph ui:id="para_eq_graph" width.min="640" height.min="340" expand="true">
-				<origin hpos="-1" vpos="-1" visible="false"/>
-
-				<!-- Gray grid -->
-				<ui:with ox="1" oy="0" color="graph_alt_2" visibility=":zoom le -39 db">
-					<ui:for id="g" counter="i" list="+8;+7;+5;+4;+2;+1;-1;-2;-4;-5;-7;-8">
-						<marker v="${g} db" />
-					</ui:for>
-				</ui:with>
-				<ui:for id="g" first="-36" last="36" step="24">
-					<marker v="${g} db" ox="1" oy="0" color="graph_alt_1"/>
-				</ui:for>
-				<ui:for id="g" first="-18" last="18" step="12">
-					<marker v="${g} db" ox="1" oy="0" color="graph_alt_1" visibility=":zoom le -18 db"/>
-				</ui:for>
-				<ui:for id="g" first="-9" last="9" step="6">
-					<marker v="${g} db" ox="1" oy="0" color="graph_alt_1" visibility=":zoom le -33 db"/>
-				</ui:for>
-				<ui:with ox="0" oy="1">
-					<ui:for id="f" first="20" last="90" step="10">
-						<marker v="${f}" color="graph_alt_1"/>
-					</ui:for>
-					<ui:for id="f" first="200" last="900" step="100">
-						<marker v="${f}" color="graph_alt_1"/>
-					</ui:for>
-					<ui:for id="f" first="2000" last="9000" step="1000">
-						<marker v="${f}" color="graph_alt_1"/>
-					</ui:for>
-					<marker value="20000" color="graph_alt_1"/>
-				</ui:with>
-
-				<!-- Yellow grid -->
-				<ui:with ox="0" oy="1" color="graph_sec">
-					<marker v="100"/>
-					<marker v="1000"/>
-					<marker v="10000"/>
-				</ui:with>
-				<ui:with ox="1" oy="0" color="graph_sec">
-					<marker v="+24 db"/>
-					<marker v="0 db"/>
-					<marker v="-24 db"/>
-				</ui:with>
-
-				<!-- Meshes -->
-				<!-- Filters inner color fill -->
-				<ui:for id="i" first="0" last=":num_filters - 1">
-					<marker id="f_${i}" ox="0" oy="1" color="graph_marker_cycle" color.hue=":hue_${i}" color.a="0.5" visibility=":fv_${i}"/>
-					<marker id="g_${i}" ox="1" oy="0" color="graph_marker_cycle" color.hue=":hue_${i}" color.a="0.5" visibility=":fv_${i}"/>
-				</ui:for>
-				<ui:for id="i" first="0" last=":num_filters - 1">
-					<mesh id="agf_${i}" width="2" color="graph_mesh_cycle" color.hue=":hue_${i}" fill="true" fcolor="graph_mesh_cycle" fcolor.hue=":hue_${i}" color.a="0.3" fcolor.a=":current_filter ieq ${i} ? 0.8 : 0.9" visibility=":fv_${i}" smooth="true"/>
-				</ui:for>
-
-				<!-- History spectrum -->
-				<mesh id="mg" fcolor.a="0.8" fill="true" width="0" color="bright_pink" fcolor="#555" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" smooth="true" visibility=":mtrack" />
-
-				<!-- Input spectrum -->
-				<!-- TODO: Show max value here -->
-				<mesh id="ifg_l" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="2" color="#444" fcolor="#444" color.a="0.5" fcolor.a="0.6" visibility=":ife_l" smooth="true" fill="true" />
-				<!-- <mesh id="ifg_r" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="2" color="#444" fcolor="#444" color.a="0.7" fcolor.a="0.8" visibility=":ife_r" smooth="true" fill="true" /> -->
-
-				<!-- Output spectrum -->
-				<!-- TODO: Show max value here -->
-				<mesh id="ofg_l" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="2" color="#777" fcolor="#777" color.a="0.5" fcolor.a="0.9" visibility=":ofe_l" smooth="true" fill="true" />
-				<!-- <mesh id="ofg_r" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="2" color="#777" fcolor="#777" color.a="0.7" fcolor.a="0.9" visibility=":ofe_r" smooth="true" fill="true" /> -->
-
-
-				<!-- EQ curve -->
-				<mesh id="ag" editable="true" ui:id="para_eq_curve" width="3" color="bright_cyan" smooth="true"/>
-
-
-				<ui:for id="i" first="0" last=":num_filters - 1">
-					<ui:with pointer="drag" x.editable="true" y.editable="true" z.editable="true">
-						<dot
-							ui:id="filter_dot_${i}"
-							x.id="f_${i}" y.id="g_${i}" z.id="q_${i}"
-							size="1 + 3*:_ui_filter_point_thickness"
-							hover.size="1 + 3*:_ui_filter_point_thickness"
-							color=":xm_${i} ? 'gray_inactive' : 'graph_marker_cycle'"
-							color.hue=":hue_${i}"
-							border.size=":current_filter ieq ${i} ? 15 : 5"
-							hover.border.size=":current_filter ieq ${i} ? 15 : 5"
-							hover.color=":xm_${i} ? 'gray_inactive' : 'graph_marker_cycle'"
-							hover.color.hue=":hue_${i}"
-							bcolor=":xm_${i} ? 'gray_inactive' : 'graph_marker_cycle'"
-							bcolor.hue=":hue_${i}"
-							hover.bcolor=":xm_${i} ? 'gray_inactive' : 'graph_marker_cycle'"
-							hover.bcolor.hue=":hue_${i}"
-							visibility=":fv_${i} or :xm_${i}"
-							x.astep="1" y.astep="1"/>
-					</ui:with>
-				</ui:for>
-
-				<!-- Boundaries -->
-				<marker ox="2" oy="0" v="1" color="graph_prim" visibility="false"/>
-				<!-- +48 dB -->
-				<marker ox="0" oy="1" v="24000" color="graph_prim" visibility="false"/>
-
-				<!-- Axis -->
-				<axis ui:id="para_eq_ox" min="10" max="24000" color="graph_prim" angle="0.0" log="true" visibility="false"/>
-				<axis ui:id="para_eq_oy" min="-48 db / :zoom" max="48 db * :zoom" color="graph_prim" angle="0.5" log="true" visibility="false"/>
-				<!-- -48..+48 dB -->
-				<axis min="-1" max="1" visible="false" angle="0.5"/>
-				<axis min="-48 db" max="48 db" angle="0.5" log="true" visibility="false"/>
-
-				<!-- Text -->
-				<ui:with ox="0" oy="2" y="0" halign="1" valign="1" pgroup="0" priority="0">
-					<text x="10" text="graph.units.hz" />
-					<text x="20" text="20"/>
-					<text x="30" text="30"/>
-					<text x="50" text="50"/>
-					<text x="100" text="100"/>
-					<text x="200" text="200"/>
-					<text x="300" text="300"/>
-					<text x="500" text="500"/>
-					<text x="1000" text="graph.values.x_k" text:value="1"/>
-					<text x="2000" text="graph.values.x_k" text:value="2"/>
-					<text x="3000" text="graph.values.x_k" text:value="3"/>
-					<text x="5000" text="graph.values.x_k" text:value="5"/>
-					<text x="10000" text="graph.values.x_k" text:value="10"/>
-					<text x="20000" text="graph.values.x_k" text:value="20"/>
-				</ui:with>
-
-				<ui:with x="10" halign="1" pgroup="0" priority="10">
-					<text y="0 db" text="0" valign="1" priority="0" />
-					<text y="1" ox="0" oy="2" text="graph.units.db" valign="-1" priority="0" />
-
-					<text y="48 db" x="13" oy="3" text="graph.future_filter_type_msg" visibility=":future_filter_type != 0"
-						text:value="
-							(:future_filter_type ieq 1) ? 'Bell' :
-							(:future_filter_type ieq 2) ? 'Lo-cut' :
-							(:future_filter_type ieq 3) ? 'Hi-shelf' :
-							(:future_filter_type ieq 4) ? 'Hi-cut' : 'Lo-shelf'"
-						text.eval="true" color="blue" font.size="10" valign="-1" priority="-1" />
-
-					<ui:for id="g" counter="i" list="+36;+24;+12;-12;-24;-36">
-						<text y="${g} db" text="${g}" valign="-1" />
-					</ui:for>
-					<ui:for id="g" counter="i" list="+18;+6;-6;-18">
-						<text y="${g} db" text="${g}" valign="-1" visibility=":zoom le -18 db"/>
-					</ui:for>
-					<ui:for id="g" counter="i" list="+9;+3;-3;-9">
-						<text y="${g} db" text="${g}" valign="-1" visibility=":zoom le -33 db"/>
-					</ui:for>
-					<ui:for id="g" counter="i" list="+8;+7;+5;+4;+2;+1;-1;-2;-4;-5;-7;-8">
-						<text y="${g} db" text="${g}" valign="-1" visibility="(:zoom le -39 db) "/>
-					</ui:for>
-				</ui:with>
-
-				<ui:for id="i" first="0" last=":num_filters - 1">
-					<ui:with ox="0" oy="2" y="1" valign="-1" color="graph_marker_cycle" visibility="false" pad.h="4" font.bold="true">
-						<text ui:id="filter_note_${i}" x=":f_${i}" halign="(:f_${i} lt 500) ? 1 : -1" text.halign="(:f_${i} lt 500) ? -1 : 1" color.hue=":hue_${i}"/>
-					</ui:with>
-				</ui:for>
-			</graph>
-		</hbox>
-
-		<!-- Zoom Fader -->
 		<cell rows="2" spacing="4">
 			<vbox vexpand="true" bg.color="bg_schema">
-				<label font.name="lsp-icons" font.size="12" font.antialias="true" text="icons.main.zoom" color="text_icon" pad.b="4" pad.t="4"/>
-				<fader id="zoom" angle="1" vexpand="true" ui:inject="Fader_prophessor" bg.inherit="true" flat="true" />
-				<value id="zoom" width="40"/>
+				<label text="labels.chan.in" pad.b="3" pad.t="3"/>
+				<hbox vexpand="true">
+					<fader id="g_in" vexpand="true" angle="1" ui:inject="Fader_prophessor" />
+					<ledmeter vexpand="true" angle="1">
+						<ledchannel id="iml" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left_in"/>
+						<ledchannel id="imr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right_in"/>
+					</ledmeter>
+				</hbox>
+				<value id="g_in" halign="0"/>
 			</vbox>
 		</cell>
+		<!-- Graph -->
+		<!-- TODO: Add tooltip -->
+		<!-- <fader id="shift" angle="1" vexpand="true" ui:inject="Fader_prophessor_thin" bg.inherit="true" flat="true" /> -->
+		<graph ui:id="para_eq_graph" width.min="640" height.min="340" expand="true">
+			<origin hpos="-1" vpos="-1" visible="false"/>
+
+			<!-- Gray grid -->
+			<ui:with ox="1" oy="0" color="graph_alt_2" visibility=":zoom le -39 db">
+				<ui:for id="g" counter="i" list="+8;+7;+5;+4;+2;+1;-1;-2;-4;-5;-7;-8">
+					<marker v="${g} db" />
+				</ui:for>
+			</ui:with>
+			<ui:for id="g" first="-36" last="36" step="24">
+				<marker v="${g} db" ox="1" oy="0" color="graph_alt_1"/>
+			</ui:for>
+			<ui:for id="g" first="-18" last="18" step="12">
+				<marker v="${g} db" ox="1" oy="0" color="graph_alt_1" visibility=":zoom le -18 db"/>
+			</ui:for>
+			<ui:for id="g" first="-9" last="9" step="6">
+				<marker v="${g} db" ox="1" oy="0" color="graph_alt_1" visibility=":zoom le -33 db"/>
+			</ui:for>
+			<ui:with ox="0" oy="1">
+				<ui:for id="f" first="20" last="90" step="10">
+					<marker v="${f}" color="graph_alt_1"/>
+				</ui:for>
+				<ui:for id="f" first="200" last="900" step="100">
+					<marker v="${f}" color="graph_alt_1"/>
+				</ui:for>
+				<ui:for id="f" first="2000" last="9000" step="1000">
+					<marker v="${f}" color="graph_alt_1"/>
+				</ui:for>
+				<marker value="20000" color="graph_alt_1"/>
+			</ui:with>
+
+			<!-- Yellow grid -->
+			<ui:with ox="0" oy="1" color="graph_sec">
+				<marker v="100"/>
+				<marker v="1000"/>
+				<marker v="10000"/>
+			</ui:with>
+			<ui:with ox="1" oy="0" color="graph_sec">
+				<marker v="+24 db"/>
+				<marker v="0 db"/>
+				<marker v="-24 db"/>
+			</ui:with>
+
+			<!-- Meshes -->
+			<!-- Filters inner color fill -->
+			<ui:for id="i" first="0" last=":num_filters - 1">
+				<marker id="f_${i}" ox="0" oy="1" color="graph_marker_cycle" color.hue=":hue_${i}" color.a="0.5" visibility=":fv_${i}"/>
+				<marker id="g_${i}" ox="1" oy="0" color="graph_marker_cycle" color.hue=":hue_${i}" color.a="0.5" visibility=":fv_${i}"/>
+			</ui:for>
+			<ui:for id="i" first="0" last=":num_filters - 1">
+				<mesh id="agf_${i}" width="2" color="graph_mesh_cycle" color.hue=":hue_${i}" fill="true" fcolor="graph_mesh_cycle" fcolor.hue=":hue_${i}" color.a="0.3" fcolor.a=":current_filter ieq ${i} ? 0.8 : 0.9" visibility=":fv_${i}" smooth="true"/>
+			</ui:for>
+
+			<!-- History spectrum -->
+			<mesh id="mg" fcolor.a="0.8" fill="true" width="0" color="bright_pink" fcolor="#555" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" smooth="true" visibility=":mtrack" />
+
+			<!-- Input spectrum -->
+			<!-- TODO: Show max value here -->
+			<mesh id="ifg_l" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="2" color="#444" fcolor="#444" color.a="0.5" fcolor.a="0.6" visibility=":ife_l" smooth="true" fill="true" />
+			<!-- <mesh id="ifg_r" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="2" color="#444" fcolor="#444" color.a="0.7" fcolor.a="0.8" visibility=":ife_r" smooth="true" fill="true" /> -->
+
+			<!-- Output spectrum -->
+			<!-- TODO: Show max value here -->
+			<mesh id="ofg_l" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="2" color="#777" fcolor="#777" color.a="0.5" fcolor.a="0.9" visibility=":ofe_l" smooth="true" fill="true" />
+			<!-- <mesh id="ofg_r" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="2" color="#777" fcolor="#777" color.a="0.7" fcolor.a="0.9" visibility=":ofe_r" smooth="true" fill="true" /> -->
+
+
+			<!-- EQ curve -->
+			<mesh id="ag" editable="true" ui:id="para_eq_curve" width="3" color="bright_cyan" smooth="true"/>
+
+
+			<ui:for id="i" first="0" last=":num_filters - 1">
+				<ui:with pointer="drag" x.editable="true" y.editable="true" z.editable="true">
+					<dot
+						ui:id="filter_dot_${i}"
+						x.id="f_${i}" y.id="g_${i}" z.id="q_${i}"
+						size="1 + 3*:_ui_filter_point_thickness"
+						hover.size="1 + 3*:_ui_filter_point_thickness"
+						color=":xm_${i} ? 'gray_inactive' : 'graph_marker_cycle'"
+						color.hue=":hue_${i}"
+						border.size=":current_filter ieq ${i} ? 15 : 5"
+						hover.border.size=":current_filter ieq ${i} ? 15 : 5"
+						hover.color=":xm_${i} ? 'gray_inactive' : 'graph_marker_cycle'"
+						hover.color.hue=":hue_${i}"
+						bcolor=":xm_${i} ? 'gray_inactive' : 'graph_marker_cycle'"
+						bcolor.hue=":hue_${i}"
+						hover.bcolor=":xm_${i} ? 'gray_inactive' : 'graph_marker_cycle'"
+						hover.bcolor.hue=":hue_${i}"
+						visibility=":fv_${i} or :xm_${i}"
+						x.astep="1" y.astep="1"/>
+				</ui:with>
+			</ui:for>
+
+			<!-- Boundaries -->
+			<marker ox="2" oy="0" v="1" color="graph_prim" visibility="false"/>
+			<!-- +48 dB -->
+			<marker ox="0" oy="1" v="24000" color="graph_prim" visibility="false"/>
+
+			<!-- Axis -->
+			<axis ui:id="para_eq_ox" min="10" max="24000" color="graph_prim" angle="0.0" log="true" visibility="false"/>
+			<axis ui:id="para_eq_oy" min="-48 db / :zoom" max="48 db * :zoom" color="graph_prim" angle="0.5" log="true" visibility="false"/>
+			<!-- -48..+48 dB -->
+			<axis min="-1" max="1" visible="false" angle="0.5"/>
+			<axis min="-48 db" max="48 db" angle="0.5" log="true" visibility="false"/>
+
+			<!-- Text -->
+			<ui:with ox="0" oy="2" y="0" halign="1" valign="1" pgroup="0" priority="0">
+				<text x="10" text="graph.units.hz" />
+				<text x="20" text="20"/>
+				<text x="30" text="30"/>
+				<text x="50" text="50"/>
+				<text x="100" text="100"/>
+				<text x="200" text="200"/>
+				<text x="300" text="300"/>
+				<text x="500" text="500"/>
+				<text x="1000" text="graph.values.x_k" text:value="1"/>
+				<text x="2000" text="graph.values.x_k" text:value="2"/>
+				<text x="3000" text="graph.values.x_k" text:value="3"/>
+				<text x="5000" text="graph.values.x_k" text:value="5"/>
+				<text x="10000" text="graph.values.x_k" text:value="10"/>
+				<text x="20000" text="graph.values.x_k" text:value="20"/>
+			</ui:with>
+
+			<ui:with x="10" halign="1" pgroup="0" priority="10">
+				<text y="0 db" text="0" valign="1" priority="0" />
+				<text y="1" ox="0" oy="2" text="graph.units.db" valign="-1" priority="0" />
+
+				<text y="48 db" x="13" oy="3" text="graph.future_filter_type_msg" visibility=":future_filter_type != 0"
+					text:value="
+						(:future_filter_type ieq 1) ? 'Bell' :
+						(:future_filter_type ieq 2) ? 'Lo-cut' :
+						(:future_filter_type ieq 3) ? 'Hi-shelf' :
+						(:future_filter_type ieq 4) ? 'Hi-cut' : 'Lo-shelf'"
+					text.eval="true" color="blue" font.size="10" valign="-1" priority="-1" />
+
+				<ui:for id="g" counter="i" list="+36;+24;+12;-12;-24;-36">
+					<text y="${g} db" text="${g}" valign="-1" />
+				</ui:for>
+				<ui:for id="g" counter="i" list="+18;+6;-6;-18">
+					<text y="${g} db" text="${g}" valign="-1" visibility=":zoom le -18 db"/>
+				</ui:for>
+				<ui:for id="g" counter="i" list="+9;+3;-3;-9">
+					<text y="${g} db" text="${g}" valign="-1" visibility=":zoom le -33 db"/>
+				</ui:for>
+				<ui:for id="g" counter="i" list="+8;+7;+5;+4;+2;+1;-1;-2;-4;-5;-7;-8">
+					<text y="${g} db" text="${g}" valign="-1" visibility="(:zoom le -39 db) "/>
+				</ui:for>
+			</ui:with>
+
+			<ui:for id="i" first="0" last=":num_filters - 1">
+				<ui:with ox="0" oy="2" y="1" valign="-1" color="graph_marker_cycle" visibility="false" pad.h="4" font.bold="true">
+					<text ui:id="filter_note_${i}" x=":f_${i}" halign="(:f_${i} lt 500) ? 1 : -1" text.halign="(:f_${i} lt 500) ? -1 : 1" color.hue=":hue_${i}"/>
+				</ui:with>
+			</ui:for>
+		</graph>
 
 		<!-- Signal meters -->
 		<cell rows="2">
 			<hbox spacing="4" bg.color="bg">
+				<!-- Zoom Fader -->
 				<vbox vexpand="true" bg.color="bg_schema">
-					<label text="labels.chan.in" pad.b="3" pad.t="3"/>
-					<hbox vexpand="true">
-						<fader id="g_in" vexpand="true" angle="1" ui:inject="Fader_prophessor" />
-						<ledmeter vexpand="true" angle="1">
-							<ledchannel id="iml" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="left_in"/>
-							<ledchannel id="imr" min="-36 db" max="+6 db" log="true" type="rms_peak" peak.visibility="true" value.color="right_in"/>
-						</ledmeter>
-					</hbox>
-					<value id="g_in" halign="0"/>
+					<label font.name="lsp-icons" font.size="12" font.antialias="true" text="icons.main.zoom" color="text_icon" pad.b="4" pad.t="4"/>
+					<fader id="zoom" angle="1" vexpand="true" ui:inject="Fader_prophessor" bg.inherit="true" flat="true" />
+					<value id="zoom" width="40"/>
 				</vbox>
 
 				<vbox vexpand="true" bg.color="bg_schema">
