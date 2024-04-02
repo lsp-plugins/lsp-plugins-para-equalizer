@@ -49,34 +49,14 @@ namespace lsp
 
         static const meta::plugin_t *plugins[] =
         {
-            &meta::para_equalizer_x8_mono,
-            &meta::para_equalizer_x8_stereo,
-            &meta::para_equalizer_x8_lr,
-            &meta::para_equalizer_x8_ms,
-            &meta::para_equalizer_x16_mono,
-            &meta::para_equalizer_x16_stereo,
-            &meta::para_equalizer_x16_lr,
-            &meta::para_equalizer_x16_ms,
-            &meta::para_equalizer_x32_mono,
-            &meta::para_equalizer_x32_stereo,
-            &meta::para_equalizer_x32_lr,
-            &meta::para_equalizer_x32_ms
+            &meta::eq_mono,
+            &meta::eq_stereo,
         };
 
         static const plugin_settings_t plugin_settings[] =
         {
-            { &meta::para_equalizer_x8_mono,     8, para_equalizer::EQ_MONO         },
-            { &meta::para_equalizer_x8_stereo,   8, para_equalizer::EQ_STEREO       },
-            { &meta::para_equalizer_x8_lr,       8, para_equalizer::EQ_LEFT_RIGHT   },
-            { &meta::para_equalizer_x8_ms,       8, para_equalizer::EQ_MID_SIDE     },
-            { &meta::para_equalizer_x16_mono,   16, para_equalizer::EQ_MONO         },
-            { &meta::para_equalizer_x16_stereo, 16, para_equalizer::EQ_STEREO       },
-            { &meta::para_equalizer_x16_lr,     16, para_equalizer::EQ_LEFT_RIGHT   },
-            { &meta::para_equalizer_x16_ms,     16, para_equalizer::EQ_MID_SIDE     },
-            { &meta::para_equalizer_x32_mono,   32, para_equalizer::EQ_MONO         },
-            { &meta::para_equalizer_x32_stereo, 32, para_equalizer::EQ_STEREO       },
-            { &meta::para_equalizer_x32_lr,     32, para_equalizer::EQ_LEFT_RIGHT   },
-            { &meta::para_equalizer_x32_ms,     32, para_equalizer::EQ_MID_SIDE     },
+            { &meta::eq_mono,   32, para_equalizer::EQ_MONO         },
+            { &meta::eq_stereo, 32, para_equalizer::EQ_STEREO       },
 
             { NULL, 0, false }
         };
@@ -89,7 +69,7 @@ namespace lsp
             return NULL;
         }
 
-        static plug::Factory factory(plugin_factory, plugins, 12);
+        static plug::Factory factory(plugin_factory, plugins, 2);
 
         //-------------------------------------------------------------------------
         para_equalizer::para_equalizer(const meta::plugin_t *metadata, size_t filters, size_t mode): plug::Module(metadata)
@@ -98,17 +78,24 @@ namespace lsp
             nMode           = mode;
             vChannels       = NULL;
             vFreqs          = NULL;
+            vMaxValues      = NULL;
+            vTmpValues      = NULL;
             vIndexes        = NULL;
             fGainIn         = 1.0f;
             fZoom           = 1.0f;
             bListen         = false;
             bSmoothMode     = false;
+            bAccumEnabled   = false;
+            nFftPosition    = FFTP_BOTH;
             pIDisplay       = NULL;
 
             pBypass         = NULL;
             pGainIn         = NULL;
             pGainOut        = NULL;
-            pReactivity     = NULL;
+            pFftSpeed       = NULL;
+            pFftEnv         = NULL;
+            pAccum          = NULL;
+            pResetAccum     = NULL;
             pListen         = NULL;
             pShiftGain      = NULL;
             pZoom           = NULL;
@@ -453,6 +440,7 @@ namespace lsp
             // Initialize global parameters
             fGainIn             = 1.0f;
             bListen             = false;
+            nFftPosition        = FFTP_BOTH;
 
             // Allocate indexes
             vIndexes            = new uint32_t[meta::para_equalizer_metadata::MESH_POINTS];
@@ -461,7 +449,7 @@ namespace lsp
 
             // Calculate amount of bulk data to allocate
             size_t allocate     = (2 * meta::para_equalizer_metadata::MESH_POINTS * (nFilters + 2) + EQ_BUFFER_SIZE * 3) * channels +
-                                  meta::para_equalizer_metadata::MESH_POINTS;
+                                  meta::para_equalizer_metadata::MESH_POINTS * 3;
             float *abuf         = new float[allocate];
             if (abuf == NULL)
                 return;
@@ -472,6 +460,13 @@ namespace lsp
 
             // Frequency list buffer
             vFreqs              = abuf;
+            abuf               += meta::para_equalizer_metadata::MESH_POINTS;
+
+            // Max values buffer
+            vMaxValues          = abuf;
+            abuf               += meta::para_equalizer_metadata::MESH_POINTS;
+
+            vTmpValues          = abuf;
             abuf               += meta::para_equalizer_metadata::MESH_POINTS;
 
             // Initialize each channel
@@ -500,7 +495,9 @@ namespace lsp
                 c->pOut             = NULL;
                 c->pInGain          = NULL;
                 c->pTrAmp           = NULL;
+                c->pTrMax           = NULL;
                 c->pPitch           = NULL;
+                c->pFft             = NULL;
                 c->pFftInSwitch     = NULL;
                 c->pFftOutSwitch    = NULL;
                 c->pFftInMesh       = NULL;
@@ -577,46 +574,54 @@ namespace lsp
 
             // Bind audio ports
             lsp_trace("Binding audio ports");
-            for (size_t i=0; i<channels; ++i)
-                vChannels[i].pIn        =   trace_port(ports[port_id++]);
-            for (size_t i=0; i<channels; ++i)
-                vChannels[i].pOut       =   trace_port(ports[port_id++]);
+
+            for (size_t i=0; i<channels; ++i) {
+                eq_channel_t *c = &vChannels[i];
+                BIND_PORT(c->pIn);
+            }
+            for (size_t i=0; i<channels; ++i) {
+                eq_channel_t *c = &vChannels[i];
+                BIND_PORT(c->pOut);
+            }
 
             // Bind common ports
             lsp_trace("Binding common ports");
-            pBypass                 = trace_port(ports[port_id++]);
-            pGainIn                 = trace_port(ports[port_id++]);
-            pGainOut                = trace_port(ports[port_id++]);
-            pEqMode                 = trace_port(ports[port_id++]);
-            pReactivity             = trace_port(ports[port_id++]);
-            pShiftGain              = trace_port(ports[port_id++]);
-            pZoom                   = trace_port(ports[port_id++]);
-            trace_port(ports[port_id++]); // Skip filter selector
-            pInspect                = trace_port(ports[port_id++]);
-            pInspectRange           = trace_port(ports[port_id++]);
-            trace_port(ports[port_id++]); // Skip auto inspect switch
+            BIND_PORT(pBypass);
+            BIND_PORT(pGainIn);
+            BIND_PORT(pGainOut);
+            BIND_PORT(pEqMode);
+            BIND_PORT(pFftMode);
+            BIND_PORT(pFftSpeed);
+            BIND_PORT(pFftEnv);
+            BIND_PORT(pAccum);
+            BIND_PORT(pResetAccum);
+            BIND_PORT(pShiftGain);
+            BIND_PORT(pZoom);
+            BIND_PORT(pInspect);
+            BIND_PORT(pInspectRange);
+            SKIP_PORT("Auto inspect switch");            // Skip auto inspect switch
 
             // Meters
             for (size_t i=0; i<channels; ++i)
             {
                 eq_channel_t *c     = &vChannels[i];
 
-                c->pFftInSwitch         = trace_port(ports[port_id++]);
-                c->pFftOutSwitch        = trace_port(ports[port_id++]);
-                c->pFftInMesh           = trace_port(ports[port_id++]);
-                c->pFftOutMesh          = trace_port(ports[port_id++]);
+                BIND_PORT(c->pFftInSwitch);
+                BIND_PORT(c->pFftOutSwitch);
+                BIND_PORT(c->pFftInMesh);
+                BIND_PORT(c->pFftOutMesh);
             }
 
             // Balance
             if (channels > 1)
-                pBalance                = trace_port(ports[port_id++]);
+                BIND_PORT(pBalance);
 
             // Listen port
             if (nMode == EQ_MID_SIDE)
             {
-                pListen                 = trace_port(ports[port_id++]);
-                vChannels[0].pInGain    = trace_port(ports[port_id++]);
-                vChannels[1].pInGain    = trace_port(ports[port_id++]);
+                BIND_PORT(pListen);
+                BIND_PORT(vChannels[0].pInGain);
+                BIND_PORT(vChannels[1].pInGain);
             }
 
             for (size_t i=0; i<channels; ++i)
@@ -624,15 +629,17 @@ namespace lsp
                 if ((nMode == EQ_STEREO) && (i > 0))
                 {
                     vChannels[i].pTrAmp     = NULL;
+                    vChannels[i].pTrMax     = NULL;
                     vChannels[i].pPitch     = vChannels[i-1].pPitch;
                 }
                 else
                 {
-                    vChannels[i].pTrAmp     = trace_port(ports[port_id++]);
-                    vChannels[i].pPitch     = trace_port(ports[port_id++]);
+                    BIND_PORT(vChannels[i].pTrAmp);
+                    BIND_PORT(vChannels[i].pTrMax);
+                    BIND_PORT(vChannels[i].pPitch);
                 }
-                vChannels[i].pInMeter   =   trace_port(ports[port_id++]);
-                vChannels[i].pOutMeter  =   trace_port(ports[port_id++]);
+                BIND_PORT(vChannels[i].pInMeter);
+                BIND_PORT(vChannels[i].pOutMeter);
 
                 if ((nMode == EQ_LEFT_RIGHT) || (nMode == EQ_MID_SIDE))
                     vChannels[i].pVisible   = trace_port(ports[port_id++]); // Skip eq curve visibility
@@ -668,18 +675,18 @@ namespace lsp
                     else
                     {
                         // 1 port controls 1 filter
-                        f->pType        = trace_port(ports[port_id++]);
-                        f->pMode        = trace_port(ports[port_id++]);
-                        f->pSlope       = trace_port(ports[port_id++]);
-                        f->pSolo        = trace_port(ports[port_id++]);
-                        f->pMute        = trace_port(ports[port_id++]);
-                        f->pFreq        = trace_port(ports[port_id++]);
-                        f->pWidth       = trace_port(ports[port_id++]);
-                        f->pGain        = trace_port(ports[port_id++]);
-                        f->pQuality     = trace_port(ports[port_id++]);
-                        trace_port(ports[port_id++]); // Skip hue
-                        f->pActivity    = trace_port(ports[port_id++]);
-                        f->pTrAmp       = trace_port(ports[port_id++]);
+                        BIND_PORT(f->pType);
+                        BIND_PORT(f->pMode);
+                        BIND_PORT(f->pSlope);
+                        BIND_PORT(f->pSolo);
+                        BIND_PORT(f->pMute);
+                        BIND_PORT(f->pFreq);
+                        BIND_PORT(f->pWidth);
+                        BIND_PORT(f->pGain);
+                        BIND_PORT(f->pQuality);
+                        SKIP_PORT("Hue"); // Skip hue
+                        BIND_PORT(f->pActivity);
+                        BIND_PORT(f->pTrAmp);
                     }
                 }
             }
@@ -828,6 +835,10 @@ namespace lsp
                 bal[1]         *= out_gain;
             }
 
+            if (pResetAccum->value() >= 0.5f)
+                dsp::fill_zero(vMaxValues, meta::para_equalizer_metadata::MESH_POINTS);
+
+
             // Listen
             if (pListen != NULL)
                 bListen     = pListen->value() >= 0.5f;
@@ -838,9 +849,33 @@ namespace lsp
             size_t n_an_channels = 0;
             for (size_t i=0; i<channels; ++i)
             {
-                eq_channel_t *c     = &vChannels[i];
-                bool in_fft         = c->pFftInSwitch->value() >= 0.5f;
-                bool out_fft        = c->pFftOutSwitch->value() >= 0.5f;
+                bool in_fft         = false;
+                bool out_fft        = false;
+
+                fft_position_t pos = fft_position_t(pFftMode->value());
+                if (pos != nFftPosition)
+                {
+                    nFftPosition    = pos;
+                    sAnalyzer.reset();
+                }
+
+                switch (nFftPosition)
+                {
+                    case FFTP_BOTH:
+                        in_fft      = true;
+                        out_fft     = true;
+                        break;
+                    case FFTP_PRE:
+                        in_fft      = true;
+                        out_fft     = false;
+                        break;
+                    case FFTP_POST:
+                        in_fft      = false;
+                        out_fft     = true;
+                        break;
+                    default:
+                        break;
+                }
 
                 // channel:        0     1     2      3
                 // designation: in_l out_l  in_r  out_r
@@ -852,7 +887,23 @@ namespace lsp
 
             // Update reactivity
             sAnalyzer.set_activity(n_an_channels > 0);
-            sAnalyzer.set_reactivity(pReactivity->value());
+            sAnalyzer.set_envelope(pFftEnv->value());
+
+            fft_speed_t speed = fft_speed_t(pFftSpeed->value());
+
+            switch (speed)
+            {
+                case FFTS_SLOWEST: sAnalyzer.set_reactivity(2.0f); break;
+                case FFTS_SLOWER:  sAnalyzer.set_reactivity(1.0f); break;
+                case FFTS_SLOW:    sAnalyzer.set_reactivity(0.5f); break;
+                case FFTS_NORMAL:  sAnalyzer.set_reactivity(0.2f); break;
+                case FFTS_FAST:    sAnalyzer.set_reactivity(0.1f); break;
+                case FFTS_FASTER:  sAnalyzer.set_reactivity(0.025f); break;
+                case FFTS_FASTEST: sAnalyzer.set_reactivity(0.0f); break;
+                default:
+                    break;
+            }
+
 
             // Update shift gain
             if (pShiftGain != NULL)
@@ -893,6 +944,7 @@ namespace lsp
             bool bypass                     = pBypass->value() >= 0.5f;
             bool mode_changed               = false;
             bSmoothMode                     = false;
+            bAccumEnabled                   = pAccum->value() >= 0.5f;
 
             // For each channel
             for (size_t i=0; i<channels; ++i)
@@ -1131,7 +1183,7 @@ namespace lsp
             sAnalyzer.set_sample_rate(sr);
             sAnalyzer.set_rank(meta::para_equalizer_metadata::FFT_RANK);
             sAnalyzer.set_activity(false);
-            sAnalyzer.set_envelope(meta::para_equalizer_metadata::FFT_ENVELOPE);
+            sAnalyzer.set_envelope(pFftEnv->value());
             sAnalyzer.set_window(meta::para_equalizer_metadata::FFT_WINDOW);
             sAnalyzer.set_rate(meta::para_equalizer_metadata::REFRESH_RATE);
         }
@@ -1155,6 +1207,15 @@ namespace lsp
 
             // Perform FFT analysis
             sAnalyzer.process(bufs, samples);
+
+            if (bAccumEnabled)
+            {
+                for (size_t i=0; i < channels; ++i)
+                {
+                    sAnalyzer.get_spectrum(i*2 + 1, vTmpValues, vIndexes, meta::para_equalizer_metadata::MESH_POINTS);
+                    dsp::pmax2(vMaxValues, vTmpValues, meta::para_equalizer_metadata::MESH_POINTS);
+                }
+            }
         }
 
         void para_equalizer::process_channel(eq_channel_t *c, size_t start, size_t samples, size_t total_samples)
@@ -1324,18 +1385,18 @@ namespace lsp
                 plug::mesh_t *mesh          = c->pFftInMesh->buffer<plug::mesh_t>();
                 if ((mesh != NULL) && (mesh->isEmpty()))
                 {
-                    // Add extra points
+                    // Add extra points to fill the mesh
                     mesh->pvData[0][0] = SPEC_FREQ_MIN * 0.5f;
-                    mesh->pvData[0][meta::para_equalizer_metadata::MESH_POINTS+1] = SPEC_FREQ_MAX * 2.0f;
+                    mesh->pvData[0][meta::para_equalizer_metadata::MESH_POINTS + 1] = SPEC_FREQ_MAX * 2.0f;
                     mesh->pvData[1][0] = 0.0f;
-                    mesh->pvData[1][meta::para_equalizer_metadata::MESH_POINTS+1] = 0.0f;
+                    mesh->pvData[1][meta::para_equalizer_metadata::MESH_POINTS + 1] = 0.0f;
 
                     // Copy frequency points
                     dsp::copy(&mesh->pvData[0][1], vFreqs, meta::para_equalizer_metadata::MESH_POINTS);
                     sAnalyzer.get_spectrum(i*2, &mesh->pvData[1][1], vIndexes, meta::para_equalizer_metadata::MESH_POINTS);
 
                     // Mark mesh containing data
-                    mesh->data(2, meta::para_equalizer_metadata::MESH_POINTS+2);
+                    mesh->data(2, meta::para_equalizer_metadata::MESH_POINTS + 2);
                 }
 
                 // Output FFT mesh
@@ -1343,8 +1404,14 @@ namespace lsp
                 if ((mesh != NULL) && (mesh->isEmpty()))
                 {
                     // Copy frequency points
-                    dsp::copy(mesh->pvData[0], vFreqs, meta::para_equalizer_metadata::MESH_POINTS);
-                    sAnalyzer.get_spectrum(i*2+1, mesh->pvData[1], vIndexes, meta::para_equalizer_metadata::MESH_POINTS);
+                    dsp::copy(&mesh->pvData[0][0], vFreqs, meta::para_equalizer_metadata::MESH_POINTS);
+                    sAnalyzer.get_spectrum(i*2+1, &mesh->pvData[1][0], vIndexes, meta::para_equalizer_metadata::MESH_POINTS);
+
+                    // Turn edges to zero to avoid visual artifacts while filling the mesh
+                    mesh->pvData[0][0] = SPEC_FREQ_MIN * 0.5f;
+                    mesh->pvData[0][meta::para_equalizer_metadata::MESH_POINTS - 1] = SPEC_FREQ_MAX * 2.0f;
+                    mesh->pvData[1][0] = 0.0f;
+                    mesh->pvData[1][meta::para_equalizer_metadata::MESH_POINTS - 1] = 0.0f;
 
                     // Mark mesh containing data
                     mesh->data(2, meta::para_equalizer_metadata::MESH_POINTS);
@@ -1429,6 +1496,33 @@ namespace lsp
                         mesh->data(2, meta::para_equalizer_metadata::MESH_POINTS);
 
                         c->nSync           &= ~CS_SYNC_AMP;
+                    }
+
+                    // Request for redraw
+                    if (pWrapper != NULL)
+                        pWrapper->query_display_draw();
+                }
+
+                // Output accumulated curve
+                if ((c->pTrMax != NULL) && bAccumEnabled)
+                {
+                    // Sync mesh
+                    plug::mesh_t *mesh  = c->pTrMax->buffer<plug::mesh_t>();
+                    if ((mesh != NULL) && (mesh->isEmpty()))
+                    {
+                        float *f = mesh->pvData[0];
+                        float *a = mesh->pvData[1];
+
+                        dsp::copy(&f[1], vFreqs, meta::para_equalizer_metadata::MESH_POINTS);
+                        dsp::copy(&a[1], vMaxValues, meta::para_equalizer_metadata::MESH_POINTS);
+
+                        f[0]    = f[1];
+                        f[meta::para_equalizer_metadata::MESH_POINTS + 1] = f[meta::para_equalizer_metadata::MESH_POINTS];
+
+                        a[0]    = 0.0f;
+                        a[meta::para_equalizer_metadata::MESH_POINTS + 1] = 0.0f;
+
+                        mesh->data(2, meta::para_equalizer_metadata::MESH_POINTS + 2);
                     }
 
                     // Request for redraw
@@ -1621,7 +1715,9 @@ namespace lsp
                 v->write("pOut", c->pOut);
                 v->write("pInGain", c->pInGain);
                 v->write("pTrAmp", c->pTrAmp);
+                v->write("pTrMax", c->pTrMax);
                 v->write("pPitch", c->pPitch);
+                v->write("pFft", c->pFft);
                 v->write("pFftInSwitch", c->pFftInSwitch);
                 v->write("pFftOutSwitch", c->pFftOutSwitch);
                 v->write("pFftInMesh", c->pFftInMesh);
@@ -1659,7 +1755,10 @@ namespace lsp
             v->write("pBypass", pBypass);
             v->write("pGainIn", pGainIn);
             v->write("pGainOut", pGainOut);
-            v->write("pReactivity", pReactivity);
+            v->write("pFftSpeed", pFftSpeed);
+            v->write("pFftSpeed", pFftEnv);
+            v->write("pAccum", pAccum);
+            v->write("pResetAccum", pResetAccum);
             v->write("pListen", pListen);
             v->write("pShiftGain", pShiftGain);
             v->write("pZoom", pZoom);

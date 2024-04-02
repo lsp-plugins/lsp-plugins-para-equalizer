@@ -22,6 +22,7 @@
 #include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/dsp-units/units.h>
 #include <lsp-plug.in/fmt/RoomEQWizard.h>
+#include <lsp-plug.in/plug-fw/meta/ports.h>
 #include <lsp-plug.in/plug-fw/meta/func.h>
 #include <lsp-plug.in/stdlib/locale.h>
 #include <lsp-plug.in/stdlib/string.h>
@@ -32,24 +33,36 @@
 
 namespace lsp
 {
+    namespace meta
+    {
+        /**
+         * Current filter (last clicked one)
+        */
+        static const meta::port_t current_filter_port =
+            INT_CONTROL_RANGE("current_filter", "Current Filter", U_NONE, 0.0f, 64.0f, 0.0f, 1.0f);
+
+        /**
+         * Is any filter currently inspected
+         * Needed to display inspection-related widgets
+        */
+        static const meta::port_t is_inspecting_port =
+            SWITCH("is_inspecting", "Is Inspecting", 0.0f);
+
+        /**
+         * Filter type that will be created on double click on this position
+        */
+        static const meta::port_t future_filter_type_port =
+            COMBO("future_filter_type", "Future Filter Type", 0, meta::filter_types);
+    } /* namespace meta */
+
     namespace plugins
     {
         //---------------------------------------------------------------------
         // Plugin UI factory
         static const meta::plugin_t *plugin_uis[] =
         {
-            &meta::para_equalizer_x8_mono,
-            &meta::para_equalizer_x8_stereo,
-            &meta::para_equalizer_x8_lr,
-            &meta::para_equalizer_x8_ms,
-            &meta::para_equalizer_x16_mono,
-            &meta::para_equalizer_x16_stereo,
-            &meta::para_equalizer_x16_lr,
-            &meta::para_equalizer_x16_ms,
-            &meta::para_equalizer_x32_mono,
-            &meta::para_equalizer_x32_stereo,
-            &meta::para_equalizer_x32_lr,
-            &meta::para_equalizer_x32_ms
+            &meta::eq_mono,
+            &meta::eq_stereo,
         };
 
         static ui::Module *ui_factory(const meta::plugin_t *meta)
@@ -57,7 +70,7 @@ namespace lsp
             return new para_equalizer_ui(meta);
         }
 
-        static ui::Factory factory(ui_factory, plugin_uis, 12);
+        static ui::Factory factory(ui_factory, plugin_uis, 2);
 
         static const tk::tether_t dot_menu_tether_list[] =
         {
@@ -71,20 +84,6 @@ namespace lsp
         static const char *fmt_strings[] =
         {
             "%s_%d",
-            NULL
-        };
-
-        static const char *fmt_strings_lr[] =
-        {
-            "%sl_%d",
-            "%sr_%d",
-            NULL
-        };
-
-        static const char *fmt_strings_ms[] =
-        {
-            "%sm_%d",
-            "%ss_%d",
             NULL
         };
 
@@ -108,13 +107,16 @@ namespace lsp
             pInspect        = NULL;
             pAutoInspect    = NULL;
             pSelector       = NULL;
+            pCurrentFilter  = NULL;
             pRewImport      = NULL;
             wGraph          = NULL;
+            wCurve          = NULL;
             wInspectReset   = NULL;
             fmtStrings      = fmt_strings;
             nSplitChannels  = 1;
             nXAxisIndex     = -1;
             nYAxisIndex     = -1;
+            nCurrentFilter  = -1;
 
             pCurrDot        = NULL;
             pCurrNote       = NULL;
@@ -124,33 +126,7 @@ namespace lsp
             wFilterMute     = NULL;
             wFilterSwitch   = NULL;
 
-            if ((!strcmp(meta->uid, meta::para_equalizer_x8_lr.uid)) ||
-                (!strcmp(meta->uid, meta::para_equalizer_x16_lr.uid)) ||
-                (!strcmp(meta->uid, meta::para_equalizer_x32_lr.uid)))
-            {
-                fmtStrings      = fmt_strings_lr;
-                nSplitChannels  = 2;
-            }
-            else if (
-                    (!strcmp(meta->uid, meta::para_equalizer_x8_ms.uid)) ||
-                    (!strcmp(meta->uid, meta::para_equalizer_x16_ms.uid)) ||
-                 (!strcmp(meta->uid, meta::para_equalizer_x32_ms.uid)))
-            {
-                fmtStrings      = fmt_strings_ms;
-                nSplitChannels  = 2;
-            }
-
-            nFilters        = 8;
-            if ((!strcmp(meta->uid, meta::para_equalizer_x16_lr.uid)) ||
-                (!strcmp(meta->uid, meta::para_equalizer_x16_mono.uid)) ||
-                (!strcmp(meta->uid, meta::para_equalizer_x16_ms.uid)) ||
-                (!strcmp(meta->uid, meta::para_equalizer_x16_stereo.uid)))
-                nFilters       = 16;
-            if ((!strcmp(meta->uid, meta::para_equalizer_x32_lr.uid)) ||
-                (!strcmp(meta->uid, meta::para_equalizer_x32_mono.uid)) ||
-                (!strcmp(meta->uid, meta::para_equalizer_x32_ms.uid)) ||
-                (!strcmp(meta->uid, meta::para_equalizer_x32_stereo.uid)))
-                nFilters       = 32;
+            nFilters       = 32;
         }
 
         para_equalizer_ui::~para_equalizer_ui()
@@ -281,6 +257,46 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t para_equalizer_ui::slot_graph_mouse_move(tk::Widget *sender, void *ptr, void *data)
+        {
+            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+            if (_this == NULL)
+                return STATUS_BAD_STATE;
+
+            ws::event_t *ev = static_cast<ws::event_t *>(data);
+            _this->on_graph_mouse_move(ev->nLeft, ev->nTop);
+
+            return STATUS_OK;
+        }
+
+        status_t para_equalizer_ui::slot_graph_mouse_out(tk::Widget *sender, void *ptr, void *data)
+        {
+            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+            if (_this == NULL)
+                return STATUS_BAD_STATE;
+
+            ws::event_t *ev = static_cast<ws::event_t *>(data);
+            _this->on_graph_mouse_out(ev->nLeft, ev->nTop);
+
+            return STATUS_OK;
+        }
+
+        status_t para_equalizer_ui::slot_curve_mouse_down(tk::Widget *sender, void *ptr, void *data)
+        {
+            lsp_trace("para_equalizer_ui::slot_curve_mouse_down");
+            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+            if (_this == NULL)
+                return STATUS_BAD_STATE;
+
+            lsp_trace("para_equalizer_ui::slot_curve_mouse_down: _this=%p", _this);
+
+            ws::event_t *ev = static_cast<ws::event_t *>(data);
+            lsp_trace("para_equalizer_ui::slot_curve_mouse_down: ev=%p", ev);
+            _this->on_curve_mouse_down(ev->nLeft, ev->nTop);
+
+            return STATUS_OK;
+        }
+
         status_t para_equalizer_ui::slot_filter_menu_submit(tk::Widget *sender, void *ptr, void *data)
         {
             para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
@@ -322,6 +338,58 @@ namespace lsp
 
             // Process the event
             _this->on_filter_dot_right_click(sender, ev->nLeft, ev->nTop);
+
+            return STATUS_OK;
+        }
+
+        status_t para_equalizer_ui::slot_filter_dot_mouse_down(tk::Widget *sender, void *ptr, void *data)
+        {
+            // Process the left mouse click
+            ws::event_t *ev = static_cast<ws::event_t *>(data);
+            if ((ev->nCode != ws::MCB_LEFT) && (ev->nCode != ws::MCB_RIGHT))
+                return STATUS_OK;
+
+            // Fetch paramters
+            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+            if (_this == NULL)
+                return STATUS_BAD_STATE;
+
+            _this->on_filter_dot_mouse_down(sender, ev->nLeft, ev->nTop);
+
+            return STATUS_OK;
+        }
+
+        status_t para_equalizer_ui::slot_filter_dot_mouse_scroll(tk::Widget *sender, void *ptr, void *data)
+        {
+            // Process the left mouse click
+            ws::event_t *ev = static_cast<ws::event_t *>(data);
+
+            // Fetch paramters
+            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+            if (_this == NULL)
+                return STATUS_BAD_STATE;
+
+            _this->on_filter_dot_mouse_scroll(sender, ev);
+
+            return STATUS_OK;
+        }
+
+        status_t para_equalizer_ui::slot_filter_dot_mouse_dbl_click(tk::Widget *sender, void *ptr, void *data)
+        {
+            // Process the left mouse click
+            ws::event_t *ev = static_cast<ws::event_t *>(data);
+
+            if (ev->nCode == ws::MCB_LEFT)
+            {
+                // Fetch paramters
+                para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
+                if (_this == NULL)
+                    return STATUS_BAD_STATE;
+
+                _this->on_filter_mouse_dbl_click(sender);
+                // ........
+                return STATUS_SKIP;
+            }
 
             return STATUS_OK;
         }
@@ -761,7 +829,12 @@ namespace lsp
                     f.pQuality      = find_port(*fmt, "q", port_id);
 
                     if (f.wDot != NULL)
+                    {
                         f.wDot->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_filter_dot_click, this);
+                        f.wDot->slots()->bind(tk::SLOT_MOUSE_DOWN, slot_filter_dot_mouse_down, this);
+                        f.wDot->slots()->bind(tk::SLOT_MOUSE_SCROLL, slot_filter_dot_mouse_scroll, this);
+                        f.wDot->slots()->intercept(tk::SLOT_MOUSE_DBL_CLICK, slot_filter_dot_mouse_dbl_click, this);
+                    }
                     if (f.wInspect != NULL)
                         f.wInspect->slots()->bind(tk::SLOT_SUBMIT, slot_filter_inspect_submit, this);
 
@@ -939,6 +1012,19 @@ namespace lsp
             wFilterMenu    = root;
         }
 
+        status_t para_equalizer_ui::init(ui::IWrapper *wrapper, tk::Display *dpy)
+        {
+            status_t res = Module::init(wrapper, dpy);
+            if (res != STATUS_OK)
+                return res;
+
+            pCurrentFilter = create_control_port(&meta::current_filter_port);
+            pIsInspecting = create_control_port(&meta::is_inspecting_port);
+            pFutureFilterType = create_control_port(&meta::future_filter_type_port);
+
+            return STATUS_OK;
+        }
+
         status_t para_equalizer_ui::post_init()
         {
             status_t res = ui::Module::post_init();
@@ -988,13 +1074,21 @@ namespace lsp
                 menu->add(child);
             }
 
-            // Bind double-click handler
+            // Bind graph handlers
             wGraph              = wnd->widgets()->get<tk::Graph>("para_eq_graph");
             if (wGraph != NULL)
             {
                 wGraph->slots()->bind(tk::SLOT_MOUSE_DBL_CLICK, slot_graph_dbl_click, this);
+                wGraph->slots()->bind(tk::SLOT_MOUSE_MOVE, slot_graph_mouse_move, this);
+                wGraph->slots()->bind(tk::SLOT_MOUSE_OUT, slot_graph_mouse_out, this);
                 nXAxisIndex         = find_axis("para_eq_ox");
                 nYAxisIndex         = find_axis("para_eq_oy");
+            }
+
+            wCurve              = wnd->widgets()->get<tk::GraphMesh>("para_eq_curve");
+            if (wCurve != NULL)
+            {
+                wCurve->slots()->bind(tk::SLOT_MOUSE_DOWN, slot_curve_mouse_down, this);
             }
 
             wInspectReset       = wnd->widgets()->get<tk::Button>("filter_inspect_reset");
@@ -1150,6 +1244,48 @@ namespace lsp
             return NULL;
         }
 
+        void para_equalizer_ui::on_filter_mouse_dbl_click(tk::Widget *sender)
+        {
+            filter_t *dot = find_filter_by_widget(sender);
+            if (dot == NULL)
+                return;
+
+            if (dot->pMute != NULL)
+            {
+                float value = dot->pMute->value();
+                dot->pMute->set_value((value >= 0.5f) ? 0.0f : 1.0f);
+                dot->pMute->notify_all(ui::PORT_USER_EDIT);
+            }
+        }
+
+        void para_equalizer_ui::on_filter_dot_mouse_down(tk::Widget *sender, ssize_t x, ssize_t y)
+        {
+            filter_t *dot = find_filter_by_widget(sender);
+            if (dot == NULL)
+                return;
+
+            nCurrentFilter = vFilters.index_of(dot);
+            if (pCurrentFilter != NULL)
+            {
+                pCurrentFilter->set_value(nCurrentFilter);
+                pCurrentFilter->notify_all(ui::PORT_USER_EDIT);
+            }
+        }
+
+        void para_equalizer_ui::on_filter_dot_mouse_scroll(tk::Widget *sender, const ws::event_t *ev)
+        {
+            filter_t *dot = find_filter_by_widget(sender);
+            if (dot == NULL)
+                return;
+
+            nCurrentFilter = vFilters.index_of(dot);
+            if (pCurrentFilter != NULL)
+            {
+                pCurrentFilter->set_value(nCurrentFilter);
+                pCurrentFilter->notify_all(ui::PORT_USER_EDIT);
+            }
+        }
+
         void para_equalizer_ui::on_filter_dot_right_click(tk::Widget *dot, ssize_t x, ssize_t y)
         {
             // Is filter dot menu present?
@@ -1217,6 +1353,16 @@ namespace lsp
             wFilterMenu->show(pCurrDot->wDot->graph(), &r);
         }
 
+        size_t para_equalizer_ui::get_future_filter_type(size_t freq) {
+            return
+                (freq <= 60.0f)    ? meta::para_equalizer_metadata::EQF_HIPASS     :
+                (freq <= 200.0f)    ? meta::para_equalizer_metadata::EQF_LOSHELF    :
+                (freq <= 7000.0f)   ? meta::para_equalizer_metadata::EQF_BELL       :
+                (freq <= 12000.0f)  ? meta::para_equalizer_metadata::EQF_HISHELF    :
+                (freq <= 20000.0f)  ? meta::para_equalizer_metadata::EQF_LOPASS    :
+                                      meta::para_equalizer_metadata::EQF_OFF;
+        }
+
         void para_equalizer_ui::on_graph_dbl_click(ssize_t x, ssize_t y)
         {
             if ((wGraph == NULL) || (nXAxisIndex < 0) || (nYAxisIndex < 0))
@@ -1263,12 +1409,7 @@ namespace lsp
             size_t mask         = 1 << channel;
 
             // Set-up parameters
-            size_t filter_type =
-                (freq <= 100.0f)    ? meta::para_equalizer_metadata::EQF_HIPASS     :
-                (freq <= 300.0f)    ? meta::para_equalizer_metadata::EQF_LOSHELF    :
-                (freq <= 7000.0f)   ? meta::para_equalizer_metadata::EQF_BELL       :
-                (freq <= 15000.0f)  ? meta::para_equalizer_metadata::EQF_HISHELF    :
-                                      meta::para_equalizer_metadata::EQF_LOPASS;
+            size_t filter_type = get_future_filter_type(freq);
 
             float filter_quality = (filter_type == meta::para_equalizer_metadata::EQF_BELL) ? 2.0f : 0.5f;
 
@@ -1281,6 +1422,119 @@ namespace lsp
             set_filter_quality(fid, mask, filter_quality);
             set_filter_enabled(fid, mask, true);
             set_filter_solo(fid, mask, false);
+
+            // Make the filter current
+            if (pCurrentFilter != NULL)
+            {
+                pCurrentFilter->set_value(fid);
+                pCurrentFilter->notify_all(ui::PORT_USER_EDIT);
+            }
+        }
+
+        void para_equalizer_ui::on_graph_mouse_move(ssize_t x, ssize_t y)
+        {
+            if ((wGraph == NULL) || (nXAxisIndex < 0) || (nYAxisIndex < 0))
+                return;
+
+            float freq = 0.0f;
+            if (wGraph->xy_to_axis(nXAxisIndex, &freq, x, y) != STATUS_OK)
+                return;
+
+            // lsp_trace("Graph mouse move: x=%d, y=%d, freq=%.2f",x, y, freq);
+
+
+            size_t filter_type = get_future_filter_type(freq);
+
+
+            // Set future filter type
+            if (pFutureFilterType != NULL)
+            {
+                pFutureFilterType->set_value(filter_type);
+                pFutureFilterType->notify_all(ui::PORT_USER_EDIT);
+            }
+        }
+
+        void para_equalizer_ui::on_graph_mouse_out(ssize_t x, ssize_t y)
+        {
+            // Clear future filter type
+            if (pFutureFilterType != NULL)
+            {
+                pFutureFilterType->set_value(0.0f);
+                pFutureFilterType->notify_all(ui::PORT_USER_EDIT);
+            }
+        }
+
+        void para_equalizer_ui::on_curve_mouse_down(ssize_t x, ssize_t y)
+        {
+            lsp_trace("Curve mouse down: x=%d, y=%d", x, y);
+            if ((wGraph == NULL) || (nXAxisIndex < 0) || (nYAxisIndex < 0))
+                return;
+
+            lsp_trace("Gate passed");
+
+            float freq = 0.0f, gain = 0.0f;
+            if (wGraph->xy_to_axis(nXAxisIndex, &freq, x, y) != STATUS_OK)
+                return;
+            if (wGraph->xy_to_axis(nYAxisIndex, &gain, x, y) != STATUS_OK)
+                return;
+
+            lsp_trace("Coords passed");
+
+            lsp_trace("Double click: x=%d, y=%d, freq=%.2f, gain=%.4f (%.2f db)",
+                x, y, freq, gain, dspu::gain_to_db(gain));
+
+            // Obtain which port set (left/right/mid/side) should be updated
+            ssize_t channel     = (pSelector != NULL) ? size_t(pSelector->value()) % nSplitChannels : 0;
+            if (channel < 0)
+            {
+                lsp_trace("Could not allocate channel");
+                return;
+            }
+
+            // Allocate new port index
+            ssize_t fid         = -1;
+            for (size_t i=0; i<32; ++i)
+            {
+                ssize_t type = get_filter_type(i, channel);
+                if (type == meta::para_equalizer_metadata::EQF_OFF)
+                {
+                    fid             = i;
+                    break;
+                }
+                else if (type < 0)
+                    break;
+            }
+
+            if (fid < 0)
+            {
+                lsp_trace("Could not allocate new equalizer band");
+                return;
+            }
+
+            // Equalizer band has been allocated, do the stuff
+            size_t mask         = 1 << channel;
+
+            // Set-up parameters
+            size_t filter_type = get_future_filter_type(freq);
+
+            float filter_quality = (filter_type == meta::para_equalizer_metadata::EQF_BELL) ? 2.0f : 0.5f;
+
+            // Set-up filter type
+            set_filter_mode(fid, mask, meta::para_equalizer_metadata::EFM_RLC_BT);
+            set_filter_type(fid, mask, filter_type);
+            set_filter_frequency(fid, mask, freq);
+            set_filter_slope(fid, mask, 1);
+            set_filter_gain(fid, mask, gain);
+            set_filter_quality(fid, mask, filter_quality);
+            set_filter_enabled(fid, mask, true);
+            set_filter_solo(fid, mask, false);
+
+            // Make the filter current
+            if (pCurrentFilter != NULL)
+            {
+                pCurrentFilter->set_value(fid);
+                pCurrentFilter->notify_all(ui::PORT_USER_EDIT);
+            }
         }
 
         bool para_equalizer_ui::filter_inspect_can_be_enabled(filter_t *f)
@@ -1348,6 +1602,12 @@ namespace lsp
             if ((pCurrDot == f) && (wFilterInspect != NULL))
                 wFilterInspect->checked()->set((inspect >= 0) && (inspect == index));
 
+            if (pIsInspecting != NULL)
+            {
+                pIsInspecting->set_value((inspect >= 0) ? 1.0f : 0.0f);
+                pIsInspecting->notify_all(ui::PORT_USER_EDIT);
+            }
+
             // Make the frequency and note visible
             update_filter_note_text();
         }
@@ -1362,6 +1622,7 @@ namespace lsp
 
             ssize_t curr    = pInspect->value();
             ssize_t index   = vFilters.index_of(f);
+
 
             if (curr == index)
                 select_inspected_filter(NULL, true);
@@ -1685,6 +1946,21 @@ namespace lsp
                     return f;
             }
             return NULL;
+        }
+
+        void para_equalizer_ui::set_current_filter(size_t id)
+        {
+            if (id < 0 || id >= vFilters.size())
+                return;
+            if (nCurrentFilter == id)
+                return;
+
+            nCurrentFilter = id;
+            if (pCurrentFilter != NULL)
+            {
+                pCurrentFilter->set_value(nCurrentFilter);
+                pCurrentFilter->notify_all(ui::PORT_USER_EDIT);
+            }
         }
 
         void para_equalizer_ui::on_main_grid_realized(tk::Widget *w)
