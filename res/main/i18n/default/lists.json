@@ -5,30 +5,30 @@
 			"unknown": "{@filter}\n{@filter_type}\n{@frequency%.2f} Hz\n{@gain%.2f} dB"
 		},
 		
-		"flt_0:7": "Filters 0-7",
-		"flt_16:23": "Filters 16-23",
-		"flt_24:31": "Filters 24-31",
-		"flt_8:15": "Filters 8-15",
+		"flt_0:7": "Filters 1-8",
+		"flt_16:23": "Filters 17-24",
+		"flt_24:31": "Filters 25-32",
+		"flt_8:15": "Filters 9-16",
 		
-		"flt_l_0:7": "Filters Left 0-7",
-		"flt_l_16:23": "Filters Left 16-23",
-		"flt_l_24:31": "Filters Left 24-31",
-		"flt_l_8:15": "Filters Left 8-15",
+		"flt_l_0:7": "Filters Left 1-8",
+		"flt_l_16:23": "Filters Left 17-24",
+		"flt_l_24:31": "Filters Left 25-32",
+		"flt_l_8:15": "Filters Left 9-16",
 		
-		"flt_m_0:7": "Filters Mid 0-7",
-		"flt_m_16:23": "Filters Mid 16-23",
-		"flt_m_24:31": "Filters Mid 24-31",
-		"flt_m_8:15": "Filters Mid 8-15",
+		"flt_m_0:7": "Filters Mid 1-8",
+		"flt_m_16:23": "Filters Mid 17-24",
+		"flt_m_24:31": "Filters Mid 25-32",
+		"flt_m_8:15": "Filters Mid 9-16",
 		
-		"flt_r_0:7": "Filters Right 0-7",
-		"flt_r_16:23": "Filters Right 16-23",
-		"flt_r_24:31": "Filters Right 24-31",
-		"flt_r_8:15": "Filters Right 8-15",
+		"flt_r_0:7": "Filters Right 1-8",
+		"flt_r_16:23": "Filters Right 17-24",
+		"flt_r_24:31": "Filters Right 25-32",
+		"flt_r_8:15": "Filters Right 9-16",
 		
-		"flt_s_0:7": "Filters Side 0-7",
-		"flt_s_16:23": "Filters Side 16-23",
-		"flt_s_24:31": "Filters Side 24-31",
-		"flt_s_8:15": "Filters Side 8-15"
+		"flt_s_0:7": "Filters Side 1-8",
+		"flt_s_16:23": "Filters Side 17-24",
+		"flt_s_24:31": "Filters Side 25-32",
+		"flt_s_8:15": "Filters Side 9-16"
 	}
 }
 

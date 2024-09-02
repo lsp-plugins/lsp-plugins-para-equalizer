@@ -637,7 +637,7 @@ namespace lsp
                     lc_string.set("lists.filters.index.right_id");
                 else
                     lc_string.set("lists.filters.index.filter_id");
-                lc_string.params()->set_int("id", filter_index % nFilters);
+                lc_string.params()->set_int("id", ((filter_index % nFilters)+1) );
                 lc_string.format(&text);
                 params.set_string("filter", &text);
                 lc_string.params()->clear();
@@ -1264,10 +1264,10 @@ namespace lsp
 
             // Set-up parameters
             size_t filter_type =
-                (freq <= 100.0f)    ? meta::para_equalizer_metadata::EQF_HIPASS     :
-                (freq <= 300.0f)    ? meta::para_equalizer_metadata::EQF_LOSHELF    :
-                (freq <= 7000.0f)   ? meta::para_equalizer_metadata::EQF_BELL       :
-                (freq <= 15000.0f)  ? meta::para_equalizer_metadata::EQF_HISHELF    :
+                (freq <= 20.0f)    ? meta::para_equalizer_metadata::EQF_HIPASS     :
+                (freq <= 40.0f)    ? meta::para_equalizer_metadata::EQF_LOSHELF    :
+                (freq <= 10000.0f)   ? meta::para_equalizer_metadata::EQF_BELL       :
+                (freq <= 20000.0f)  ? meta::para_equalizer_metadata::EQF_HISHELF    :
                                       meta::para_equalizer_metadata::EQF_LOPASS;
 
             float filter_quality = (filter_type == meta::para_equalizer_metadata::EQF_BELL) ? 2.0f : 0.5f;

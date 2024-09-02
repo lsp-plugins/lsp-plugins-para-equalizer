@@ -268,7 +268,7 @@
 									<vsep/>
 								</cell>
 								<ui:with expand="true" bright="(:ft${ch} igt 0) ? 1 : 0.75" bg.bright="(:ft${ch} igt 0) ? 1.0 : :const_bg_darken">
-									<cell cols="2"><label text="${i}" pad="6"/></cell>
+									<cell cols="2"><label text="${:i+1}" pad="6"/></cell>
 									<cell cols="2" fill="true">
 										<combo ui:id="filter_type${ch}" id="ft${ch}" fill="true" pad.l="6" pad.r="6" pad.b="6"/>
 									</cell>
