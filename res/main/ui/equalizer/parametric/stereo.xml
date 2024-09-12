@@ -61,6 +61,8 @@
 
 					<mesh id="ifg_l" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="0" color="left_in" color.a="0.8" fcolor.a="0.8" fill="true" fcolor="left_in" visibility=":ife_l"/>
 					<mesh id="ifg_r" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="0" color="right_in" color.a="0.8" fcolor.a="0.8" fill="true" fcolor="right_in" visibility=":ife_r"/>
+					<mesh id="rfg_l" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="2" color="left_in" visibility=":rfe_l"/>
+					<mesh id="rfg_r" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="2" color="right_in" visibility=":rfe_r"/>
 					<mesh id="ofg_l" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="2" color="left" visibility=":ofe_l"/>
 					<mesh id="ofg_r" oy=":_ui_zoomable_spectrum_graph ? 1 : 3" width="2" color="right" visibility=":ofe_r"/>
 
@@ -180,7 +182,7 @@
 
 		<vbox spacing="4">
 			<group text="groups.signal" expand="true">
-				<grid rows="4" cols="2" hspacing="4">
+				<grid rows="5" cols="2" hspacing="4">
 					<knob id="g_in" pad.r="4"/>
 					<vbox vfill="false">
 						<label text="labels.input" halign="0"/>
@@ -192,12 +194,16 @@
 						<label text="labels.output" expand="true" halign="0"/>
 						<value id="g_out" width.min="50" sline="true" halign="0"/>
 					</vbox>
-
+					
 					<knob id="bal" balance="0.5" scolor="balance" pad.r="4"/>
 					<vbox vfill="false">
 						<label text="labels.balance" halign="0"/>
 						<value id="bal" width.min="50" sline="true" halign="0"/>
 					</vbox>
+					
+					<cell cols="2">
+						<shmlink id="send" />
+					</cell>
 
 					<knob id="frqs" scolor="mid" pad.r="4"/>
 					<vbox vfill="false">
@@ -209,21 +215,35 @@
 			<!-- Analysis -->
 			<group text="groups.analysis" expand="true" ipadding="0">
 				<vbox>
-					<grid rows="4" cols="2">
+					<grid rows="7" cols="2">
 						<align halign="-1" pad.t="4" pad.l="6">
 							<label text="labels.fft.fft_in"/>
 						</align>
-						<hbox spacing="4" pad.v="4" pad.h="6" hfill="false"><button id="ife_l" text="labels.chan.L_eft" size="19" ui:inject="Button_left_8"/>
-							<button id="ife_r" text="labels.chan.R_ight" size="19" ui:inject="Button_right_8"/></hbox>
-
+						<hbox spacing="4" pad.v="4" pad.h="6" hfill="false">
+							<button id="ife_l" text="labels.chan.L_eft" size="19" ui:inject="Button_left_8"/>
+							<button id="ife_r" text="labels.chan.R_ight" size="19" ui:inject="Button_right_8"/>
+						</hbox>
 						<cell cols="2"><hsep pad.v="2" bg.color="bg" vreduce="true"/></cell>
 
 						<align halign="-1" pad.t="4" pad.l="6">
 							<label text="labels.fft.fft_out" halign="0"/>
 						</align>
-						<hbox spacing="4" pad.v="4" pad.h="6" hfill="false"><button id="ofe_l" text="labels.chan.L_eft" size="19" ui:inject="Button_left_8"/>
-							<button id="ofe_r" text="labels.chan.R_ight" size="19" ui:inject="Button_right_8"/></hbox>
-
+						<hbox spacing="4" pad.v="4" pad.h="6" hfill="false">
+							<button id="ofe_l" text="labels.chan.L_eft" size="19" ui:inject="Button_left_8"/>
+							<button id="ofe_r" text="labels.chan.R_ight" size="19" ui:inject="Button_right_8"/>
+						</hbox>
+						<cell cols="2"><hsep pad.v="2" bg.color="bg" vreduce="true"/></cell>
+						
+						<align halign="-1" pad.t="4" pad.l="6">
+							<label text="labels.fft.fft_ext" halign="0"/>
+						</align>
+						<hbox spacing="4" pad.v="4" pad.h="6" hfill="false">
+							<button id="rfe_l" text="labels.chan.L_eft" size="19" ui:inject="Button_left_8"/>
+							<button id="rfe_r" text="labels.chan.R_ight" size="19" ui:inject="Button_right_8"/>
+						</hbox>
+						<cell cols="2">
+							<shmlink id="return" />
+						</cell>
 						<cell cols="2"><hsep pad.v="2" bg.color="bg" vreduce="true"/></cell>
 					</grid>
 
