@@ -1281,7 +1281,7 @@ namespace lsp
                     if (fGainIn != 1.0f)
                     {
                         dsp::mul_k2(l->vInBuffer, fGainIn, to_process);
-                        dsp::mul_k2(l->vInBuffer, fGainIn, to_process);
+                        dsp::mul_k2(r->vInBuffer, fGainIn, to_process);
                     }
                     l->vInPtr = l->vInBuffer;
                     r->vInPtr = r->vInBuffer;
