@@ -4,6 +4,7 @@
 
 === 1.0.26 ===
 * Added send/return options to communicate with another equalizers/plugins.
+* Updated build scripts and dependencies.
 
 === 1.0.25 ===
 * Updated build scripts and dependencies.
