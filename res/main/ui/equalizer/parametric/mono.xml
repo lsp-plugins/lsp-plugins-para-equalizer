@@ -185,16 +185,13 @@
 			<group text="groups.analysis" expand="true" ipadding="0">
 				<vbox>
 					<grid rows="2" cols="1">
-						<!-- <align halign="-1" pad.t="4" pad.l="6">
-							<label text="labels.fft.fft"/>
-						</align> -->
 						<hbox spacing="4" pad.v="4" pad.h="6" hfill="false">
 							<button id="ife" text="labels.chan.in" height="19" width="30" ui:inject="Button_mono_8"/>
 							<button id="ofe" text="labels.chan.out" height="19" width="30" ui:inject="Button_mono_8"/>
 							<button id="rfe" text="labels.chan.link" height="19" width="30" ui:inject="Button_mono_8"/>
 						</hbox>
 
-						<cell cols="2"><hsep pad.v="2" bg.color="bg" vreduce="true"/></cell>
+						<hsep pad.v="2" bg.color="bg" vreduce="true"/>
 					</grid>
 
 					<grid rows="2" cols="2" transpose="false" hspacing="4" pad.v="4">
