@@ -1265,9 +1265,9 @@ namespace lsp
             // Set-up parameters
             size_t filter_type =
                 (freq <= 20.0f)    ? meta::para_equalizer_metadata::EQF_HIPASS     :
-                (freq <= 40.0f)    ? meta::para_equalizer_metadata::EQF_LOSHELF    :
-                (freq <= 10000.0f)   ? meta::para_equalizer_metadata::EQF_BELL       :
-                (freq <= 20000.0f)  ? meta::para_equalizer_metadata::EQF_HISHELF    :
+                (freq <= 50.0f)    ? meta::para_equalizer_metadata::EQF_LOSHELF    :
+                (freq <= 5000.0f)   ? meta::para_equalizer_metadata::EQF_BELL       :
+                (freq <= 15000.0f)  ? meta::para_equalizer_metadata::EQF_HISHELF    :
                                       meta::para_equalizer_metadata::EQF_LOPASS;
 
             float filter_quality = (filter_type == meta::para_equalizer_metadata::EQF_BELL) ? 2.0f : 0.5f;

@@ -1,6 +1,6 @@
 <?php
 	plugin_header();
-	
+
 	$nf     =   (strpos($PAGE, '_x32') > 0) ? 32 : 16;
 	$m      =   (strpos($PAGE, '_mono') > 0) ? 'm' : (
 	            (strpos($PAGE, '_stereo') > 0) ? 's' : (
@@ -27,7 +27,7 @@
     <li><b>Direct Design (DR) filters</b> add alterantive implementations for the various supperted filter types, and may be chosen whenever their frequency response is best suited.</li>
 </ul>
 <p>
-	This plugin performs parametric equalization of <?= $cc ?> channel<?php 
+	This plugin performs parametric equalization of <?= $cc ?> channel<?php
 	if ($m == 'ms') echo " in Mid-Side mode";
 	elseif ($m == 'lr') echo " by applying individual equalization to left and right channels separately";
 	?>. Up to <?= $nf ?> filters are available for signal processing simultaneously.
@@ -42,7 +42,7 @@
 	by selecting corresponding menu item in the popup menu (
 		<? if ($m == 'ms') echo "Switch to Mid / Switch to Side";
 		   else "Switch to Left / Switch to Right"; ?>
-	) above the filter's dot on the graph. 
+	) above the filter's dot on the graph.
 </p>
 <? } ?>
 
@@ -141,10 +141,10 @@ of so-called poles and zeros:<p>
 	settings depending on the actual frequency value at the position of the mouse click:
 </p>
 <ul>
-	<li>100 Hz and below: Hi-pass RLC BT filter with Q=0.5;</li>
-	<li>100 Hz - 300 Hz: Lo-shelf RLC BT filter with Q=0.5;</li>
-	<li>300 Hz - 7 kHz: Bell RLC BT filter with Q=2;</li>
-	<li>7 kHz - 15 kHz: Hi-shelf RLC BT filter with Q=0.5;</li>
+	<li>20 Hz and below: Hi-pass RLC BT filter with Q=0.5;</li>
+	<li>20 Hz - 50 Hz: Lo-shelf RLC BT filter with Q=0.5;</li>
+	<li>50 Hz - 5 kHz: Bell RLC BT filter with Q=2;</li>
+	<li>5 kHz - 15 kHz: Hi-shelf RLC BT filter with Q=0.5;</li>
 	<li>15 kHz and above: Lo-pass RLC BT filter with Q=0.5.</li>
 </ul>
 <p>
@@ -234,7 +234,7 @@ of so-called poles and zeros:<p>
 		<li><b>BWC</b> - Butterworth-Chebyshev-type-1 based filters. Does not affect <b>Resonance</b> and <b>Notch</b> filters.</li>
 		<li><b>LRX</b> - Linkwitz-Riley based filters. Does not affect <b>Resonance</b> and <b>Notch</b> filters.</li>
         <li><b>APO</b> - Digital biquad filters derived from canonic analog biquad prototypes digitalized through
-        				Bilinear transform. These are <a href="https://shepazu.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html">textbook filters</a> 
+        				Bilinear transform. These are <a href="https://shepazu.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html">textbook filters</a>
         				which are implemented as in the <a href="https://equalizerapo.com/">EqualizerAPO</a> software.</li>
 		<li><b>BT</b> - Bilinear Z-transform is used for pole/zero mapping.</li>
 		<li><b>MT</b> - Matched Z-transform is used for pole/zero mapping.</li>

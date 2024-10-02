@@ -5,6 +5,7 @@
 === 1.0.26 ===
 * Added send/return options to communicate with another equalizers/plugins.
 * Updated build scripts and dependencies.
+* Changed the frequencies that are responsible for enabling filter types when double-clicking on the graph
 
 === 1.0.25 ===
 * Updated build scripts and dependencies.
