@@ -261,11 +261,10 @@
 
 				<vsep bg.color="bg" pad.h="2" hreduce="true" hexpand="false"/>
 
-				<shmlin id="return" pad.v="4">
-					pad.l="2"/>
-					<shmlink id="send" pad.v="4"/>
-				</hbox>
-			</cell>
+				<shmlink id="return" pad.v="4" pad.l="2"/>
+				<shmlink id="send" pad.v="4" />
+			</hbox>
+		</cell>
 
 			<cell cols="3">
 				<cgroup id="fsel" pointer="${(:num_filters igt 8) ? 'hand' : 'arrow'}">
