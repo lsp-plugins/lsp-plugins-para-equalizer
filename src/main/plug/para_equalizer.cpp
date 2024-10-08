@@ -23,6 +23,7 @@
 #include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/dsp/dsp.h>
 #include <lsp-plug.in/dsp-units/units.h>
+#include <lsp-plug.in/plug-fw/core/AudioBuffer.h>
 #include <lsp-plug.in/stdlib/math.h>
 
 #include <lsp-plug.in/shared/debug.h>
@@ -460,7 +461,7 @@ namespace lsp
                 return;
 
             // Calculate amount of bulk data to allocate
-            size_t allocate     = (2 * meta::para_equalizer_metadata::MESH_POINTS * (nFilters + 2) + EQ_BUFFER_SIZE * 3) * channels +
+            size_t allocate     = (2 * meta::para_equalizer_metadata::MESH_POINTS * (nFilters + 2) + EQ_BUFFER_SIZE * 4) * channels +
                                   meta::para_equalizer_metadata::MESH_POINTS;
             float *abuf         = new float[allocate];
             if (abuf == NULL)
@@ -487,24 +488,32 @@ namespace lsp
                 c->vDryBuf          = advance_ptr<float>(abuf, EQ_BUFFER_SIZE);
                 c->vInBuffer        = advance_ptr<float>(abuf, EQ_BUFFER_SIZE);
                 c->vOutBuffer       = advance_ptr<float>(abuf, EQ_BUFFER_SIZE);
+                c->vExtBuffer       = advance_ptr<float>(abuf, EQ_BUFFER_SIZE);
                 c->vTrRe            = advance_ptr<float>(abuf, meta::para_equalizer_metadata::MESH_POINTS);
                 c->vTrIm            = advance_ptr<float>(abuf, meta::para_equalizer_metadata::MESH_POINTS);
 
                 // Input and output ports
                 c->vIn              = NULL;
                 c->vOut             = NULL;
+                c->vSend            = NULL;
+                c->vReturn          = NULL;
                 c->vInPtr           = NULL;
+                c->vExtPtr          = NULL;
 
                 // Ports
                 c->pIn              = NULL;
                 c->pOut             = NULL;
+                c->pSend            = NULL;
+                c->pReturn          = NULL;
                 c->pInGain          = NULL;
                 c->pTrAmp           = NULL;
                 c->pPitch           = NULL;
                 c->pFftInSwitch     = NULL;
                 c->pFftOutSwitch    = NULL;
+                c->pFftExtSwitch    = NULL;
                 c->pFftInMesh       = NULL;
                 c->pFftOutMesh      = NULL;
+                c->pFftExtMesh      = NULL;
                 c->pVisible         = NULL;
                 c->pInMeter         = NULL;
                 c->pOutMeter        = NULL;
@@ -578,45 +587,55 @@ namespace lsp
             // Bind audio ports
             lsp_trace("Binding audio ports");
             for (size_t i=0; i<channels; ++i)
-                vChannels[i].pIn        =   trace_port(ports[port_id++]);
+                BIND_PORT(vChannels[i].pIn);
             for (size_t i=0; i<channels; ++i)
-                vChannels[i].pOut       =   trace_port(ports[port_id++]);
+                BIND_PORT(vChannels[i].pOut);
 
             // Bind common ports
             lsp_trace("Binding common ports");
-            pBypass                 = trace_port(ports[port_id++]);
-            pGainIn                 = trace_port(ports[port_id++]);
-            pGainOut                = trace_port(ports[port_id++]);
-            pEqMode                 = trace_port(ports[port_id++]);
-            pReactivity             = trace_port(ports[port_id++]);
-            pShiftGain              = trace_port(ports[port_id++]);
-            pZoom                   = trace_port(ports[port_id++]);
-            trace_port(ports[port_id++]); // Skip filter selector
-            pInspect                = trace_port(ports[port_id++]);
-            pInspectRange           = trace_port(ports[port_id++]);
-            trace_port(ports[port_id++]); // Skip auto inspect switch
+            BIND_PORT(pBypass);
+            BIND_PORT(pGainIn);
+            BIND_PORT(pGainOut);
+            BIND_PORT(pEqMode);
+            BIND_PORT(pReactivity);
+            BIND_PORT(pShiftGain);
+            BIND_PORT(pZoom);
+            SKIP_PORT("Filter selector");
+            BIND_PORT(pInspect);
+            BIND_PORT(pInspectRange);
+            SKIP_PORT("Auto inspect switch");
+
+            // Communication
+            SKIP_PORT("Send name");
+            for (size_t i=0; i<channels; ++i)
+                BIND_PORT(vChannels[i].pSend);
+            SKIP_PORT("Return name");
+            for (size_t i=0; i<channels; ++i)
+                BIND_PORT(vChannels[i].pReturn);
 
             // Meters
             for (size_t i=0; i<channels; ++i)
             {
                 eq_channel_t *c     = &vChannels[i];
 
-                c->pFftInSwitch         = trace_port(ports[port_id++]);
-                c->pFftOutSwitch        = trace_port(ports[port_id++]);
-                c->pFftInMesh           = trace_port(ports[port_id++]);
-                c->pFftOutMesh          = trace_port(ports[port_id++]);
+                BIND_PORT(c->pFftInSwitch);
+                BIND_PORT(c->pFftOutSwitch);
+                BIND_PORT(c->pFftExtSwitch);
+                BIND_PORT(c->pFftInMesh);
+                BIND_PORT(c->pFftOutMesh);
+                BIND_PORT(c->pFftExtMesh);
             }
 
             // Balance
             if (channels > 1)
-                pBalance                = trace_port(ports[port_id++]);
+                BIND_PORT(pBalance);
 
             // Listen port
             if (nMode == EQ_MID_SIDE)
             {
-                pListen                 = trace_port(ports[port_id++]);
-                vChannels[0].pInGain    = trace_port(ports[port_id++]);
-                vChannels[1].pInGain    = trace_port(ports[port_id++]);
+                BIND_PORT(pListen);
+                BIND_PORT(vChannels[0].pInGain);
+                BIND_PORT(vChannels[1].pInGain);
             }
 
             for (size_t i=0; i<channels; ++i)
@@ -628,14 +647,14 @@ namespace lsp
                 }
                 else
                 {
-                    vChannels[i].pTrAmp     = trace_port(ports[port_id++]);
-                    vChannels[i].pPitch     = trace_port(ports[port_id++]);
+                    BIND_PORT(vChannels[i].pTrAmp);
+                    BIND_PORT(vChannels[i].pPitch);
                 }
-                vChannels[i].pInMeter   =   trace_port(ports[port_id++]);
-                vChannels[i].pOutMeter  =   trace_port(ports[port_id++]);
+                BIND_PORT(vChannels[i].pInMeter);
+                BIND_PORT(vChannels[i].pOutMeter);
 
                 if ((nMode == EQ_LEFT_RIGHT) || (nMode == EQ_MID_SIDE))
-                    vChannels[i].pVisible   = trace_port(ports[port_id++]); // Skip eq curve visibility
+                    BIND_PORT(vChannels[i].pVisible);
                 else
                     vChannels[i].pVisible   = NULL;
             }
@@ -668,18 +687,18 @@ namespace lsp
                     else
                     {
                         // 1 port controls 1 filter
-                        f->pType        = trace_port(ports[port_id++]);
-                        f->pMode        = trace_port(ports[port_id++]);
-                        f->pSlope       = trace_port(ports[port_id++]);
-                        f->pSolo        = trace_port(ports[port_id++]);
-                        f->pMute        = trace_port(ports[port_id++]);
-                        f->pFreq        = trace_port(ports[port_id++]);
-                        f->pWidth       = trace_port(ports[port_id++]);
-                        f->pGain        = trace_port(ports[port_id++]);
-                        f->pQuality     = trace_port(ports[port_id++]);
-                        trace_port(ports[port_id++]); // Skip hue
-                        f->pActivity    = trace_port(ports[port_id++]);
-                        f->pTrAmp       = trace_port(ports[port_id++]);
+                        BIND_PORT(f->pType);
+                        BIND_PORT(f->pMode);
+                        BIND_PORT(f->pSlope);
+                        BIND_PORT(f->pSolo);
+                        BIND_PORT(f->pMute);
+                        BIND_PORT(f->pFreq);
+                        BIND_PORT(f->pWidth);
+                        BIND_PORT(f->pGain);
+                        BIND_PORT(f->pQuality);
+                        SKIP_PORT("Hue");
+                        BIND_PORT(f->pActivity);
+                        BIND_PORT(f->pTrAmp);
                     }
                 }
             }
@@ -839,14 +858,16 @@ namespace lsp
             for (size_t i=0; i<channels; ++i)
             {
                 eq_channel_t *c     = &vChannels[i];
-                bool in_fft         = c->pFftInSwitch->value() >= 0.5f;
-                bool out_fft        = c->pFftOutSwitch->value() >= 0.5f;
+                const bool in_fft   = c->pFftInSwitch->value() >= 0.5f;
+                const bool out_fft  = c->pFftOutSwitch->value() >= 0.5f;
+                const bool ext_fft  = c->pFftExtSwitch->value() >= 0.5f;
 
-                // channel:        0     1     2      3
-                // designation: in_l out_l  in_r  out_r
-                sAnalyzer.enable_channel(i*2, in_fft);
-                sAnalyzer.enable_channel(i*2+1, out_fft);
-                if ((in_fft) || (out_fft))
+                // channel:        0     1     2      3     4     5
+                // designation: in_l out_l ext_l   in_r out_r ext_r
+                sAnalyzer.enable_channel(i*3, in_fft);
+                sAnalyzer.enable_channel(i*3+1, out_fft);
+                sAnalyzer.enable_channel(i*3+2, ext_fft);
+                if ((in_fft) || (out_fft) || (ext_fft))
                     ++n_an_channels;
             }
 
@@ -1102,7 +1123,7 @@ namespace lsp
             for (size_t i=0; i<channels; ++i)
             {
                 vChannels[i].sDryDelay.set_delay(latency);
-                sAnalyzer.set_channel_delay(i*2, latency);
+                sAnalyzer.set_channel_delay(i*3, latency); // delay left and right inputs
             }
             set_latency(latency);
         }
@@ -1123,9 +1144,10 @@ namespace lsp
             }
 
             // Initialize analyzer
-            if (!sAnalyzer.init(channels*2, meta::para_equalizer_metadata::FFT_RANK,
-                                sr, meta::para_equalizer_metadata::REFRESH_RATE,
-                                max_latency))
+            if (!sAnalyzer.init(
+                channels*3, meta::para_equalizer_metadata::FFT_RANK,
+                sr, meta::para_equalizer_metadata::REFRESH_RATE,
+                max_latency))
                 return;
 
             sAnalyzer.set_sample_rate(sr);
@@ -1145,12 +1167,13 @@ namespace lsp
             // Prepare processing
             size_t channels     = (nMode == EQ_MONO) ? 1 : 2;
 
-            const float *bufs[4] = { NULL, NULL, NULL, NULL };
+            const float *bufs[6] = { NULL, NULL, NULL, NULL, NULL, NULL };
             for (size_t i=0; i<channels; ++i)
             {
                 eq_channel_t *c         = &vChannels[i];
-                bufs[i*2]               = c->vInPtr;
-                bufs[i*2+1]             = c->vOutBuffer;
+                bufs[i*3]               = c->vInPtr;
+                bufs[i*3 + 1]           = c->vOutBuffer;
+                bufs[i*3 + 2]           = c->vExtPtr;
             }
 
             // Perform FFT analysis
@@ -1208,6 +1231,23 @@ namespace lsp
                 eq_channel_t *c     = &vChannels[i];
                 c->vIn              = c->pIn->buffer<float>();
                 c->vOut             = c->pOut->buffer<float>();
+                c->vSend            = NULL;
+                c->vReturn          = NULL;
+                c->vInPtr           = NULL;
+                c->vExtPtr          = NULL;
+
+                if (c->pSend != NULL)
+                {
+                    core::AudioBuffer *buf = c->pSend->buffer<core::AudioBuffer>();
+                    if ((buf != NULL) && (buf->active()))
+                        c->vSend        = buf->buffer();
+                }
+                if (c->pReturn != NULL)
+                {
+                    core::AudioBuffer *buf = c->pReturn->buffer<core::AudioBuffer>();
+                    if ((buf != NULL) && (buf->active()))
+                        c->vReturn      = buf->buffer();
+                }
             }
 
             for (size_t offset = 0; offset < samples; )
@@ -1232,10 +1272,16 @@ namespace lsp
                         r->pInMeter->set_value(dsp::abs_max(l->vIn, to_process) * fGainIn);
                     }
                     dsp::lr_to_ms(l->vInBuffer, r->vInBuffer, l->vIn, r->vIn, to_process);
+                    if ((l->vReturn != NULL) && (r->vReturn != NULL))
+                    {
+                        dsp::lr_to_ms(l->vExtBuffer, r->vExtBuffer, l->vReturn, r->vReturn, to_process);
+                        l->vExtPtr  = l->vExtBuffer;
+                        r->vExtPtr  = r->vExtBuffer;
+                    }
                     if (fGainIn != 1.0f)
                     {
                         dsp::mul_k2(l->vInBuffer, fGainIn, to_process);
-                        dsp::mul_k2(l->vInBuffer, fGainIn, to_process);
+                        dsp::mul_k2(r->vInBuffer, fGainIn, to_process);
                     }
                     l->vInPtr = l->vInBuffer;
                     r->vInPtr = r->vInBuffer;
@@ -1248,6 +1294,8 @@ namespace lsp
                 else if (nMode == EQ_MONO)
                 {
                     eq_channel_t *c = &vChannels[0];
+                    if (c->vReturn != NULL)
+                        c->vExtPtr  = c->vReturn;
                     if (fGainIn != 1.0f)
                     {
                         dsp::mul_k3(c->vInBuffer, c->vIn, fGainIn, to_process);
@@ -1260,6 +1308,11 @@ namespace lsp
                 else
                 {
                     eq_channel_t *l = &vChannels[0], *r = &vChannels[1];
+                    if ((l->vReturn != NULL) && (r->vReturn != NULL))
+                    {
+                        l->vExtPtr  = l->vReturn;
+                        r->vExtPtr  = r->vReturn;
+                    }
                     if (fGainIn != 1.0f)
                     {
                         dsp::mul_k3(l->vInBuffer, l->vIn, fGainIn, to_process);
@@ -1298,12 +1351,24 @@ namespace lsp
 
                     // Process via bypass
                     if (c->fOutGain != 1.0f)
+                    {
+                        if (c->vSend != NULL)
+                            dsp::mul_k3(c->vSend, c->vOutBuffer, c->fOutGain, to_process);
                         c->sBypass.process_wet(c->vOut, c->vDryBuf, c->vOutBuffer, c->fOutGain, to_process);
+                    }
                     else
+                    {
+                        if (c->vSend != NULL)
+                            dsp::copy(c->vSend, c->vOutBuffer, to_process);
                         c->sBypass.process(c->vOut, c->vDryBuf, c->vOutBuffer, to_process);
+                    }
 
                     c->vIn             += to_process;
                     c->vOut            += to_process;
+                    if (c->vSend != NULL)
+                        c->vSend           += to_process;
+                    if (c->vReturn != NULL)
+                        c->vReturn         += to_process;
                 }
 
                 // Update offset
@@ -1332,7 +1397,7 @@ namespace lsp
 
                     // Copy frequency points
                     dsp::copy(&mesh->pvData[0][1], vFreqs, meta::para_equalizer_metadata::MESH_POINTS);
-                    sAnalyzer.get_spectrum(i*2, &mesh->pvData[1][1], vIndexes, meta::para_equalizer_metadata::MESH_POINTS);
+                    sAnalyzer.get_spectrum(i*3, &mesh->pvData[1][1], vIndexes, meta::para_equalizer_metadata::MESH_POINTS);
 
                     // Mark mesh containing data
                     mesh->data(2, meta::para_equalizer_metadata::MESH_POINTS+2);
@@ -1344,7 +1409,19 @@ namespace lsp
                 {
                     // Copy frequency points
                     dsp::copy(mesh->pvData[0], vFreqs, meta::para_equalizer_metadata::MESH_POINTS);
-                    sAnalyzer.get_spectrum(i*2+1, mesh->pvData[1], vIndexes, meta::para_equalizer_metadata::MESH_POINTS);
+                    sAnalyzer.get_spectrum(i*3 + 1, mesh->pvData[1], vIndexes, meta::para_equalizer_metadata::MESH_POINTS);
+
+                    // Mark mesh containing data
+                    mesh->data(2, meta::para_equalizer_metadata::MESH_POINTS);
+                }
+
+                // External (return) FFT mesh
+                mesh                        = c->pFftExtMesh->buffer<plug::mesh_t>();
+                if ((mesh != NULL) && (mesh->isEmpty()))
+                {
+                    // Copy frequency points
+                    dsp::copy(mesh->pvData[0], vFreqs, meta::para_equalizer_metadata::MESH_POINTS);
+                    sAnalyzer.get_spectrum(i*3 + 2, mesh->pvData[1], vIndexes, meta::para_equalizer_metadata::MESH_POINTS);
 
                     // Mark mesh containing data
                     mesh->data(2, meta::para_equalizer_metadata::MESH_POINTS);
@@ -1608,9 +1685,13 @@ namespace lsp
                 v->write("vDryBuf", c->vDryBuf);
                 v->write("vInBuffer", c->vInBuffer);
                 v->write("vOutBuffer", c->vOutBuffer);
+                v->write("vExtBuffer", c->vExtBuffer);
                 v->write("vIn", c->vIn);
                 v->write("vOut", c->vOut);
+                v->write("vSend", c->vSend);
+                v->write("vReturn", c->vReturn);
                 v->write("vInPtr", c->vInPtr);
+                v->write("vExtPtr", c->vExtPtr);
                 v->write("nSync", c->nSync);
                 v->write("bHasSolo", c->bHasSolo);
 
@@ -1619,13 +1700,17 @@ namespace lsp
 
                 v->write("pIn", c->pIn);
                 v->write("pOut", c->pOut);
+                v->write("pSend", c->pSend);
+                v->write("pReturn", c->pReturn);
                 v->write("pInGain", c->pInGain);
                 v->write("pTrAmp", c->pTrAmp);
                 v->write("pPitch", c->pPitch);
                 v->write("pFftInSwitch", c->pFftInSwitch);
                 v->write("pFftOutSwitch", c->pFftOutSwitch);
+                v->write("pFftExtSwitch", c->pFftExtSwitch);
                 v->write("pFftInMesh", c->pFftInMesh);
                 v->write("pFftOutMesh", c->pFftOutMesh);
+                v->write("pFftExtMesh", c->pFftExtMesh);
                 v->write("pVisible", c->pVisible);
                 v->write("pInMeter", c->pInMeter);
                 v->write("pOutMeter", c->pOutMeter);

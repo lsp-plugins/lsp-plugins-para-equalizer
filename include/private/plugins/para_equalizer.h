@@ -99,9 +99,13 @@ namespace lsp
                     float              *vDryBuf;        // Dry buffer
                     float              *vInBuffer;      // Input buffer (input signal passed to analyzer)
                     float              *vOutBuffer;     // Output buffer
+                    float              *vExtBuffer;     // External buffer
                     float              *vIn;            // Input buffer
                     float              *vOut;           // Output buffer
+                    float              *vSend;          // Send buffer
+                    float              *vReturn;        // Return buffer
                     float              *vInPtr;         // Actual pointer to input data (for eliminatioon of unnecessary memory copies)
+                    float              *vExtPtr;        // Actual pointer to return data (for eliminatioon of unnecessary memory copies)
                     uint32_t            nSync;          // Chart state
                     bool                bHasSolo;       // Channel has soloing filter
 
@@ -110,13 +114,17 @@ namespace lsp
 
                     plug::IPort        *pIn;            // Input port
                     plug::IPort        *pOut;           // Output port
+                    plug::IPort        *pSend;          // Audio send
+                    plug::IPort        *pReturn;        // Audio return
                     plug::IPort        *pInGain;        // Input gain
                     plug::IPort        *pTrAmp;         // Amplitude chart
                     plug::IPort        *pPitch;         // Frequency shift
                     plug::IPort        *pFftInSwitch;   // FFT input switch
                     plug::IPort        *pFftOutSwitch;  // FFT output switch
+                    plug::IPort        *pFftExtSwitch;  // FFT external switch
                     plug::IPort        *pFftInMesh;     // FFT input mesh
                     plug::IPort        *pFftOutMesh;    // FFT output mesh
+                    plug::IPort        *pFftExtMesh;    // FFT external mesh
                     plug::IPort        *pVisible;       // Visibility flag
                     plug::IPort        *pInMeter;       // Output level meter
                     plug::IPort        *pOutMeter;      // Output level meter
