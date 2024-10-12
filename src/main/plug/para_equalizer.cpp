@@ -41,56 +41,59 @@ namespace lsp
 
         //-------------------------------------------------------------------------
         // Plugin factory
-        typedef struct plugin_settings_t
+        inline namespace
         {
-            const meta::plugin_t   *metadata;
-            uint8_t                 channels;
-            uint8_t                 mode;
-        } plugin_settings_t;
+            typedef struct plugin_settings_t
+            {
+                const meta::plugin_t   *metadata;
+                uint8_t                 channels;
+                uint8_t                 mode;
+            } plugin_settings_t;
 
-        static const meta::plugin_t *plugins[] =
-        {
-            &meta::para_equalizer_x8_mono,
-            &meta::para_equalizer_x8_stereo,
-            &meta::para_equalizer_x8_lr,
-            &meta::para_equalizer_x8_ms,
-            &meta::para_equalizer_x16_mono,
-            &meta::para_equalizer_x16_stereo,
-            &meta::para_equalizer_x16_lr,
-            &meta::para_equalizer_x16_ms,
-            &meta::para_equalizer_x32_mono,
-            &meta::para_equalizer_x32_stereo,
-            &meta::para_equalizer_x32_lr,
-            &meta::para_equalizer_x32_ms
-        };
+            static const meta::plugin_t *plugins[] =
+            {
+                &meta::para_equalizer_x8_mono,
+                &meta::para_equalizer_x8_stereo,
+                &meta::para_equalizer_x8_lr,
+                &meta::para_equalizer_x8_ms,
+                &meta::para_equalizer_x16_mono,
+                &meta::para_equalizer_x16_stereo,
+                &meta::para_equalizer_x16_lr,
+                &meta::para_equalizer_x16_ms,
+                &meta::para_equalizer_x32_mono,
+                &meta::para_equalizer_x32_stereo,
+                &meta::para_equalizer_x32_lr,
+                &meta::para_equalizer_x32_ms
+            };
 
-        static const plugin_settings_t plugin_settings[] =
-        {
-            { &meta::para_equalizer_x8_mono,     8, para_equalizer::EQ_MONO         },
-            { &meta::para_equalizer_x8_stereo,   8, para_equalizer::EQ_STEREO       },
-            { &meta::para_equalizer_x8_lr,       8, para_equalizer::EQ_LEFT_RIGHT   },
-            { &meta::para_equalizer_x8_ms,       8, para_equalizer::EQ_MID_SIDE     },
-            { &meta::para_equalizer_x16_mono,   16, para_equalizer::EQ_MONO         },
-            { &meta::para_equalizer_x16_stereo, 16, para_equalizer::EQ_STEREO       },
-            { &meta::para_equalizer_x16_lr,     16, para_equalizer::EQ_LEFT_RIGHT   },
-            { &meta::para_equalizer_x16_ms,     16, para_equalizer::EQ_MID_SIDE     },
-            { &meta::para_equalizer_x32_mono,   32, para_equalizer::EQ_MONO         },
-            { &meta::para_equalizer_x32_stereo, 32, para_equalizer::EQ_STEREO       },
-            { &meta::para_equalizer_x32_lr,     32, para_equalizer::EQ_LEFT_RIGHT   },
-            { &meta::para_equalizer_x32_ms,     32, para_equalizer::EQ_MID_SIDE     },
+            static const plugin_settings_t plugin_settings[] =
+            {
+                { &meta::para_equalizer_x8_mono,     8, para_equalizer::EQ_MONO         },
+                { &meta::para_equalizer_x8_stereo,   8, para_equalizer::EQ_STEREO       },
+                { &meta::para_equalizer_x8_lr,       8, para_equalizer::EQ_LEFT_RIGHT   },
+                { &meta::para_equalizer_x8_ms,       8, para_equalizer::EQ_MID_SIDE     },
+                { &meta::para_equalizer_x16_mono,   16, para_equalizer::EQ_MONO         },
+                { &meta::para_equalizer_x16_stereo, 16, para_equalizer::EQ_STEREO       },
+                { &meta::para_equalizer_x16_lr,     16, para_equalizer::EQ_LEFT_RIGHT   },
+                { &meta::para_equalizer_x16_ms,     16, para_equalizer::EQ_MID_SIDE     },
+                { &meta::para_equalizer_x32_mono,   32, para_equalizer::EQ_MONO         },
+                { &meta::para_equalizer_x32_stereo, 32, para_equalizer::EQ_STEREO       },
+                { &meta::para_equalizer_x32_lr,     32, para_equalizer::EQ_LEFT_RIGHT   },
+                { &meta::para_equalizer_x32_ms,     32, para_equalizer::EQ_MID_SIDE     },
 
-            { NULL, 0, false }
-        };
+                { NULL, 0, false }
+            };
 
-        static plug::Module *plugin_factory(const meta::plugin_t *meta)
-        {
-            for (const plugin_settings_t *s = plugin_settings; s->metadata != NULL; ++s)
-                if (s->metadata == meta)
-                    return new para_equalizer(s->metadata, s->channels, s->mode);
-            return NULL;
-        }
+            static plug::Module *plugin_factory(const meta::plugin_t *meta)
+            {
+                for (const plugin_settings_t *s = plugin_settings; s->metadata != NULL; ++s)
+                    if (s->metadata == meta)
+                        return new para_equalizer(s->metadata, s->channels, s->mode);
+                return NULL;
+            }
 
-        static plug::Factory factory(plugin_factory, plugins, 12);
+            static plug::Factory factory(plugin_factory, plugins, 12);
+        } /* inline namespace */
 
         //-------------------------------------------------------------------------
         para_equalizer::para_equalizer(const meta::plugin_t *metadata, size_t filters, size_t mode): plug::Module(metadata)
