@@ -2,6 +2,9 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.28 ===
+
+
 === 1.0.27 ===
 * Fixed compilation on modern compilers.
 * Updated build scripts and dependencies.
