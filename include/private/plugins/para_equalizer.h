@@ -164,6 +164,7 @@ namespace lsp
 
             protected:
                 void                do_destroy();
+                void                mark_all_filters_for_update();
                 void                perform_analysis(size_t samples);
                 void                process_channel(eq_channel_t *c, size_t start, size_t samples, size_t total_samples);
 
