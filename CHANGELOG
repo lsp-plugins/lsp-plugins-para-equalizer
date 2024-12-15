@@ -4,6 +4,7 @@
 
 === 1.0.28 ===
 * Fixed imprecise spectrum graph when rapidly changing the frequency of filter.
+* Updated build scripts and dependencies.
 
 === 1.0.27 ===
 * Fixed compilation on modern compilers.
