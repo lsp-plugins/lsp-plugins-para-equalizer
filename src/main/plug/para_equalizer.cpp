@@ -707,15 +707,21 @@ namespace lsp
             }
         }
 
-        void para_equalizer::ui_activated()
+        void para_equalizer::mark_all_filters_for_update()
         {
-            size_t channels     = ((nMode == EQ_MONO) || (nMode == EQ_STEREO)) ? 1 : 2;
+            const size_t channels     = ((nMode == EQ_MONO) || (nMode == EQ_STEREO)) ? 1 : 2;
+
             for (size_t i=0; i<channels; ++i)
             {
                 for (size_t j=0; j<=nFilters; ++j)
                     vChannels[i].vFilters[j].nSync = CS_UPDATE;
                 vChannels[i].nSync = CS_UPDATE;
             }
+        }
+
+        void para_equalizer::ui_activated()
+        {
+            mark_all_filters_for_update();
             pWrapper->request_settings_update();
         }
 
@@ -1431,7 +1437,23 @@ namespace lsp
                 }
             }
 
+            // Report latency
             set_latency(latency);
+
+            // Reset smooth mode
+            if (bSmoothMode)
+            {
+                // Apply actual settings of equalizer at the end
+                for (size_t i=0; i<channels; ++i)
+                {
+                    eq_channel_t *c     = &vChannels[i];
+                    for (size_t j=0; j<=nFilters; ++j)
+                        c->sEqualizer.set_params(j, &c->vFilters[j].sFP);
+                }
+
+                mark_all_filters_for_update();
+                bSmoothMode     = false;
+            }
 
             // For Mono and Stereo channels only the first channel should be processed
             if (nMode == EQ_STEREO)
@@ -1515,20 +1537,6 @@ namespace lsp
                     if (pWrapper != NULL)
                         pWrapper->query_display_draw();
                 }
-            }
-
-            // Reset smooth mode
-            if (bSmoothMode)
-            {
-                // Apply actual settings of equalizer at the end
-                for (size_t i=0; i<channels; ++i)
-                {
-                    eq_channel_t *c     = &vChannels[i];
-                    for (size_t j=0; j<=nFilters; ++j)
-                        c->sEqualizer.set_params(j, &c->vFilters[j].sFP);
-                }
-
-                bSmoothMode     = false;
             }
         }
 
