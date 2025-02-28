@@ -2,6 +2,9 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.29 ===
+* Updated build scripts and dependencies.
+
 === 1.0.28 ===
 * Fixed imprecise spectrum graph when rapidly changing the frequency of filter.
 * Updated build scripts and dependencies.
