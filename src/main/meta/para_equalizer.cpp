@@ -178,24 +178,24 @@ namespace lsp
             { NULL, NULL }
         };
 
-        #define EQ_FILTER(id, label, x, total, f) \
+        #define EQ_FILTER(id, label, alias, x, total, f) \
             COMBO("ft" id "_" #x, "Filter type " label #x, 0, filter_types), \
             COMBO("fm" id "_" #x, "Filter mode " label #x, 0, filter_modes), \
             COMBO("s" id "_" #x, "Filter slope " label #x, 0, filter_slopes), \
             SWITCH("xs" id "_" #x, "Filter solo " label #x, 0.0f), \
             SWITCH("xm" id "_" #x, "Filter mute " label #x, 0.0f), \
-            LOG_CONTROL_DFL("f" id "_" #x, "Frequency " label #x, U_HZ, para_equalizer_metadata::FREQ, f), \
+            LOG_CONTROL_DFL("f" id "_" #x, "Frequency " label #x, "Freq " #x alias, U_HZ, para_equalizer_metadata::FREQ, f), \
             CONTROL("w" id "_" #x, "Filter Width " label #x, U_OCTAVES, para_equalizer_metadata::WIDTH), \
-            LOG_CONTROL_ALL("g" id "_" #x, "Gain " label # x, U_GAIN_AMP, GAIN_AMP_M_36_DB, GAIN_AMP_P_36_DB, GAIN_AMP_0_DB, 0.01), \
+            LOG_CONTROL_ALL("g" id "_" #x, "Gain " label # x, "Gain " #x alias, U_GAIN_AMP, GAIN_AMP_M_36_DB, GAIN_AMP_P_36_DB, GAIN_AMP_0_DB, 0.01), \
             CONTROL_ALL("q" id "_" #x, "Quality factor " label #x, U_NONE, 0.0f, 100.0f, 0.0f, 0.025f), \
             CYC_CONTROL_ALL("hue" id "_" #x, "Hue " label #x, U_NONE, 0.0f, 1.0f, (float(x) / float(total)), 0.25f/360.0f), \
             BLINK("fv" id "_" #x, "Filter visibility " label #x), \
             MESH("agf" id "_" #x, "Amplitude graph " label #x, 2, para_equalizer_metadata::FILTER_MESH_POINTS)
 
-        #define EQ_FILTER_MONO(x, total, f)     EQ_FILTER("", "", x, total, f)
-        #define EQ_FILTER_STEREO(x, total, f)   EQ_FILTER("", "", x, total, f)
-        #define EQ_FILTER_LR(x, total, f)       EQ_FILTER("l", "Left ", x, total, f), EQ_FILTER("r", "Right ", x, total, f)
-        #define EQ_FILTER_MS(x, total, f)       EQ_FILTER("m", "Mid ", x, total, f), EQ_FILTER("s", "Side ", x, total, f)
+        #define EQ_FILTER_MONO(x, total, f)     EQ_FILTER("", "", "", x, total, f)
+        #define EQ_FILTER_STEREO(x, total, f)   EQ_FILTER("", "", "", x, total, f)
+        #define EQ_FILTER_LR(x, total, f)       EQ_FILTER("l", "Left ", " L", x, total, f), EQ_FILTER("r", "Right ", " R", x, total, f)
+        #define EQ_FILTER_MS(x, total, f)       EQ_FILTER("m", "Mid ", " M", x, total, f), EQ_FILTER("s", "Side ", " S", x, total, f)
 
         #define EQ_COMMON(fselect, filters) \
             BYPASS, \
