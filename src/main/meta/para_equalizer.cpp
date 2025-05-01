@@ -202,9 +202,9 @@ namespace lsp
             AMP_GAIN("g_in", "Input gain", para_equalizer_metadata::IN_GAIN_DFL, 10.0f), \
             AMP_GAIN("g_out", "Output gain", para_equalizer_metadata::OUT_GAIN_DFL, 10.0f), \
             COMBO("mode", "Equalizer mode", 0, equalizer_eq_modes), \
-            LOG_CONTROL("react", "FFT reactivity", U_MSEC, para_equalizer_metadata::REACT_TIME), \
+            LOG_CONTROL("react", "FFT reactivity", "Reactivity", U_MSEC, para_equalizer_metadata::REACT_TIME), \
             AMP_GAIN("shift", "Shift gain", 1.0f, 100.0f), \
-            LOG_CONTROL("zoom", "Graph zoom", U_GAIN_AMP, para_equalizer_metadata::ZOOM), \
+            LOG_CONTROL("zoom", "Graph zoom", "Zoom", U_GAIN_AMP, para_equalizer_metadata::ZOOM), \
             COMBO("fsel", "Filter select", 0, fselect), \
             INT_CONTROL_ALL("insp_id", "Inspected filter identifier", U_NONE, -1, (filters-1), -1, 1), \
             CONTROL("insp_r", "Inspect frequency range", U_OCTAVES, para_equalizer_metadata::INSPECT), \
