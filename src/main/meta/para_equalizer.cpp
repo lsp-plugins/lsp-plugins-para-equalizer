@@ -188,7 +188,7 @@ namespace lsp
             CONTROL("w" id "_" #x, "Filter Width " label #x, "Width " #x alias, U_OCTAVES, para_equalizer_metadata::WIDTH), \
             LOG_CONTROL_ALL("g" id "_" #x, "Gain " label # x, "Gain " #x alias, U_GAIN_AMP, GAIN_AMP_M_36_DB, GAIN_AMP_P_36_DB, GAIN_AMP_0_DB, 0.01), \
             CONTROL_ALL("q" id "_" #x, "Quality factor " label #x, "Q " #x alias, U_NONE, 0.0f, 100.0f, 0.0f, 0.025f), \
-            CYC_CONTROL_ALL("hue" id "_" #x, "Hue " label #x, U_NONE, 0.0f, 1.0f, (float(x) / float(total)), 0.25f/360.0f), \
+            CYC_CONTROL_ALL("hue" id "_" #x, "Hue " label #x, "Hue " #x alias, U_NONE, 0.0f, 1.0f, (float(x) / float(total)), 0.25f/360.0f), \
             BLINK("fv" id "_" #x, "Filter visibility " label #x), \
             MESH("agf" id "_" #x, "Amplitude graph " label #x, 2, para_equalizer_metadata::FILTER_MESH_POINTS)
 
@@ -199,11 +199,11 @@ namespace lsp
 
         #define EQ_COMMON(fselect, filters) \
             BYPASS, \
-            AMP_GAIN("g_in", "Input gain", para_equalizer_metadata::IN_GAIN_DFL, 10.0f), \
-            AMP_GAIN("g_out", "Output gain", para_equalizer_metadata::OUT_GAIN_DFL, 10.0f), \
+            AMP_GAIN("g_in", "Input gain", "Input gain", para_equalizer_metadata::IN_GAIN_DFL, 10.0f), \
+            AMP_GAIN("g_out", "Output gain", "Output gain", para_equalizer_metadata::OUT_GAIN_DFL, 10.0f), \
             COMBO("mode", "Equalizer mode", "Mode", 0, equalizer_eq_modes), \
             LOG_CONTROL("react", "FFT reactivity", "Reactivity", U_MSEC, para_equalizer_metadata::REACT_TIME), \
-            AMP_GAIN("shift", "Shift gain", 1.0f, 100.0f), \
+            AMP_GAIN("shift", "Shift gain", "Shift gain", 1.0f, 100.0f), \
             LOG_CONTROL("zoom", "Graph zoom", "Zoom", U_GAIN_AMP, para_equalizer_metadata::ZOOM), \
             COMBO("fsel", "Filter select", "Filter", 0, fselect), \
             INT_CONTROL_ALL("insp_id", "Inspected filter identifier", "Inspect index", U_NONE, -1, (filters-1), -1, 1), \
@@ -217,7 +217,7 @@ namespace lsp
             METER_GAIN("sm", "Output signal meter", GAIN_AMP_P_12_DB)
 
         #define EQ_STEREO_PORTS \
-            PAN_CTL("bal", "Output balance", 0.0f), \
+            PAN_CTL("bal", "Output balance", "Out balance", 0.0f), \
             MESH("ag", "Amplitude graph", 2, para_equalizer_metadata::MESH_POINTS), \
             CONTROL("frqs", "Frequency shift", "Freq shift", U_SEMITONES, para_equalizer_metadata::PITCH), \
             METER_GAIN("iml", "Input signal meter Left", GAIN_AMP_P_12_DB), \
@@ -226,7 +226,7 @@ namespace lsp
             METER_GAIN("smr", "Output signal meter Right", GAIN_AMP_P_12_DB)
 
         #define EQ_LR_PORTS \
-            PAN_CTL("bal", "Output balance", 0.0f), \
+            PAN_CTL("bal", "Output balance", "Out balance", 0.0f), \
             MESH("ag_l", "Amplitude graph Left", 2, para_equalizer_metadata::MESH_POINTS), \
             CONTROL("frqs_l", "Frequency shift Left", "Freq shift L", U_SEMITONES, para_equalizer_metadata::PITCH), \
             METER_GAIN("iml", "Input signal meter Left", GAIN_AMP_P_12_DB), \
@@ -239,10 +239,10 @@ namespace lsp
             SWITCH("fltv_r", "Filter visibility Right", "Show filter R", 1.0f)
 
         #define EQ_MS_PORTS \
-            PAN_CTL("bal", "Output balance", 0.0f), \
+            PAN_CTL("bal", "Output balance", "Out balance", 0.0f), \
             SWITCH("lstn", "Mid/Side listen", "M/S listen", 0.0f), \
-            AMP_GAIN100("gain_m", "Mid gain", GAIN_AMP_0_DB), \
-            AMP_GAIN100("gain_s", "Side gain", GAIN_AMP_0_DB), \
+            AMP_GAIN100("gain_m", "Mid gain", "Gain M", GAIN_AMP_0_DB), \
+            AMP_GAIN100("gain_s", "Side gain", "Gain S", GAIN_AMP_0_DB), \
             MESH("ag_m", "Amplitude graph Mid", 2, para_equalizer_metadata::MESH_POINTS), \
             CONTROL("frqs_m", "Frequency shift Mid", "Freq shift M", U_SEMITONES, para_equalizer_metadata::PITCH), \
             METER_GAIN("iml", "Input signal meter Left", GAIN_AMP_P_12_DB), \
