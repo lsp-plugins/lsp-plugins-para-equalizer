@@ -210,6 +210,9 @@ namespace lsp
             CONTROL("insp_r", "Inspect frequency range", "Inspect range", U_OCTAVES, para_equalizer_metadata::INSPECT), \
             SWITCH("insp_on", "Automatically inspect filter when editing", "Auto inspect", 0)
 
+        #define EQ_LINK(id, label, alias) \
+            SWITCH(id, label, alias, 0.0f)
+
         #define EQ_MONO_PORTS \
             MESH("ag", "Amplitude graph", 2, para_equalizer_metadata::MESH_POINTS), \
             CONTROL("frqs", "Frequency shift", "Freq shift", U_SEMITONES, para_equalizer_metadata::PITCH), \
@@ -461,6 +464,7 @@ namespace lsp
         {
             PORTS_STEREO_PLUGIN,
             EQ_COMMON(filter_select_8lr, 16),
+            EQ_LINK("clink", "Left/Right controls link", "L/R link"),
             EQ_COMMUNICATION_STEREO,
             CHANNEL_ANALYSIS("_l", " Left", " L"),
             CHANNEL_ANALYSIS("_r", " Right", " R"),
@@ -481,6 +485,7 @@ namespace lsp
         {
             PORTS_STEREO_PLUGIN,
             EQ_COMMON(filter_select_16lr, 32),
+            EQ_LINK("clink", "Left/Right controls link", "L/R link"),
             EQ_COMMUNICATION_STEREO,
             CHANNEL_ANALYSIS("_l", " Left", " L"),
             CHANNEL_ANALYSIS("_r", " Right", " R"),
@@ -509,6 +514,7 @@ namespace lsp
         {
             PORTS_STEREO_PLUGIN,
             EQ_COMMON(filter_select_32lr, 64),
+            EQ_LINK("clink", "Left/Right controls link", "L/R link"),
             EQ_COMMUNICATION_STEREO,
             CHANNEL_ANALYSIS("_l", " Left", " L"),
             CHANNEL_ANALYSIS("_r", " Right", " R"),
@@ -553,6 +559,7 @@ namespace lsp
         {
             PORTS_STEREO_PLUGIN,
             EQ_COMMON(filter_select_8ms, 16),
+            EQ_LINK("clink", "Mid/Side controls link", "M/S link"),
             EQ_COMMUNICATION_STEREO,
             CHANNEL_ANALYSIS("_m", " Mid", " M"),
             CHANNEL_ANALYSIS("_s", " Side", " S"),
@@ -573,6 +580,7 @@ namespace lsp
         {
             PORTS_STEREO_PLUGIN,
             EQ_COMMON(filter_select_16ms, 32),
+            EQ_LINK("clink", "Mid/Side controls link", "M/S link"),
             EQ_COMMUNICATION_STEREO,
             CHANNEL_ANALYSIS("_m", " Mid", " M"),
             CHANNEL_ANALYSIS("_s", " Side", " S"),
@@ -601,6 +609,7 @@ namespace lsp
         {
             PORTS_STEREO_PLUGIN,
             EQ_COMMON(filter_select_32ms, 64),
+            EQ_LINK("clink", "Mid/Side controls link", "M/S link"),
             EQ_COMMUNICATION_STEREO,
             CHANNEL_ANALYSIS("_m", " Mid", " M"),
             CHANNEL_ANALYSIS("_s", " Side", " S"),

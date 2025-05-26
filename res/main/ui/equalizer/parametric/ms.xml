@@ -1,6 +1,17 @@
 <plugin resizable="true">
 	<ui:eval id="num_filters" value="(ex :ftm_16) ? 32 : ((ex :ftm_8) ? 16 : 8)"/>
 	<ui:eval id="num_blocks" value="(ex :ftm_16) ? 8 : ((ex :ftm_8) ? 4 : 2)"/>
+	
+	<!-- Control linking -->
+	<ui:for id="port" list="'ft'; 'fm'; 's'; 'xs'; 'xm'; 'f'; 'w'; 'g'; 'q'">
+		<ui:for id="i" first="0" count=":num_filters">
+			<ctl:link
+				id.1="${port}m_${i}" value.1=":${port}s_${i}"
+				id.2="${port}s_${i}" value.2=":${port}m_${i}"
+				activity=":clink" />
+		</ui:for>
+	</ui:for>
+	
 	<grid rows="3" cols="3" spacing="4">
 
 		<!-- Graph -->
@@ -274,9 +285,9 @@
 			<hbox spacing="4" vreduce="true" bg.color="bg_schema" pad.h="6">
 				<button ui:id="filter_inspect_reset" text="labels.chan.inspect" ui:inject="Button_orange" pad.v="4"/>
 				<button id="insp_on" text="labels.auto" ui:inject="Button_orange" pad.v="4"/>
-
 				<knob id="insp_r" scale.size="3" scolor="orange" size="10" pad.l="6"/>
 				<value id="insp_r" width.min="48" same_line="true" fill="true" halign="1" pad.r="12"/>
+				<button id="clink" ui:inject="Button_green" text="labels.chan.ms_link" />
 
 				<void hexpand="true"/>
 

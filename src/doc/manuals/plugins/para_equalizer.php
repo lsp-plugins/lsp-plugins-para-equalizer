@@ -153,7 +153,12 @@ of so-called poles and zeros:<p>
 </p>
 <p><b>Meters:</b></p>
 <ul>
-	<?php if ($m == 'ms') { ?>
+	<?php if ($m == 'lr') { ?>
+		<li><b>L/R Link</b> - enables linking between Left and Right channel controls so change of one forces the sibling to become the same value.</li>
+		<li><b>Input</b> - the level meter for left and right channels of the input signal.</li>
+		<li><b>Output</b> - the level meter for left and right channels of the output signal.</li>
+	<?php } elseif ($m == 'ms') { ?>
+		<li><b>M/S Link</b> - enables linking between Mid and Side channel controls so change of one forces the sibling to become the same value.</li>
 		<li><b>Input</b> - the level meter for left and right channels of the input signal.
 		If <b>Listen</b> button is pressed, it shows the level of middle and side channels of the input signal respectively.</li>
 		<li><b>Output</b> - the level meter for left and right channels of the output signal.
