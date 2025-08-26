@@ -24,7 +24,7 @@
 	</li>
 	<li><b>Matched Z Transform (MT) filters</b> are probably the best choice when cutting out individual short range of frequencies.</li>
 	<li><b>Bilinear Transform (BT) filters</b> are good when cutting-out high frequencies because they have -INF dB amplification at the Nyquist frequency.</li>
-    <li><b>Direct Design (DR) filters</b> add alterantive implementations for the various supperted filter types, and may be chosen whenever their frequency response is best suited.</li>
+    <li><b>Direct Design (DR) filters</b> add alternative implementations for the various supperted filter types, and may be chosen whenever their frequency response is best suited.</li>
 </ul>
 <p>
 	This plugin performs parametric equalization of <?= $cc ?> channel<?php
@@ -153,7 +153,12 @@ of so-called poles and zeros:<p>
 </p>
 <p><b>Meters:</b></p>
 <ul>
-	<?php if ($m == 'ms') { ?>
+	<?php if ($m == 'lr') { ?>
+		<li><b>L/R Link</b> - enables linking between Left and Right channel controls so change of one forces the sibling to become the same value.</li>
+		<li><b>Input</b> - the level meter for left and right channels of the input signal.</li>
+		<li><b>Output</b> - the level meter for left and right channels of the output signal.</li>
+	<?php } elseif ($m == 'ms') { ?>
+		<li><b>M/S Link</b> - enables linking between Mid and Side channel controls so change of one forces the sibling to become the same value.</li>
 		<li><b>Input</b> - the level meter for left and right channels of the input signal.
 		If <b>Listen</b> button is pressed, it shows the level of middle and side channels of the input signal respectively.</li>
 		<li><b>Output</b> - the level meter for left and right channels of the output signal.
@@ -225,7 +230,7 @@ of so-called poles and zeros:<p>
 		<li><b>Lo-pass</b> - Low-pass filter with rejection of high frequencies.</li>
 		<li><b>Lo-shelf</b> - Shelving filter with adjustment of low frequencies.</li>
 		<li><b>Notch</b> - Notch filter with full rejection of selected frequency.</li>
-		<li><b>Resonance</b> - Resonance filter wih sharp peak/recess.</li>
+		<li><b>Resonance</b> - Resonance filter with sharp peak/recess.</li>
 		<li><b>Allpass</b> - All-pass filter which only affects the phase of the audio signal at the specified frequency.</li>
 	</ul>
 	<li><b>Mode</b> - sets up the class of the filter:</li>

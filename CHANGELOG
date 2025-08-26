@@ -2,6 +2,10 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.31 ===
+* Added left/right and mid/side linking in the UI.
+* Updated build scripts and dependencies.
+
 === 1.0.30 ===
 * Updated build scripts and dependencies.
 

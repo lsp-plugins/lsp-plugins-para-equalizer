@@ -1,7 +1,7 @@
 {
 	"para_equalizer": {
 		"name": "Parametric Equalizer",
-		"description": "This plugin allows to perform parametric equalization of inpu tsignal.\nUp to 16 or 32 different filters are simultaneously available for processing."
+		"description": "This plugin allows to perform parametric equalization of input signal.\nUp to 16 or 32 different filters are simultaneously available for processing."
 	}
 }
 
