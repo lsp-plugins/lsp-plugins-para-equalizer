@@ -97,6 +97,15 @@
 				<axis min="-1" max="1" visible="false" angle="0.5"/>
 				<axis min="-48 db" max="48 db" angle="0.5" log="true" visibility="false"/>
 
+				<embed
+					oy="2"
+					start.x="midi_freq_start(12, 127)" start.y="0.1"
+					end.x="midi_freq_end(12, 127)" end.y="0.05"
+					valign="1" alpha="0.3"
+					visibility=":_ui_graph_piano_layout">
+					<piano natural="false" note.min="12" note.max="127" height.min="20" editable="false" selectable="false" border="0"/>
+				</embed>
+
 				<!-- Text -->
 				<ui:with ox="0" oy="2" y="0" halign="1" valign="1" pgroup="0" priority="0">
 					<text x="10" text="graph.units.hz"/>
@@ -113,6 +122,14 @@
 					<text x="5000" text="graph.values.x_k" text:value="5"/>
 					<text x="10000" text="graph.values.x_k" text:value="10"/>
 					<text x="20000" text="graph.values.x_k" text:value="20"/>
+				</ui:with>
+				<ui:with ox="0" oy="2" y="0.1" halign="1" valign="1" pgroup="0" priority="10" visibility=":_ui_graph_piano_layout">
+					<ui:for id="octave" first="0" last="9">
+						<text x="midi_freq(12 * ${:octave + 1})"
+							text="lists.notes.fmt.c" text:octave="${octave}"
+							valign="1"
+							halign="0" />
+					</ui:for>
 				</ui:with>
 
 				<ui:with x="10" halign="1" pgroup="0" priority="10">
