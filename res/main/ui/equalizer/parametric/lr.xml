@@ -1,7 +1,7 @@
 <plugin resizable="true">
 	<ui:eval id="num_filters" value="(ex :ftl_16) ? 32 : ((ex :ftl_8) ? 16 : 8)"/>
 	<ui:eval id="num_blocks" value="(ex :ftl_16) ? 8 : ((ex :ftl_8) ? 4 : 2)"/>
-	
+
 	<!-- Control linking -->
 	<ui:for id="port" list="'ft'; 'fm'; 's'; 'xs'; 'xm'; 'f'; 'w'; 'g'; 'q'">
 		<ui:for id="i" first="0" count=":num_filters">
@@ -11,7 +11,7 @@
 				activity=":clink" />
 		</ui:for>
 	</ui:for>
-	
+
 	<grid rows="3" cols="3" spacing="4">
 
 		<!-- Graph -->
@@ -58,6 +58,15 @@
 					<marker v="0 db"/>
 					<marker v="-24 db"/>
 				</ui:with>
+
+				<embed
+					oy="2"
+					start.x="midi_freq_start(12, 127)" start.y="0.1"
+					end.x="midi_freq_end(12, 127)" end.y="0.05"
+					valign="1" alpha="0"
+					visibility=":_ui_graph_piano_layout">
+					<piano natural="false" note.min="12" note.max="127" height.min="20" editable="false" selectable="false" border="0"/>
+				</embed>
 
 				<!-- Meshes -->
 				<ui:for id="i" first="0" last=":num_filters - 1">
@@ -120,7 +129,7 @@
 				<axis min="-48 db" max="48 db" angle="0.5" log="true" visibility="false"/>
 
 				<!-- Text -->
-				<ui:with ox="0" oy="2" y="0" halign="1" valign="1" pgroup="0" priority="0">
+				<ui:with ox="0" oy="2" y="0.12" halign="1" valign="1" pgroup="0" priority="0">
 					<text x="10" text="graph.units.hz"/>
 					<text x="20" text="20"/>
 					<text x="30" text="30"/>
@@ -135,6 +144,15 @@
 					<text x="5000" text="graph.values.x_k" text:value="5"/>
 					<text x="10000" text="graph.values.x_k" text:value="10"/>
 					<text x="20000" text="graph.values.x_k" text:value="20"/>
+				</ui:with>
+
+				<ui:with ox="0" oy="2" y="0" halign="1" valign="1" pgroup="0" priority="10" visibility=":_ui_graph_piano_layout">
+					<ui:for id="octave" first="0" last="9">
+						<text x="midi_freq(12 * ${:octave + 1})"
+							text="lists.notes.fmt.c" text:octave="${octave}"
+							valign="1"
+							halign="0" />
+					</ui:for>
 				</ui:with>
 
 				<ui:with x="10" halign="1" pgroup="0" priority="10">
