@@ -108,6 +108,7 @@ namespace lsp
             pInspect        = NULL;
             pAutoInspect    = NULL;
             pSelector       = NULL;
+            pQuantize       = NULL;
             pRewImport      = NULL;
             wGraph          = NULL;
             wInspectReset   = NULL;
@@ -567,6 +568,36 @@ namespace lsp
             update_filter_note_text();
         }
 
+        bool para_equalizer_ui::quantize_note(note_t *out, float freq)
+        {
+            // Process filter note
+            const float note_full = dspu::frequency_to_note(freq);
+            if (note_full == dspu::NOTE_OUT_OF_RANGE)
+                return false;
+
+            const float center  = note_full + 0.5f;
+            out->nNumber        = int32_t(center);
+            out->nCents         = (center - float(out->nNumber)) * 100 - 50;
+
+            return true;
+        }
+
+        float para_equalizer_ui::quantize_frequency(float value, void *context)
+        {
+            para_equalizer_ui *self = static_cast<para_equalizer_ui *>(context);
+            if (self == NULL)
+                return value;
+            const bool quantize     = (self->pQuantize != NULL) ? self->pQuantize->value() > 0.5f : false;
+            if (!quantize)
+                return value;
+
+            note_t note;
+            if (!quantize_note(&note, value))
+                return value;
+
+            return dspu::midi_note_to_frequency(note.nNumber);
+        }
+
         void para_equalizer_ui::update_filter_note_text()
         {
             // Determine which frequency/note to show: of inspected filter or of selected filter
@@ -649,29 +680,23 @@ namespace lsp
                 params.set_string("filter_type", &text);
 
                 // Process filter note
-                float note_full = dspu::frequency_to_note(freq);
-                if (note_full != dspu::NOTE_OUT_OF_RANGE)
+                note_t note;
+                if (quantize_note(&note, freq))
                 {
-                    note_full += 0.5f;
-                    ssize_t note_number = ssize_t(note_full);
-
                     // Note name
-                    ssize_t note        = note_number % 12;
-                    text.fmt_ascii("lists.notes.names.%s", note_names[note]);
+                    text.fmt_ascii("lists.notes.names.%s", note_names[note.nNumber % 12]);
                     lc_string.set(&text);
                     lc_string.format(&text);
                     params.set_string("note", &text);
 
                     // Octave number
-                    ssize_t octave      = (note_number / 12) - 1;
-                    params.set_int("octave", octave);
+                    params.set_int("octave", ssize_t(note.nNumber / 12) - 1);
 
                     // Cents
-                    ssize_t note_cents  = (note_full - float(note_number)) * 100 - 50;
-                    if (note_cents < 0)
-                        text.fmt_ascii(" - %02d", -note_cents);
+                    if (note.nCents < 0)
+                        text.fmt_ascii(" - %02d", int(-note.nCents));
                     else
-                        text.fmt_ascii(" + %02d", note_cents);
+                        text.fmt_ascii(" + %02d", int(note.nCents));
                     params.set_string("cents", &text);
 
                     f->wNote->text()->set("lists.para_eq.display.full", &params);
@@ -761,7 +786,10 @@ namespace lsp
                     f.pQuality      = find_port(*fmt, "q", port_id);
 
                     if (f.wDot != NULL)
+                    {
                         f.wDot->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_filter_dot_click, this);
+                        f.wDot->hvalue()->set_transform(quantize_frequency, this);
+                    }
                     if (f.wInspect != NULL)
                         f.wInspect->slots()->bind(tk::SLOT_SUBMIT, slot_filter_inspect_submit, this);
 
@@ -971,6 +999,7 @@ namespace lsp
             if (pAutoInspect != NULL)
                 pAutoInspect->bind(this);
             pSelector           = pWrapper->port("fsel");
+            pQuantize           = pWrapper->port("quant");
 
             // Add subwidgets
             ctl::Window *wnd    = pWrapper->controller();

@@ -604,6 +604,7 @@ namespace lsp
             BIND_PORT(pShiftGain);
             BIND_PORT(pZoom);
             SKIP_PORT("Filter selector");
+            SKIP_PORT("Quantize note frequencies");
             BIND_PORT(pInspect);
             BIND_PORT(pInspectRange);
             SKIP_PORT("Auto inspect switch");

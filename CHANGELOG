@@ -3,7 +3,8 @@
 *******************************************************************************
 
 === 1.0.32 ===
-
+* Added display of piano keyboard layout on graph.
+* Added frequency quantization function to match the exact frequency of the note.
 
 === 1.0.31 ===
 * Added left/right and mid/side linking in the UI.

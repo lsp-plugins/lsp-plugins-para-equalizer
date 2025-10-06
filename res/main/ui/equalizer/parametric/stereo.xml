@@ -57,6 +57,15 @@
 					visibility=":_ui_graph_piano_layout">
 					<piano natural="false" note.min="12" note.max="127" height.min="20" editable="false" selectable="false" border="0"/>
 				</embed>
+				
+				<embed
+					oy="2"
+					start.x="20000" start.y="0.1"
+					end.x="20000" end.y="0.05"
+					valign="1" halign="0" alpha="0">
+					<button id="quant" text="Q" />
+				</embed>
+				
 
 				<!-- Meshes -->
 				<ui:for id="i" first="0" last=":num_filters - 1">
