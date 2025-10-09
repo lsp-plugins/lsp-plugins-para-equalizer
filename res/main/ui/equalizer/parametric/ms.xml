@@ -5,10 +5,7 @@
 	<!-- Control linking -->
 	<ui:for id="port" list="'ft'; 'fm'; 's'; 'xs'; 'xm'; 'f'; 'w'; 'g'; 'q'">
 		<ui:for id="i" first="0" count=":num_filters">
-			<ctl:link
-				id.1="${port}m_${i}" value.1=":${port}s_${i}"
-				id.2="${port}s_${i}" value.2=":${port}m_${i}"
-				activity=":clink" />
+			<ctl:link id.1="${port}m_${i}" value.1=":${port}s_${i}" id.2="${port}s_${i}" value.2=":${port}m_${i}" activity=":clink"/>
 		</ui:for>
 	</ui:for>
 
@@ -59,6 +56,7 @@
 					<marker v="-24 db"/>
 				</ui:with>
 
+				<!-- Piano keys -->
 				<embed oy="2" start.x="midi_freq_start(12, 127)" start.y="0.1" end.x="midi_freq_end(12, 127)" end.y="0.05" valign="1" alpha="0" visibility=":_ui_graph_piano_layout">
 					<piano natural="false" note.min="12" note.max="127" height="24" editable="false" selectable="false" border="0"/>
 				</embed>
@@ -148,7 +146,7 @@
 				</ui:with>
 
 				<!-- Octave text -->
-				<ui:with ox="0" oy="2" y="0.12" halign="1" valign="1" pgroup="0" priority="10" visibility=":_ui_graph_piano_layout">
+				<ui:with ox="0" oy="2" y="0.05" halign="1" valign="1" pgroup="0" priority="10" visibility=":_ui_graph_piano_layout" pad.b="26">
 					<ui:for id="octave" first="0" last="9">
 						<text x="midi_freq(12 * ${:octave + 1})" text="lists.notes.fmt.c" text:octave="${octave}" valign="1" halign="0"/>
 					</ui:for>
@@ -302,7 +300,7 @@
 				<button id="insp_on" text="labels.auto" ui:inject="Button_orange" pad.v="4"/>
 				<knob id="insp_r" scale.size="3" scolor="orange" size="10" pad.l="6"/>
 				<value id="insp_r" width.min="48" same_line="true" fill="true" halign="1" pad.r="12"/>
-				<button id="clink" ui:inject="Button_green" text="labels.chan.ms_link" />
+				<button id="clink" ui:inject="Button_green" text="labels.chan.ms_link"/>
 
 				<void hexpand="true"/>
 
