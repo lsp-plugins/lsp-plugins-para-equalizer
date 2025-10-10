@@ -50,9 +50,16 @@
 				</ui:with>
 
 				<!-- Piano keys -->
-				<embed oy="2" start.x="midi_freq_start(12, 127)" start.y="0.1" end.x="midi_freq_end(12, 127)" end.y="0.05" valign="1" alpha="0" visibility=":_ui_graph_piano_layout">
+				<embed oy="4" start.x="midi_freq_start(12, 127)" start.y="20" end.x="midi_freq_end(12, 127)" end.y="44" valign="1" alpha="0" visibility=":_ui_graph_piano_layout">
 					<piano natural="false" note.min="12" note.max="127" height="24" editable="false" selectable="false" border="0"/>
 				</embed>
+
+				<!-- Octave text -->
+				<ui:with ox="0" oy="4" y="44" halign="1" valign="1" pgroup="0" priority="10" visibility=":_ui_graph_piano_layout" pad.b="2">
+					<ui:for id="octave" first="0" last="9">
+						<text x="midi_freq(12 * ${:octave + 1})" text="lists.notes.fmt.c" text:octave="${octave}" valign="1" halign="0"/>
+					</ui:for>
+				</ui:with>
 
 				<!-- Meshes -->
 				<ui:for id="i" first="0" last=":num_filters - 1">
@@ -101,6 +108,7 @@
 				<!-- -48..+48 dB -->
 				<axis min="-1" max="1" visible="false" angle="0.5"/>
 				<axis min="-48 db" max="48 db" angle="0.5" log="true" visibility="false"/>
+				<axis min="0" max=":_a_scaled_height" visibility="false" angle="0.5"/>
 
 				<!-- Text -->
 				<ui:with ox="0" oy="2" y="0" halign="1" valign="1" pgroup="0" priority="0">
@@ -120,14 +128,8 @@
 					<text x="20000" text="graph.values.x_k" text:value="20"/>
 				</ui:with>
 
-				<!-- Octave text -->
-				<ui:with ox="0" oy="2" y="0.05" halign="1" valign="1" pgroup="0" priority="10" visibility=":_ui_graph_piano_layout" pad.b="26">
-					<ui:for id="octave" first="0" last="9">
-						<text x="midi_freq(12 * ${:octave + 1})" text="lists.notes.fmt.c" text:octave="${octave}" valign="1" halign="0"/>
-					</ui:for>
-				</ui:with>
-
-				<embed oy="2" start.x="18000" start.y="0.1" end.x="18000" end.y="0.05" valign="1" halign="0" alpha="0">
+				<!-- Button quantize -->
+				<embed oy="4" start.x="18000" start.y="20" end.x="18000" end.y="44" valign="1" halign="0" alpha="0">
 					<button id="quant" font.name="lsp-icons" font.size="12" size="24" text="icons.other.quantize_note"/>
 				</embed>
 
