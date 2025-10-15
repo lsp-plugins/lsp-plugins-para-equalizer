@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-para-equalizer
  * Created on: 2 авг. 2021 г.
@@ -247,25 +247,36 @@ namespace lsp
 
         status_t para_equalizer_ui::slot_commit_rew_path(tk::Widget *sender, void *ptr, void *data)
         {
-            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
-            if (_this == NULL)
+            para_equalizer_ui *self = static_cast<para_equalizer_ui *>(ptr);
+            if (self == NULL)
                 return STATUS_BAD_STATE;
 
-            if (_this->pRewPath != NULL)
+            if (self->pRewPath != NULL)
+                self->pRewPath->begin_edit();
+            if (self->pRewFileType != NULL)
+                self->pRewFileType->begin_edit();
+
+            if (self->pRewPath != NULL)
             {
                 LSPString path;
-                if (_this->pRewImport->path()->format(&path) == STATUS_OK)
+                if (self->pRewImport->path()->format(&path) == STATUS_OK)
                 {
                     const char *u8path = path.get_utf8();
-                    _this->pRewPath->write(u8path, ::strlen(u8path));
-                    _this->pRewPath->notify_all(ui::PORT_USER_EDIT);
+
+                    self->pRewPath->write(u8path, ::strlen(u8path));
+                    self->pRewPath->notify_all(ui::PORT_USER_EDIT);
                 }
             }
-            if (_this->pRewFileType != NULL)
+            if (self->pRewFileType != NULL)
             {
-                _this->pRewFileType->set_value(_this->pRewImport->selected_filter()->get());
-                _this->pRewFileType->notify_all(ui::PORT_USER_EDIT);
+                self->pRewFileType->set_value(self->pRewImport->selected_filter()->get());
+                self->pRewFileType->notify_all(ui::PORT_USER_EDIT);
             }
+
+            if (self->pRewPath != NULL)
+                self->pRewPath->end_edit();
+            if (self->pRewFileType != NULL)
+                self->pRewFileType->end_edit();
 
             return STATUS_OK;
         }
@@ -1048,8 +1059,10 @@ namespace lsp
             // Force the inspect mode to be turned off
             if (pInspect != NULL)
             {
+                pInspect->begin_edit();
                 pInspect->set_value(-1.0f);
                 pInspect->notify_all(ui::PORT_USER_EDIT);
+                pInspect->end_edit();
             }
 
             return ui::Module::pre_destroy();
@@ -1094,11 +1107,17 @@ namespace lsp
             if ((src == NULL) || (dst == NULL))
                 return;
 
+            src->begin_edit();
+            dst->begin_edit();
+
             dst->set_value(src->value());
             src->set_default();
 
             dst->notify_all(ui::PORT_USER_EDIT);
             src->notify_all(ui::PORT_USER_EDIT);
+
+            src->end_edit();
+            dst->end_edit();
         }
 
         void para_equalizer_ui::on_filter_menu_item_submit(tk::MenuItem *mi)
@@ -1106,6 +1125,19 @@ namespace lsp
             if (pCurrDot == NULL)
                 return;
             lsp_finally { pCurrDot = NULL; };
+
+            if (pCurrDot->pType != NULL)
+                pCurrDot->pType->begin_edit();
+            if (pCurrDot->pMode != NULL)
+                pCurrDot->pMode->begin_edit();
+            if (pCurrDot->pSlope != NULL)
+                pCurrDot->pSlope->begin_edit();
+            if (pCurrDot->pMute != NULL)
+                pCurrDot->pMute->begin_edit();
+            if (pCurrDot->pSolo != NULL)
+                pCurrDot->pSolo->begin_edit();
+            if (pSelector != NULL)
+                pCurrDot->pSolo->begin_edit();
 
             on_filter_menu_item_selected(&vFilterTypes, pCurrDot->pType, mi);
             on_filter_menu_item_selected(&vFilterModes, pCurrDot->pMode, mi);
@@ -1149,6 +1181,19 @@ namespace lsp
             }
             if (mi == wFilterInspect)
                 toggle_inspected_filter(pCurrDot, true);
+
+            if (pCurrDot->pType != NULL)
+                pCurrDot->pType->end_edit();
+            if (pCurrDot->pMode != NULL)
+                pCurrDot->pMode->end_edit();
+            if (pCurrDot->pSlope != NULL)
+                pCurrDot->pSlope->end_edit();
+            if (pCurrDot->pMute != NULL)
+                pCurrDot->pMute->end_edit();
+            if (pCurrDot->pSolo != NULL)
+                pCurrDot->pSolo->end_edit();
+            if (pSelector != NULL)
+                pCurrDot->pSolo->end_edit();
         }
 
         para_equalizer_ui::filter_t *para_equalizer_ui::find_switchable_filter(filter_t *filter)
@@ -1367,8 +1412,10 @@ namespace lsp
 
             if ((pInspect != NULL) && (commit) && (inspect != index))
             {
+                pInspect->begin_edit();
                 pInspect->set_value(index);
                 pInspect->notify_all(ui::PORT_USER_EDIT);
+                pInspect->end_edit();
                 inspect     = index;
             }
 
