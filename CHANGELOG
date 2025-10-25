@@ -2,6 +2,11 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.32 ===
+* Added display of piano keyboard layout on graph.
+* Added frequency quantization function to match the exact frequency of the note.
+* Updated build scripts and dependencies.
+
 === 1.0.31 ===
 * Added left/right and mid/side linking in the UI.
 * Updated build scripts and dependencies.

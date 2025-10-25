@@ -1,17 +1,14 @@
 <plugin resizable="true">
 	<ui:eval id="num_filters" value="(ex :ftm_16) ? 32 : ((ex :ftm_8) ? 16 : 8)"/>
 	<ui:eval id="num_blocks" value="(ex :ftm_16) ? 8 : ((ex :ftm_8) ? 4 : 2)"/>
-	
+
 	<!-- Control linking -->
 	<ui:for id="port" list="'ft'; 'fm'; 's'; 'xs'; 'xm'; 'f'; 'w'; 'g'; 'q'">
 		<ui:for id="i" first="0" count=":num_filters">
-			<ctl:link
-				id.1="${port}m_${i}" value.1=":${port}s_${i}"
-				id.2="${port}s_${i}" value.2=":${port}m_${i}"
-				activity=":clink" />
+			<ctl:link id.1="${port}m_${i}" value.1=":${port}s_${i}" id.2="${port}s_${i}" value.2=":${port}m_${i}" activity=":clink"/>
 		</ui:for>
 	</ui:for>
-	
+
 	<grid rows="3" cols="3" spacing="4">
 
 		<!-- Graph -->
@@ -57,6 +54,18 @@
 					<marker v="+24 db"/>
 					<marker v="0 db"/>
 					<marker v="-24 db"/>
+				</ui:with>
+
+				<!-- Piano keys -->
+				<embed oy="4" start.x="midi_freq_start(12, 127)" start.y="20" end.x="midi_freq_end(12, 127)" end.y="44" valign="1" alpha="0" visibility=":_ui_graph_piano_layout">
+					<piano natural="false" note.min="12" note.max="127" height="24" editable="false" selectable="false" border="0"/>
+				</embed>
+
+				<!-- Octave text -->
+				<ui:with ox="0" oy="4" y="44" halign="1" valign="1" pgroup="0" priority="10" visibility=":_ui_graph_piano_layout" pad.b="2">
+					<ui:for id="octave" first="0" last="9">
+						<text x="midi_freq(12 * ${:octave + 1})" text="lists.notes.fmt.c" text:octave="${octave}" valign="1" halign="0"/>
+					</ui:for>
 				</ui:with>
 
 				<!-- Meshes -->
@@ -124,6 +133,7 @@
 				<!-- -48..+48 dB -->
 				<axis min="-1" max="1" visible="false" angle="0.5"/>
 				<axis min="-48 db" max="48 db" angle="0.5" log="true" visibility="false"/>
+				<axis min="0" max=":_a_scaled_height" visibility="false" angle="0.5"/>
 
 				<!-- Text -->
 				<ui:with ox="0" oy="2" y="0" halign="1" valign="1" pgroup="0" priority="0">
@@ -142,6 +152,15 @@
 					<text x="10000" text="graph.values.x_k" text:value="10"/>
 					<text x="20000" text="graph.values.x_k" text:value="20"/>
 				</ui:with>
+
+				<!-- Button quantize -->
+				<embed oy="4" start.x="18000" start.y="20" end.x="18000" end.y="44" valign="1" halign="0" alpha="0">
+					<button id="quant" font.name="lsp-icons" font.size="12" size="24" text="icons.other.quantize_note"/>
+				</embed>
+
+				<embed oy="2" start.x="18000" start.y="0.1" end.x="18000" end.y="0.05" valign="1" halign="0" alpha="0">
+					<button id="quant" font.name="lsp-icons" font.size="12" size="24" text="icons.other.quantize_note"/>
+				</embed>
 
 				<ui:with x="10" halign="1" pgroup="0" priority="10">
 					<text y="0 db" text="0" valign="1" priority="0"/>
@@ -287,7 +306,7 @@
 				<button id="insp_on" text="labels.auto" ui:inject="Button_orange" pad.v="4"/>
 				<knob id="insp_r" scale.size="3" scolor="orange" size="10" pad.l="6"/>
 				<value id="insp_r" width.min="48" same_line="true" fill="true" halign="1" pad.r="12"/>
-				<button id="clink" ui:inject="Button_green" text="labels.chan.ms_link" />
+				<button id="clink" ui:inject="Button_green" text="labels.chan.ms_link"/>
 
 				<void hexpand="true"/>
 

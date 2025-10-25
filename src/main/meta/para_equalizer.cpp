@@ -25,7 +25,7 @@
 
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MAJOR         1
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MINOR         0
-#define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MICRO         31
+#define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MICRO         32
 
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION  \
     LSP_MODULE_VERSION( \
@@ -206,6 +206,7 @@ namespace lsp
             AMP_GAIN("shift", "Shift gain", "Shift gain", 1.0f, 100.0f), \
             LOG_CONTROL("zoom", "Graph zoom", "Zoom", U_GAIN_AMP, para_equalizer_metadata::ZOOM), \
             COMBO("fsel", "Filter select", "Filter", 0, fselect), \
+            SWITCH("quant", "Quantize note frequencies when editing", "Quantize Notes", 0), \
             INT_CONTROL_ALL("insp_id", "Inspected filter identifier", "Inspect index", U_NONE, -1, (filters-1), -1, 1), \
             CONTROL("insp_r", "Inspect frequency range", "Inspect range", U_OCTAVES, para_equalizer_metadata::INSPECT), \
             SWITCH("insp_on", "Automatically inspect filter when editing", "Auto inspect", 0)

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-para-equalizer
  * Created on: 2 авг. 2021 г.
@@ -108,6 +108,7 @@ namespace lsp
             pInspect        = NULL;
             pAutoInspect    = NULL;
             pSelector       = NULL;
+            pQuantize       = NULL;
             pRewImport      = NULL;
             wGraph          = NULL;
             wInspectReset   = NULL;
@@ -246,25 +247,36 @@ namespace lsp
 
         status_t para_equalizer_ui::slot_commit_rew_path(tk::Widget *sender, void *ptr, void *data)
         {
-            para_equalizer_ui *_this = static_cast<para_equalizer_ui *>(ptr);
-            if (_this == NULL)
+            para_equalizer_ui *self = static_cast<para_equalizer_ui *>(ptr);
+            if (self == NULL)
                 return STATUS_BAD_STATE;
 
-            if (_this->pRewPath != NULL)
+            if (self->pRewPath != NULL)
+                self->pRewPath->begin_edit();
+            if (self->pRewFileType != NULL)
+                self->pRewFileType->begin_edit();
+
+            if (self->pRewPath != NULL)
             {
                 LSPString path;
-                if (_this->pRewImport->path()->format(&path) == STATUS_OK)
+                if (self->pRewImport->path()->format(&path) == STATUS_OK)
                 {
                     const char *u8path = path.get_utf8();
-                    _this->pRewPath->write(u8path, ::strlen(u8path));
-                    _this->pRewPath->notify_all(ui::PORT_USER_EDIT);
+
+                    self->pRewPath->write(u8path, ::strlen(u8path));
+                    self->pRewPath->notify_all(ui::PORT_USER_EDIT);
                 }
             }
-            if (_this->pRewFileType != NULL)
+            if (self->pRewFileType != NULL)
             {
-                _this->pRewFileType->set_value(_this->pRewImport->selected_filter()->get());
-                _this->pRewFileType->notify_all(ui::PORT_USER_EDIT);
+                self->pRewFileType->set_value(self->pRewImport->selected_filter()->get());
+                self->pRewFileType->notify_all(ui::PORT_USER_EDIT);
             }
+
+            if (self->pRewPath != NULL)
+                self->pRewPath->end_edit();
+            if (self->pRewFileType != NULL)
+                self->pRewFileType->end_edit();
 
             return STATUS_OK;
         }
@@ -567,6 +579,36 @@ namespace lsp
             update_filter_note_text();
         }
 
+        bool para_equalizer_ui::quantize_note(note_t *out, float freq)
+        {
+            // Process filter note
+            const float note_full = dspu::frequency_to_note(freq);
+            if (note_full == dspu::NOTE_OUT_OF_RANGE)
+                return false;
+
+            const float center  = note_full + 0.5f;
+            out->nNumber        = int32_t(center);
+            out->nCents         = (center - float(out->nNumber)) * 100 - 50;
+
+            return true;
+        }
+
+        float para_equalizer_ui::quantize_frequency(float value, void *context)
+        {
+            para_equalizer_ui *self = static_cast<para_equalizer_ui *>(context);
+            if (self == NULL)
+                return value;
+            const bool quantize     = (self->pQuantize != NULL) ? self->pQuantize->value() > 0.5f : false;
+            if (!quantize)
+                return value;
+
+            note_t note;
+            if (!quantize_note(&note, value))
+                return value;
+
+            return dspu::midi_note_to_frequency(note.nNumber);
+        }
+
         void para_equalizer_ui::update_filter_note_text()
         {
             // Determine which frequency/note to show: of inspected filter or of selected filter
@@ -649,29 +691,23 @@ namespace lsp
                 params.set_string("filter_type", &text);
 
                 // Process filter note
-                float note_full = dspu::frequency_to_note(freq);
-                if (note_full != dspu::NOTE_OUT_OF_RANGE)
+                note_t note;
+                if (quantize_note(&note, freq))
                 {
-                    note_full += 0.5f;
-                    ssize_t note_number = ssize_t(note_full);
-
                     // Note name
-                    ssize_t note        = note_number % 12;
-                    text.fmt_ascii("lists.notes.names.%s", note_names[note]);
+                    text.fmt_ascii("lists.notes.names.%s", note_names[note.nNumber % 12]);
                     lc_string.set(&text);
                     lc_string.format(&text);
                     params.set_string("note", &text);
 
                     // Octave number
-                    ssize_t octave      = (note_number / 12) - 1;
-                    params.set_int("octave", octave);
+                    params.set_int("octave", ssize_t(note.nNumber / 12) - 1);
 
                     // Cents
-                    ssize_t note_cents  = (note_full - float(note_number)) * 100 - 50;
-                    if (note_cents < 0)
-                        text.fmt_ascii(" - %02d", -note_cents);
+                    if (note.nCents < 0)
+                        text.fmt_ascii(" - %02d", int(-note.nCents));
                     else
-                        text.fmt_ascii(" + %02d", note_cents);
+                        text.fmt_ascii(" + %02d", int(note.nCents));
                     params.set_string("cents", &text);
 
                     f->wNote->text()->set("lists.para_eq.display.full", &params);
@@ -761,7 +797,10 @@ namespace lsp
                     f.pQuality      = find_port(*fmt, "q", port_id);
 
                     if (f.wDot != NULL)
+                    {
                         f.wDot->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_filter_dot_click, this);
+                        f.wDot->hvalue()->set_transform(quantize_frequency, this);
+                    }
                     if (f.wInspect != NULL)
                         f.wInspect->slots()->bind(tk::SLOT_SUBMIT, slot_filter_inspect_submit, this);
 
@@ -971,6 +1010,7 @@ namespace lsp
             if (pAutoInspect != NULL)
                 pAutoInspect->bind(this);
             pSelector           = pWrapper->port("fsel");
+            pQuantize           = pWrapper->port("quant");
 
             // Add subwidgets
             ctl::Window *wnd    = pWrapper->controller();
@@ -1019,8 +1059,10 @@ namespace lsp
             // Force the inspect mode to be turned off
             if (pInspect != NULL)
             {
+                pInspect->begin_edit();
                 pInspect->set_value(-1.0f);
                 pInspect->notify_all(ui::PORT_USER_EDIT);
+                pInspect->end_edit();
             }
 
             return ui::Module::pre_destroy();
@@ -1065,11 +1107,17 @@ namespace lsp
             if ((src == NULL) || (dst == NULL))
                 return;
 
+            src->begin_edit();
+            dst->begin_edit();
+
             dst->set_value(src->value());
             src->set_default();
 
             dst->notify_all(ui::PORT_USER_EDIT);
             src->notify_all(ui::PORT_USER_EDIT);
+
+            src->end_edit();
+            dst->end_edit();
         }
 
         void para_equalizer_ui::on_filter_menu_item_submit(tk::MenuItem *mi)
@@ -1077,6 +1125,19 @@ namespace lsp
             if (pCurrDot == NULL)
                 return;
             lsp_finally { pCurrDot = NULL; };
+
+            if (pCurrDot->pType != NULL)
+                pCurrDot->pType->begin_edit();
+            if (pCurrDot->pMode != NULL)
+                pCurrDot->pMode->begin_edit();
+            if (pCurrDot->pSlope != NULL)
+                pCurrDot->pSlope->begin_edit();
+            if (pCurrDot->pMute != NULL)
+                pCurrDot->pMute->begin_edit();
+            if (pCurrDot->pSolo != NULL)
+                pCurrDot->pSolo->begin_edit();
+            if (pSelector != NULL)
+                pCurrDot->pSolo->begin_edit();
 
             on_filter_menu_item_selected(&vFilterTypes, pCurrDot->pType, mi);
             on_filter_menu_item_selected(&vFilterModes, pCurrDot->pMode, mi);
@@ -1120,6 +1181,19 @@ namespace lsp
             }
             if (mi == wFilterInspect)
                 toggle_inspected_filter(pCurrDot, true);
+
+            if (pCurrDot->pType != NULL)
+                pCurrDot->pType->end_edit();
+            if (pCurrDot->pMode != NULL)
+                pCurrDot->pMode->end_edit();
+            if (pCurrDot->pSlope != NULL)
+                pCurrDot->pSlope->end_edit();
+            if (pCurrDot->pMute != NULL)
+                pCurrDot->pMute->end_edit();
+            if (pCurrDot->pSolo != NULL)
+                pCurrDot->pSolo->end_edit();
+            if (pSelector != NULL)
+                pCurrDot->pSolo->end_edit();
         }
 
         para_equalizer_ui::filter_t *para_equalizer_ui::find_switchable_filter(filter_t *filter)
@@ -1338,8 +1412,10 @@ namespace lsp
 
             if ((pInspect != NULL) && (commit) && (inspect != index))
             {
+                pInspect->begin_edit();
                 pInspect->set_value(index);
                 pInspect->notify_all(ui::PORT_USER_EDIT);
+                pInspect->end_edit();
                 inspect     = index;
             }
 

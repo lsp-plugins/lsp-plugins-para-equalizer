@@ -35,6 +35,12 @@ namespace lsp
         class para_equalizer_ui: public ui::Module, public ui::IPortListener
         {
             protected:
+                typedef struct note_t
+                {
+                    int32_t             nNumber;        // Note number in MIDI notation
+                    int32_t             nCents;         // Detune in cents
+                } note_t;
+
                 typedef struct filter_t
                 {
                     para_equalizer_ui  *pUI;
@@ -71,6 +77,7 @@ namespace lsp
                 ui::IPort          *pInspect;           // Inspected filter index
                 ui::IPort          *pAutoInspect;       // Automatically inspect the filter
                 ui::IPort          *pSelector;          // Filter selector
+                ui::IPort          *pQuantize;          // Quantize button
                 tk::FileDialog     *pRewImport;
                 tk::Graph          *wGraph;
                 tk::Button         *wInspectReset;      // Inspect reset button
@@ -115,6 +122,10 @@ namespace lsp
                 static status_t slot_main_grid_mouse_in(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_main_grid_mouse_out(tk::Widget *sender, void *ptr, void *data);
                 static status_t slot_main_grid_mouse_move(tk::Widget *sender, void *ptr, void *data);
+
+            protected:
+                static bool     quantize_note(note_t *out, float freq);
+                static float    quantize_frequency(float value, void *context);
 
             protected:
                 tk::Menu       *create_menu();
