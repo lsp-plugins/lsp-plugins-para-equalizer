@@ -2,6 +2,9 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.33 ===
+
+
 === 1.0.32 ===
 * Added display of piano keyboard layout on graph.
 * Added frequency quantization function to match the exact frequency of the note.
