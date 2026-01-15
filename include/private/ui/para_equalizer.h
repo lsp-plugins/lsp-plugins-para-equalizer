@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-para-equalizer
  * Created on: 2 авг. 2021 г.
@@ -191,7 +191,12 @@ namespace lsp
 
             public:
                 explicit para_equalizer_ui(const meta::plugin_t *meta);
+                para_equalizer_ui(const para_equalizer_ui &) = delete;
+                para_equalizer_ui(para_equalizer_ui &&) = delete;
                 virtual ~para_equalizer_ui() override;
+
+                para_equalizer_ui & operator = (const para_equalizer_ui &) = delete;
+                para_equalizer_ui & operator = (para_equalizer_ui &&) = delete;
 
                 virtual status_t    post_init() override;
                 virtual status_t    pre_destroy() override;
