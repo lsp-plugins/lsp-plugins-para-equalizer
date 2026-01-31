@@ -125,7 +125,7 @@ namespace lsp
 
             protected:
                 static bool     quantize_note(note_t *out, float freq);
-                static float    quantize_frequency(float value, void *context);
+                static float    quantize_frequency(float value, bool write, void *context);
 
             protected:
                 tk::Menu       *create_menu();

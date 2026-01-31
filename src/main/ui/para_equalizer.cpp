@@ -593,8 +593,11 @@ namespace lsp
             return true;
         }
 
-        float para_equalizer_ui::quantize_frequency(float value, void *context)
+        float para_equalizer_ui::quantize_frequency(float value, bool write, void *context)
         {
+            if (!write)
+                return value;
+
             para_equalizer_ui *self = static_cast<para_equalizer_ui *>(context);
             if (self == NULL)
                 return value;
