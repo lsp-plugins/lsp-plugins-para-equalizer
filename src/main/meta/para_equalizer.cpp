@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-para-equalizer
  * Created on: 2 авг. 2021 г.
@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/plug-fw/meta/ports.h>
+#include <lsp-plug.in/plug-fw/meta/registry.h>
 #include <lsp-plug.in/shared/meta/developers.h>
 #include <private/meta/para_equalizer.h>
 
@@ -689,6 +690,7 @@ namespace lsp
             mono_plugin_port_groups,
             &para_equalizer_bundle
         };
+        LSP_REGISTER_METADATA(para_equalizer_x8_mono);
 
         const meta::plugin_t para_equalizer_x16_mono =
         {
@@ -719,6 +721,7 @@ namespace lsp
             mono_plugin_port_groups,
             &para_equalizer_bundle
         };
+        LSP_REGISTER_METADATA(para_equalizer_x16_mono);
 
         const meta::plugin_t para_equalizer_x32_mono =
         {
@@ -749,6 +752,7 @@ namespace lsp
             mono_plugin_port_groups,
             &para_equalizer_bundle
         };
+        LSP_REGISTER_METADATA(para_equalizer_x32_mono);
 
         const meta::plugin_t para_equalizer_x8_stereo =
         {
@@ -779,6 +783,7 @@ namespace lsp
             stereo_plugin_port_groups,
             &para_equalizer_bundle
         };
+        LSP_REGISTER_METADATA(para_equalizer_x8_stereo);
 
         const meta::plugin_t para_equalizer_x16_stereo =
         {
@@ -809,6 +814,7 @@ namespace lsp
             stereo_plugin_port_groups,
             &para_equalizer_bundle
         };
+        LSP_REGISTER_METADATA(para_equalizer_x16_stereo);
 
         const meta::plugin_t para_equalizer_x32_stereo =
         {
@@ -839,6 +845,7 @@ namespace lsp
             stereo_plugin_port_groups,
             &para_equalizer_bundle
         };
+        LSP_REGISTER_METADATA(para_equalizer_x32_stereo);
 
         const meta::plugin_t para_equalizer_x8_lr =
         {
@@ -869,6 +876,7 @@ namespace lsp
             stereo_plugin_port_groups,
             &para_equalizer_bundle
         };
+        LSP_REGISTER_METADATA(para_equalizer_x8_lr);
 
         const meta::plugin_t para_equalizer_x16_lr =
         {
@@ -899,6 +907,7 @@ namespace lsp
             stereo_plugin_port_groups,
             &para_equalizer_bundle
         };
+        LSP_REGISTER_METADATA(para_equalizer_x16_lr);
 
         const meta::plugin_t para_equalizer_x32_lr =
         {
@@ -929,6 +938,7 @@ namespace lsp
             stereo_plugin_port_groups,
             &para_equalizer_bundle
         };
+        LSP_REGISTER_METADATA(para_equalizer_x32_lr);
 
         const meta::plugin_t para_equalizer_x8_ms =
         {
@@ -959,6 +969,7 @@ namespace lsp
             stereo_plugin_port_groups,
             &para_equalizer_bundle
         };
+        LSP_REGISTER_METADATA(para_equalizer_x8_ms);
 
         const meta::plugin_t para_equalizer_x16_ms =
         {
@@ -989,6 +1000,7 @@ namespace lsp
             stereo_plugin_port_groups,
             &para_equalizer_bundle
         };
+        LSP_REGISTER_METADATA(para_equalizer_x16_ms);
 
         const meta::plugin_t para_equalizer_x32_ms =
         {
@@ -1019,6 +1031,8 @@ namespace lsp
             stereo_plugin_port_groups,
             &para_equalizer_bundle
         };
+        LSP_REGISTER_METADATA(para_equalizer_x32_ms);
+
     } /* namespace meta */
 } /* namespace lsp */
 
