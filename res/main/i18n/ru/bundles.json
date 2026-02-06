@@ -1,7 +1,21 @@
 {
 	"para_equalizer": {
-		"name": "Параметрический эквалайзер",
-		"description": "Этот плагин позволяет выполнять параметрическую эквализацию входного сигнала.\nДоступны для одновременной обработки до 8, 16 или 32 различных фильтров."
-	}
+		"description": "Этот плагин позволяет выполнять параметрическую эквализацию входного сигнала.\nДоступны для одновременной обработки до 8, 16 или 32 различных фильтров.",
+		"name": "Параметрический эквалайзер"
+	},
+	"launcher": {
+		"para_equalizer_x16_lr": "Раздельный ЛП x16",
+        "para_equalizer_x16_mono": "Моно x16",
+        "para_equalizer_x16_ms": "Раздельный ЦС x16",
+        "para_equalizer_x16_stereo": "Стерео x16",
+        "para_equalizer_x32_lr": "Раздельный ЛП x32",
+        "para_equalizer_x32_mono": "Моно x32",
+        "para_equalizer_x32_ms": "Раздельный ЦС x32",
+        "para_equalizer_x32_stereo": "Стерео x32",
+        "para_equalizer_x8_lr": "Раздельный ЛП x8",
+        "para_equalizer_x8_mono": "Моно x8",
+        "para_equalizer_x8_ms": "Раздельный ЦС x8",
+        "para_equalizer_x8_stereo": "Стерео x8"
+    }
 }
 
