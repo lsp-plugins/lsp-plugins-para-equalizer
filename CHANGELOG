@@ -3,7 +3,7 @@
 *******************************************************************************
 
 === 1.0.35 ===
-
+* Better parsing APO filter files.
 
 === 1.0.34 ===
 * Updated build scripts and dependencies.
