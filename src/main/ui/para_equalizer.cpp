@@ -1616,6 +1616,16 @@ namespace lsp
                         gain    = f->gain;
                         quality = 2.0/3.0;
                         break;
+                    case room_ew::LSC:
+                        type    = meta::para_equalizer_metadata::EQF_LOSHELF;
+                        gain    = f->gain;
+                        quality = f->Q;
+                        break;
+                    case room_ew::HSC:
+                        type    = meta::para_equalizer_metadata::EQF_HISHELF;
+                        gain    = f->gain;
+                        quality = f->Q;
+                        break;
                     case room_ew::LP:
                         type    = meta::para_equalizer_metadata::EQF_LOPASS;
                         break;
