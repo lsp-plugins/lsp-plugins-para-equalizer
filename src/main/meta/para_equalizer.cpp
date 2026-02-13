@@ -685,7 +685,7 @@ namespace lsp
             clap_features_mono,
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x8_mono_ports,
-            "equalizer/parametric/mono.xml",
+            "plugins/equalizer/parametric/mono.xml",
             "equalizer/parametric/mono",
             mono_plugin_port_groups,
             &para_equalizer_bundle
@@ -716,7 +716,7 @@ namespace lsp
             clap_features_mono,
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x16_mono_ports,
-            "equalizer/parametric/mono.xml",
+            "plugins/equalizer/parametric/mono.xml",
             "equalizer/parametric/mono",
             mono_plugin_port_groups,
             &para_equalizer_bundle
@@ -747,7 +747,7 @@ namespace lsp
             clap_features_mono,
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x32_mono_ports,
-            "equalizer/parametric/mono.xml",
+            "plugins/equalizer/parametric/mono.xml",
             "equalizer/parametric/mono",
             mono_plugin_port_groups,
             &para_equalizer_bundle
@@ -778,7 +778,7 @@ namespace lsp
             clap_features_stereo,
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x8_stereo_ports,
-            "equalizer/parametric/stereo.xml",
+            "plugins/equalizer/parametric/stereo.xml",
             "equalizer/parametric/stereo",
             stereo_plugin_port_groups,
             &para_equalizer_bundle
@@ -809,7 +809,7 @@ namespace lsp
             clap_features_stereo,
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x16_stereo_ports,
-            "equalizer/parametric/stereo.xml",
+            "plugins/equalizer/parametric/stereo.xml",
             "equalizer/parametric/stereo",
             stereo_plugin_port_groups,
             &para_equalizer_bundle
@@ -840,7 +840,7 @@ namespace lsp
             clap_features_stereo,
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x32_stereo_ports,
-            "equalizer/parametric/stereo.xml",
+            "plugins/equalizer/parametric/stereo.xml",
             "equalizer/parametric/stereo",
             stereo_plugin_port_groups,
             &para_equalizer_bundle
@@ -871,7 +871,7 @@ namespace lsp
             clap_features_stereo,
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x8_lr_ports,
-            "equalizer/parametric/lr.xml",
+            "plugins/equalizer/parametric/lr.xml",
             "equalizer/parametric/lr",
             stereo_plugin_port_groups,
             &para_equalizer_bundle
@@ -902,7 +902,7 @@ namespace lsp
             clap_features_stereo,
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x16_lr_ports,
-            "equalizer/parametric/lr.xml",
+            "plugins/equalizer/parametric/lr.xml",
             "equalizer/parametric/lr",
             stereo_plugin_port_groups,
             &para_equalizer_bundle
@@ -933,7 +933,7 @@ namespace lsp
             clap_features_stereo,
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x32_lr_ports,
-            "equalizer/parametric/lr.xml",
+            "plugins/equalizer/parametric/lr.xml",
             "equalizer/parametric/lr",
             stereo_plugin_port_groups,
             &para_equalizer_bundle
@@ -964,7 +964,7 @@ namespace lsp
             clap_features_stereo,
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x8_ms_ports,
-            "equalizer/parametric/ms.xml",
+            "plugins/equalizer/parametric/ms.xml",
             "equalizer/parametric/ms",
             stereo_plugin_port_groups,
             &para_equalizer_bundle
@@ -995,7 +995,7 @@ namespace lsp
             clap_features_stereo,
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x16_ms_ports,
-            "equalizer/parametric/ms.xml",
+            "plugins/equalizer/parametric/ms.xml",
             "equalizer/parametric/ms",
             stereo_plugin_port_groups,
             &para_equalizer_bundle
@@ -1026,7 +1026,7 @@ namespace lsp
             clap_features_stereo,
             E_INLINE_DISPLAY | E_DUMP_STATE,
             para_equalizer_x32_ms_ports,
-            "equalizer/parametric/ms.xml",
+            "plugins/equalizer/parametric/ms.xml",
             "equalizer/parametric/ms",
             stereo_plugin_port_groups,
             &para_equalizer_bundle
