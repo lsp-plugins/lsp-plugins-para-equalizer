@@ -688,7 +688,8 @@ namespace lsp
             "plugins/equalizer/parametric/mono.xml",
             "equalizer/parametric/mono",
             mono_plugin_port_groups,
-            &para_equalizer_bundle
+            &para_equalizer_bundle,
+            4
         };
         LSP_REGISTER_METADATA(para_equalizer_x8_mono);
 
@@ -719,7 +720,8 @@ namespace lsp
             "plugins/equalizer/parametric/mono.xml",
             "equalizer/parametric/mono",
             mono_plugin_port_groups,
-            &para_equalizer_bundle
+            &para_equalizer_bundle,
+            5
         };
         LSP_REGISTER_METADATA(para_equalizer_x16_mono);
 
@@ -750,7 +752,8 @@ namespace lsp
             "plugins/equalizer/parametric/mono.xml",
             "equalizer/parametric/mono",
             mono_plugin_port_groups,
-            &para_equalizer_bundle
+            &para_equalizer_bundle,
+            6
         };
         LSP_REGISTER_METADATA(para_equalizer_x32_mono);
 
@@ -781,7 +784,8 @@ namespace lsp
             "plugins/equalizer/parametric/stereo.xml",
             "equalizer/parametric/stereo",
             stereo_plugin_port_groups,
-            &para_equalizer_bundle
+            &para_equalizer_bundle,
+            1
         };
         LSP_REGISTER_METADATA(para_equalizer_x8_stereo);
 
@@ -812,7 +816,8 @@ namespace lsp
             "plugins/equalizer/parametric/stereo.xml",
             "equalizer/parametric/stereo",
             stereo_plugin_port_groups,
-            &para_equalizer_bundle
+            &para_equalizer_bundle,
+            2
         };
         LSP_REGISTER_METADATA(para_equalizer_x16_stereo);
 
@@ -843,7 +848,8 @@ namespace lsp
             "plugins/equalizer/parametric/stereo.xml",
             "equalizer/parametric/stereo",
             stereo_plugin_port_groups,
-            &para_equalizer_bundle
+            &para_equalizer_bundle,
+            3
         };
         LSP_REGISTER_METADATA(para_equalizer_x32_stereo);
 
@@ -874,7 +880,8 @@ namespace lsp
             "plugins/equalizer/parametric/lr.xml",
             "equalizer/parametric/lr",
             stereo_plugin_port_groups,
-            &para_equalizer_bundle
+            &para_equalizer_bundle,
+            7
         };
         LSP_REGISTER_METADATA(para_equalizer_x8_lr);
 
@@ -905,7 +912,8 @@ namespace lsp
             "plugins/equalizer/parametric/lr.xml",
             "equalizer/parametric/lr",
             stereo_plugin_port_groups,
-            &para_equalizer_bundle
+            &para_equalizer_bundle,
+            8
         };
         LSP_REGISTER_METADATA(para_equalizer_x16_lr);
 
@@ -936,7 +944,8 @@ namespace lsp
             "plugins/equalizer/parametric/lr.xml",
             "equalizer/parametric/lr",
             stereo_plugin_port_groups,
-            &para_equalizer_bundle
+            &para_equalizer_bundle,
+            9
         };
         LSP_REGISTER_METADATA(para_equalizer_x32_lr);
 
@@ -967,7 +976,8 @@ namespace lsp
             "plugins/equalizer/parametric/ms.xml",
             "equalizer/parametric/ms",
             stereo_plugin_port_groups,
-            &para_equalizer_bundle
+            &para_equalizer_bundle,
+            10
         };
         LSP_REGISTER_METADATA(para_equalizer_x8_ms);
 
@@ -998,7 +1008,8 @@ namespace lsp
             "plugins/equalizer/parametric/ms.xml",
             "equalizer/parametric/ms",
             stereo_plugin_port_groups,
-            &para_equalizer_bundle
+            &para_equalizer_bundle,
+            11
         };
         LSP_REGISTER_METADATA(para_equalizer_x16_ms);
 
@@ -1029,11 +1040,10 @@ namespace lsp
             "plugins/equalizer/parametric/ms.xml",
             "equalizer/parametric/ms",
             stereo_plugin_port_groups,
-            &para_equalizer_bundle
+            &para_equalizer_bundle,
+            12
         };
         LSP_REGISTER_METADATA(para_equalizer_x32_ms);
 
     } /* namespace meta */
 } /* namespace lsp */
-
-

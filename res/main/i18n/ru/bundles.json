@@ -4,18 +4,17 @@
 		"name": "Параметрический эквалайзер"
 	},
 	"launcher": {
-		"para_equalizer_x16_lr": "Раздельный ЛП x16",
+		"para_equalizer_x16_lr": "ЛП x16",
         "para_equalizer_x16_mono": "Моно x16",
-        "para_equalizer_x16_ms": "Раздельный ЦС x16",
+        "para_equalizer_x16_ms": "ЦС x16",
         "para_equalizer_x16_stereo": "Стерео x16",
-        "para_equalizer_x32_lr": "Раздельный ЛП x32",
+        "para_equalizer_x32_lr": "ЛП x32",
         "para_equalizer_x32_mono": "Моно x32",
-        "para_equalizer_x32_ms": "Раздельный ЦС x32",
+        "para_equalizer_x32_ms": "ЦС x32",
         "para_equalizer_x32_stereo": "Стерео x32",
-        "para_equalizer_x8_lr": "Раздельный ЛП x8",
+        "para_equalizer_x8_lr": "ЛП x8",
         "para_equalizer_x8_mono": "Моно x8",
-        "para_equalizer_x8_ms": "Раздельный ЦС x8",
+        "para_equalizer_x8_ms": "ЦС x8",
         "para_equalizer_x8_stereo": "Стерео x8"
     }
 }
-
