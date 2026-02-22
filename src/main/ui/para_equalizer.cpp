@@ -1670,6 +1670,10 @@ namespace lsp
                         type    = meta::para_equalizer_metadata::EQF_ALLPASS;
                         quality = 0.0;
                         break;
+                    case room_ew::BP:
+                        type    = meta::para_equalizer_metadata::EQF_BANDPASS;
+                        quality = f->Q;
+                        break;
                     default: // Skip other filter types
                         break;
                 }
