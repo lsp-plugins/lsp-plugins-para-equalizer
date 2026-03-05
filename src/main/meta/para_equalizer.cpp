@@ -39,6 +39,10 @@ namespace lsp
 {
     namespace meta
     {
+        // Different revisions
+        #define REV_0           0
+        #define REV_1           1
+
         //-------------------------------------------------------------------------
         // Parametric Equalizer
         static const int plugin_classes[]           = { C_PARA_EQ, -1 };
@@ -96,6 +100,17 @@ namespace lsp
             { "LRX (BT)",       "eq.mode.lrx_bt" },
             { "LRX (MT)",       "eq.mode.lrx_mt" },
             { "APO (DR)",       "eq.mode.apo_dr" },
+            { NULL, NULL }
+        };
+
+        static const port_item_t equalizer_decramping[] =
+        {
+            { "Off",            "eq.decramp.off"    },
+            { "x2",             "eq.decramp.x2"     },
+            { "x3",             "eq.decramp.x3"     },
+            { "x4",             "eq.decramp.x4"     },
+            { "x6",             "eq.decramp.x6"     },
+            { "x8",             "eq.decramp.x8"     },
             { NULL, NULL }
         };
 
@@ -203,6 +218,7 @@ namespace lsp
             AMP_GAIN("g_in", "Input gain", "Input gain", para_equalizer_metadata::IN_GAIN_DFL, 10.0f), \
             AMP_GAIN("g_out", "Output gain", "Output gain", para_equalizer_metadata::OUT_GAIN_DFL, 10.0f), \
             COMBO("mode", "Equalizer mode", "Mode", 0, equalizer_eq_modes), \
+            ADDON_COMBO(REV_1, "decramp", "Equalizer decramping", "Decramping", 0, equalizer_decramping), \
             LOG_CONTROL("react", "FFT reactivity", "Reactivity", U_MSEC, para_equalizer_metadata::REACT_TIME), \
             AMP_GAIN("shift", "Shift gain", "Shift gain", 1.0f, 100.0f), \
             LOG_CONTROL("zoom", "Graph zoom", "Zoom", U_GAIN_AMP, para_equalizer_metadata::ZOOM), \

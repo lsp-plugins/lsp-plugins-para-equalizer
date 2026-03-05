@@ -258,6 +258,8 @@
 
 				<label text="labels.mode"/>
 				<combo id="mode" pad.v="4"/>
+				<label text="labels.decramp"/>
+				<combo id="decramp" pad.r="12" pad.v="4"/>
 			</hbox>
 		</cell>
 

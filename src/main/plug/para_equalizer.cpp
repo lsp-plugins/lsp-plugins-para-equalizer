@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-para-equalizer
  * Created on: 2 авг. 2021 г.
@@ -100,8 +100,10 @@ namespace lsp
         {
             nFilters        = filters;
             nMode           = mode;
+            nDecramp        = 1;
             vChannels       = NULL;
             vFreqs          = NULL;
+            vBuffer         = NULL;
             vIndexes        = NULL;
             fGainIn         = 1.0f;
             fZoom           = 1.0f;
@@ -117,6 +119,7 @@ namespace lsp
             pShiftGain      = NULL;
             pZoom           = NULL;
             pEqMode         = NULL;
+            pEqDecramp      = NULL;
             pBalance        = NULL;
             pInspect        = NULL;
             pInspectRange   = NULL;
@@ -465,7 +468,8 @@ namespace lsp
 
             // Calculate amount of bulk data to allocate
             size_t allocate     = (2 * meta::para_equalizer_metadata::MESH_POINTS * (nFilters + 2) + EQ_BUFFER_SIZE * 4) * channels +
-                                  meta::para_equalizer_metadata::MESH_POINTS;
+                                  meta::para_equalizer_metadata::MESH_POINTS +
+                                  EQ_BUFFER_SIZE;
             float *abuf         = new float[allocate];
             if (abuf == NULL)
                 return;
@@ -475,8 +479,8 @@ namespace lsp
             dsp::fill_zero(abuf, allocate);
 
             // Frequency list buffer
-            vFreqs              = abuf;
-            abuf               += meta::para_equalizer_metadata::MESH_POINTS;
+            vFreqs              = advance_ptr<float>(abuf, meta::para_equalizer_metadata::MESH_POINTS);
+            vBuffer             = advance_ptr<float>(abuf, EQ_BUFFER_SIZE);
 
             // Initialize each channel
             for (size_t i=0; i<channels; ++i)
@@ -533,9 +537,14 @@ namespace lsp
                 if (c->vFilters == NULL)
                     return;
 
+                // Initialize oversampler
+                if (!c->sOversampler.init())
+                    return;
+                c->sOversampler.set_filtering(false);
+
                 c->sEqualizer.init(nFilters + 1, EQ_RANK);
                 c->sEqualizer.set_smooth(true);
-                max_latency         = lsp_max(max_latency, c->sEqualizer.max_latency());
+                max_latency         = lsp_max(max_latency, c->sEqualizer.max_latency() + c->sOversampler.max_latency());
 
                 // Initialize filters
                 for (size_t j=0; j<=nFilters; ++j)
@@ -600,6 +609,7 @@ namespace lsp
             BIND_PORT(pGainIn);
             BIND_PORT(pGainOut);
             BIND_PORT(pEqMode);
+            BIND_PORT(pEqDecramp);
             BIND_PORT(pReactivity);
             BIND_PORT(pShiftGain);
             BIND_PORT(pZoom);
@@ -825,6 +835,67 @@ namespace lsp
             return false;
         }
 
+        uint32_t para_equalizer::calc_decramping()
+        {
+            // Compute the relation of sample rate to the base frequency (actual oversampling)
+            const float kf          = 44100.0f / fSampleRate;
+
+            // Decode the expected oversampling depending on the input parameter
+            uint32_t exp        = 1;
+            switch (uint32_t(pEqDecramp->value()))
+            {
+                case 0: exp         = 1; break;
+                case 1: exp         = 2; break;
+                case 2: exp         = 3; break;
+                case 3: exp         = 4; break;
+                case 4: exp         = 6; break;
+                case 5: exp         = 8; break;
+                default:exp         = 1; break;
+            }
+
+            // Compute the desired oversampling
+            exp                 = ceilf(exp * kf);
+            switch (exp)
+            {
+                case 0:
+                case 1:
+                    return 1;
+
+                case 2:
+                case 3:
+                case 4:
+                case 6:
+                case 8:
+                    return exp;
+
+                case 5:
+                case 7:
+                    return exp + 1;
+
+                default:
+                    break;
+            }
+
+            return 8;
+        }
+
+        dspu::over_mode_t para_equalizer::calc_oversampler_mode(dspu::equalizer_mode_t eq_mode, size_t decramp)
+        {
+            if ((eq_mode != dspu::EQM_IIR) && (eq_mode != dspu::EQM_FIR))
+                return dspu::over_mode_t::OM_NONE;
+
+            switch (decramp)
+            {
+                case 2: return dspu::over_mode_t::OM_LANCZOS_2X16BIT;
+                case 3: return dspu::over_mode_t::OM_LANCZOS_3X16BIT;
+                case 4: return dspu::over_mode_t::OM_LANCZOS_4X16BIT;
+                case 6: return dspu::over_mode_t::OM_LANCZOS_6X16BIT;
+                case 8: return dspu::over_mode_t::OM_LANCZOS_8X16BIT;
+                default: break;
+            }
+            return dspu::over_mode_t::OM_NONE;
+        }
+
         void para_equalizer::update_settings()
         {
             // Check sample rate
@@ -925,7 +996,16 @@ namespace lsp
             dspu::equalizer_mode_t eq_mode  = get_eq_mode(pEqMode->value());
             bool bypass                     = pBypass->value() >= 0.5f;
             bool mode_changed               = false;
+            bool decramp_changed            = false;
             bSmoothMode                     = false;
+            const uint32_t decramp          = calc_decramping();
+            const dspu::over_mode_t over_mode   = calc_oversampler_mode(eq_mode, decramp);
+
+            if (decramp != nDecramp)
+            {
+                nDecramp                        = decramp;
+                decramp_changed                 = true;
+            }
 
             // For each channel
             for (size_t i=0; i<channels; ++i)
@@ -933,12 +1013,24 @@ namespace lsp
                 eq_channel_t *c     = &vChannels[i];
                 bool visible        = (c->pVisible == NULL) ?  true : (c->pVisible->value() >= 0.5f);
 
+                // Set-up sample rate
+                c->sOversampler.set_sample_rate(fSampleRate);
+                c->sOversampler.set_mode(over_mode);
+
+                if (c->sOversampler.modified())
+                {
+                    c->sOversampler.update_settings();
+                    decramp_changed     = true;
+                }
+
                 // Change the operating mode for the equalizer
                 if (c->sEqualizer.mode() != eq_mode)
                 {
                     c->sEqualizer.set_mode(eq_mode);
                     mode_changed        = true;
                 }
+                c->sEqualizer.set_sample_rate(fSampleRate * nDecramp);
+                c->sEqualizer.set_actual_sample_rate(fSampleRate);
 
                 // Update settings
                 if (c->sBypass.set_bypass(bypass))
@@ -1011,7 +1103,7 @@ namespace lsp
                         (fp->fQuality != op->fQuality);
 
                     // Apply filter params if theey have changed
-                    if ((type_changed) || (param_changed))
+                    if ((type_changed) || (param_changed) || (decramp_changed))
                     {
                         c->sEqualizer.set_params(j, fp);
                         f->nSync            = CS_UPDATE;
@@ -1130,7 +1222,11 @@ namespace lsp
             // Update latency
             size_t latency          = 0;
             for (size_t i=0; i<channels; ++i)
-                latency                 = lsp_max(latency, vChannels[i].sEqualizer.get_latency());
+            {
+                const float ovs_lat     = vChannels[i].sOversampler.latency();
+                const float eq_lat      = vChannels[i].sEqualizer.get_latency();
+                latency                 = lsp_max(latency, ovs_lat + eq_lat);
+            }
 
             for (size_t i=0; i<channels; ++i)
             {
@@ -1152,7 +1248,6 @@ namespace lsp
             {
                 eq_channel_t *c     = &vChannels[i];
                 c->sBypass.init(sr);
-                c->sEqualizer.set_sample_rate(sr);
             }
 
             // Initialize analyzer
@@ -1195,6 +1290,9 @@ namespace lsp
         void para_equalizer::process_channel(eq_channel_t *c, size_t start, size_t samples, size_t total_samples)
         {
             // Process the signal by the equalizer
+            const size_t oversampling   = c->sOversampler.get_oversampling();
+            const size_t ovs_count      = EQ_BUFFER_SIZE / oversampling;
+
             if (bSmoothMode)
             {
                 dspu::filter_params_t fp;
@@ -1222,12 +1320,39 @@ namespace lsp
                     }
 
                     // Apply processing
-                    c->sEqualizer.process(&c->vOutBuffer[offset], &c->vInPtr[offset], count);
+                    if (oversampling > 1)
+                    {
+                        for (size_t j=0; j<count; )
+                        {
+                            const size_t to_do          = lsp_min(count - j, ovs_count);
+                            c->sOversampler.upsample(vBuffer, &c->vInPtr[offset + j], to_do);
+                            c->sEqualizer.process(vBuffer, vBuffer, to_do * oversampling);
+                            c->sOversampler.downsample(&c->vOutBuffer[offset + j], vBuffer, to_do);
+                            j                          += to_do;
+                        }
+                    }
+                    else
+                        c->sEqualizer.process(&c->vOutBuffer[offset], &c->vInPtr[offset], count);
+
                     offset                     += count;
                 }
             }
             else
-                c->sEqualizer.process(c->vOutBuffer, c->vInPtr, samples);
+            {
+                if (oversampling > 1)
+                {
+                    for (size_t j=0; j<samples; )
+                    {
+                        const size_t to_do          = lsp_min(samples - j, ovs_count);
+                        c->sOversampler.upsample(vBuffer, &c->vInPtr[j], to_do);
+                        c->sEqualizer.process(vBuffer, vBuffer, to_do * oversampling);
+                        c->sOversampler.downsample(&c->vOutBuffer[j], vBuffer, to_do);
+                        j                          += to_do;
+                    }
+                }
+                else
+                    c->sEqualizer.process(c->vOutBuffer, c->vInPtr, samples);
+            }
 
             if (c->fInGain != 1.0f)
                 dsp::mul_k2(c->vOutBuffer, c->fInGain, samples);
@@ -1682,6 +1807,7 @@ namespace lsp
         {
             v->begin_object(c, sizeof(eq_channel_t));
             {
+                v->write_object("sOversampler", &c->sOversampler);
                 v->write_object("sEqualizer", &c->sEqualizer);
                 v->write_object("sBypass", &c->sBypass);
                 v->write_object("sDryDelay", &c->sDryDelay);
