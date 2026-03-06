@@ -1867,6 +1867,7 @@ namespace lsp
             v->write_object("sAnalyzer", &sAnalyzer);
             v->write("nFilters", nFilters);
             v->write("nMode", nMode);
+            v->write("nDecramp", nDecramp);
             v->begin_array("vChannels", vChannels, channels);
             {
                 for (size_t i=0; i<channels; ++i)
@@ -1889,6 +1890,7 @@ namespace lsp
             v->write("pShiftGain", pShiftGain);
             v->write("pZoom", pZoom);
             v->write("pEqMode", pEqMode);
+            v->write("pEqDecramp", pEqDecramp);
             v->write("pBalance", pBalance);
         }
 
