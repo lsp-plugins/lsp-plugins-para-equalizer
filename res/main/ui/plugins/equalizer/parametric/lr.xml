@@ -316,7 +316,7 @@
 
 				<label text="labels.mode"/>
 				<combo id="mode" pad.r="12" pad.v="4"/>
-				<label text="labels.decramp"/>
+				<label text="labels.decramp" pad.l="6"/>
 				<combo id="decramp" pad.r="12" pad.v="4"/>
 				<button id="fltv_l" height="22" width="45" text="labels.chan.left" ui:inject="Button_left" pad.v="4"/>
 				<button id="fltv_r" height="22" width="45" text="labels.chan.right" ui:inject="Button_right" pad.v="4" />

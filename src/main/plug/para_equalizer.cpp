@@ -1241,7 +1241,7 @@ namespace lsp
             size_t channels     = (nMode == EQ_MONO) ? 1 : 2;
 
             sAnalyzer.set_sample_rate(sr);
-            size_t max_latency  = 1 << (meta::para_equalizer_metadata::FFT_RANK + 1);
+            size_t max_latency  = (1 << (meta::para_equalizer_metadata::FFT_RANK + 1)) + dspu::OVERSAMPLER_MAX_LATENCY;
 
             // Initialize channels
             for (size_t i=0; i<channels; ++i)
