@@ -206,7 +206,7 @@ namespace lsp
             CONTROL_ALL("q" id "_" #x, "Quality factor " label #x, "Q " #x alias, U_NONE, 0.0f, 100.0f, 0.0f, 0.025f), \
             CYC_CONTROL_ALL("hue" id "_" #x, "Hue " label #x, "Hue " #x alias, U_NONE, 0.0f, 1.0f, (float(x) / float(total)), 0.25f/360.0f), \
             BLINK("fv" id "_" #x, "Filter visibility " label #x), \
-            MESH("agf" id "_" #x, "Amplitude graph " label #x, 2, para_equalizer_metadata::FILTER_MESH_POINTS)
+            MESH("agf" id "_" #x, "Amplitude graph " label #x, 2, para_equalizer_metadata::MESH_POINTS + 4)
 
         #define EQ_FILTER_MONO(x, total, f)     EQ_FILTER("", "", "", x, total, f)
         #define EQ_FILTER_STEREO(x, total, f)   EQ_FILTER("", "", "", x, total, f)
@@ -232,14 +232,14 @@ namespace lsp
             SWITCH(id, label, alias, 0.0f)
 
         #define EQ_MONO_PORTS \
-            MESH("ag", "Amplitude graph", 2, para_equalizer_metadata::MESH_POINTS), \
+            MESH("ag", "Amplitude graph", 2, para_equalizer_metadata::MESH_POINTS + 4), \
             CONTROL("frqs", "Frequency shift", "Freq shift", U_SEMITONES, para_equalizer_metadata::PITCH), \
             METER_GAIN("im", "Input signal meter", GAIN_AMP_P_12_DB), \
             METER_GAIN("sm", "Output signal meter", GAIN_AMP_P_12_DB)
 
         #define EQ_STEREO_PORTS \
             PAN_CTL("bal", "Output balance", "Out balance", 0.0f), \
-            MESH("ag", "Amplitude graph", 2, para_equalizer_metadata::MESH_POINTS), \
+            MESH("ag", "Amplitude graph", 2, para_equalizer_metadata::MESH_POINTS + 4), \
             CONTROL("frqs", "Frequency shift", "Freq shift", U_SEMITONES, para_equalizer_metadata::PITCH), \
             METER_GAIN("iml", "Input signal meter Left", GAIN_AMP_P_12_DB), \
             METER_GAIN("sml", "Output signal meter Left", GAIN_AMP_P_12_DB), \
@@ -248,12 +248,12 @@ namespace lsp
 
         #define EQ_LR_PORTS \
             PAN_CTL("bal", "Output balance", "Out balance", 0.0f), \
-            MESH("ag_l", "Amplitude graph Left", 2, para_equalizer_metadata::MESH_POINTS), \
+            MESH("ag_l", "Amplitude graph Left", 2, para_equalizer_metadata::MESH_POINTS + 4), \
             CONTROL("frqs_l", "Frequency shift Left", "Freq shift L", U_SEMITONES, para_equalizer_metadata::PITCH), \
             METER_GAIN("iml", "Input signal meter Left", GAIN_AMP_P_12_DB), \
             METER_GAIN("sml", "Output signal meter Left", GAIN_AMP_P_12_DB), \
             SWITCH("fltv_l", "Filter visibility Left", "Show filter L", 1.0f), \
-            MESH("ag_r", "Amplitude graph Right", 2, para_equalizer_metadata::MESH_POINTS), \
+            MESH("ag_r", "Amplitude graph Right", 2, para_equalizer_metadata::MESH_POINTS + 4), \
             CONTROL("frqs_r", "Frequency shift Right", "Freq shift R", U_SEMITONES, para_equalizer_metadata::PITCH), \
             METER_GAIN("imr", "Input signal meter Right", GAIN_AMP_P_12_DB), \
             METER_GAIN("smr", "Output signal meter Right", GAIN_AMP_P_12_DB), \
@@ -264,12 +264,12 @@ namespace lsp
             SWITCH("lstn", "Mid/Side listen", "M/S listen", 0.0f), \
             AMP_GAIN100("gain_m", "Mid gain", "Gain M", GAIN_AMP_0_DB), \
             AMP_GAIN100("gain_s", "Side gain", "Gain S", GAIN_AMP_0_DB), \
-            MESH("ag_m", "Amplitude graph Mid", 2, para_equalizer_metadata::MESH_POINTS), \
+            MESH("ag_m", "Amplitude graph Mid", 2, para_equalizer_metadata::MESH_POINTS + 4), \
             CONTROL("frqs_m", "Frequency shift Mid", "Freq shift M", U_SEMITONES, para_equalizer_metadata::PITCH), \
             METER_GAIN("iml", "Input signal meter Left", GAIN_AMP_P_12_DB), \
             METER_GAIN("sml", "Output signal meter Left", GAIN_AMP_P_12_DB), \
             SWITCH("fltv_m", "Filter visibility Mid", "Show filter M", 1.0f), \
-            MESH("ag_s", "Amplitude graph Side", 2, para_equalizer_metadata::MESH_POINTS), \
+            MESH("ag_s", "Amplitude graph Side", 2, para_equalizer_metadata::MESH_POINTS + 4), \
             CONTROL("frqs_s", "Frequency shift Side", "Freq shift S", U_SEMITONES, para_equalizer_metadata::PITCH), \
             METER_GAIN("imr", "Input signal meter Right", GAIN_AMP_P_12_DB), \
             METER_GAIN("smr", "Output signal meter Right", GAIN_AMP_P_12_DB), \

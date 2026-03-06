@@ -5,6 +5,7 @@
 === 1.0.35 ===
 * Better parsing APO filter files.
 * Added support of bilinear transform filters decramping.
+* Fixed artifacts at the edges of the equalization curve.
 
 === 1.0.34 ===
 * Updated build scripts and dependencies.

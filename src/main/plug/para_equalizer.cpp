@@ -1612,17 +1612,26 @@ namespace lsp
                         {
                             if (c->sEqualizer.filter_active(j))
                             {
-                                // Add extra points
-                                mesh->pvData[0][0] = SPEC_FREQ_MIN*0.5f;
-                                mesh->pvData[0][meta::para_equalizer_metadata::MESH_POINTS+1] = SPEC_FREQ_MAX*2.0;
-                                mesh->pvData[1][0] = 1.0f;
-                                mesh->pvData[1][meta::para_equalizer_metadata::MESH_POINTS+1] = 1.0f;
+                                // Frequency
+                                float *dst          = mesh->pvData[0];
+                                dsp::copy(&dst[2], vFreqs, meta::para_equalizer_metadata::MESH_POINTS);
+                                dst[0]              = SPEC_FREQ_MIN * 0.5f;
+                                dst[1]              = SPEC_FREQ_MIN * 0.5f;
+                                dst                += meta::para_equalizer_metadata::MESH_POINTS + 2;
+                                dst[0]              = SPEC_FREQ_MAX * 2.0f;
+                                dst[1]              = SPEC_FREQ_MAX * 2.0f;
 
-                                // Fill mesh
-                                dsp::copy(&mesh->pvData[0][1], vFreqs, meta::para_equalizer_metadata::MESH_POINTS);
-                                dsp::complex_mod(&mesh->pvData[1][1], f->vTrRe, f->vTrIm, meta::para_equalizer_metadata::MESH_POINTS);
+                                // Amplitude
+                                dst                 = mesh->pvData[1];
+                                dsp::complex_mod(&dst[2], f->vTrRe, f->vTrIm, meta::para_equalizer_metadata::MESH_POINTS);
+                                dst[0]              = GAIN_AMP_0_DB;
+                                dst[1]              = dst[2];
+                                dst                += meta::para_equalizer_metadata::MESH_POINTS + 2;
+                                dst[0]              = dst[-1];
+                                dst[1]              = GAIN_AMP_0_DB;
 
-                                mesh->data(2, meta::para_equalizer_metadata::FILTER_MESH_POINTS);
+                                // Report data presence
+                                mesh->data(2, meta::para_equalizer_metadata::MESH_POINTS + 4);
                             }
                             else
                                 mesh->data(2, 0);
@@ -1654,9 +1663,26 @@ namespace lsp
                     plug::mesh_t *mesh  = c->pTrAmp->buffer<plug::mesh_t>();
                     if ((mesh != NULL) && (mesh->isEmpty()))
                     {
-                        dsp::copy(mesh->pvData[0], vFreqs, meta::para_equalizer_metadata::MESH_POINTS);
-                        dsp::complex_mod(mesh->pvData[1], c->vTrRe, c->vTrIm, meta::para_equalizer_metadata::MESH_POINTS);
-                        mesh->data(2, meta::para_equalizer_metadata::MESH_POINTS);
+                        // Frequency
+                        float *dst          = mesh->pvData[0];
+                        dsp::copy(&dst[2], vFreqs, meta::para_equalizer_metadata::MESH_POINTS);
+                        dst[0]              = SPEC_FREQ_MIN * 0.5f;
+                        dst[1]              = SPEC_FREQ_MIN * 0.5f;
+                        dst                += meta::para_equalizer_metadata::MESH_POINTS + 2;
+                        dst[0]              = SPEC_FREQ_MAX * 2.0f;
+                        dst[1]              = SPEC_FREQ_MAX * 2.0f;
+
+                        // Amplitude
+                        dst                 = mesh->pvData[1];
+                        dsp::complex_mod(&dst[2], c->vTrRe, c->vTrIm, meta::para_equalizer_metadata::MESH_POINTS);
+                        dst[0]              = GAIN_AMP_0_DB;
+                        dst[1]              = dst[2];
+                        dst                += meta::para_equalizer_metadata::MESH_POINTS + 2;
+                        dst[0]              = dst[-1];
+                        dst[1]              = GAIN_AMP_0_DB;
+
+                        // Report data presence
+                        mesh->data(2, meta::para_equalizer_metadata::MESH_POINTS + 4);
 
                         c->nSync           &= ~CS_SYNC_AMP;
                     }
