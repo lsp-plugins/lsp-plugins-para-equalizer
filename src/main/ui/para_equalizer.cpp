@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-para-equalizer
  * Created on: 2 авг. 2021 г.
@@ -167,7 +167,7 @@ namespace lsp
             tk::FileDialog *dlg = _this->pRewImport;
             if (dlg == NULL)
             {
-                dlg = new tk::FileDialog(_this->pDisplay);
+                dlg = new tk::FileDialog(_this->display());
                 if (dlg == NULL)
                     return STATUS_NO_MEM;
 
@@ -593,8 +593,11 @@ namespace lsp
             return true;
         }
 
-        float para_equalizer_ui::quantize_frequency(float value, void *context)
+        float para_equalizer_ui::quantize_frequency(float value, bool write, void *context)
         {
+            if (!write)
+                return value;
+
             para_equalizer_ui *self = static_cast<para_equalizer_ui *>(context);
             if (self == NULL)
                 return value;
@@ -660,7 +663,7 @@ namespace lsp
                 expr::Parameters params;
                 tk::prop::String lc_string;
                 LSPString text;
-                lc_string.bind(f->wNote->style(), pDisplay->dictionary());
+                lc_string.bind(f->wNote->style(), display()->dictionary());
                 SET_LOCALE_SCOPED(LC_NUMERIC, "C");
 
                 // Frequency and gain
@@ -1017,7 +1020,7 @@ namespace lsp
             tk::Menu *menu      = tk::widget_cast<tk::Menu>(wnd->widgets()->find(WUID_IMPORT_MENU));
             if (menu != NULL)
             {
-                tk::MenuItem *child = new tk::MenuItem(pDisplay);
+                tk::MenuItem *child = new tk::MenuItem(display());
                 if (child == NULL)
                     return STATUS_NO_MEM;
 
@@ -1042,7 +1045,7 @@ namespace lsp
                 wInspectReset->slots()->bind(tk::SLOT_SUBMIT, slot_filter_inspect_submit, this);
 
             // Bind the timer
-            sEditTimer.bind(pDisplay);
+            sEditTimer.bind(display());
             sEditTimer.set_handler(slot_filter_edit_timer, this);
 
             // Update state
@@ -1613,6 +1616,16 @@ namespace lsp
                         gain    = f->gain;
                         quality = 2.0/3.0;
                         break;
+                    case room_ew::LSC:
+                        type    = meta::para_equalizer_metadata::EQF_LOSHELF;
+                        gain    = f->gain;
+                        quality = f->Q;
+                        break;
+                    case room_ew::HSC:
+                        type    = meta::para_equalizer_metadata::EQF_HISHELF;
+                        gain    = f->gain;
+                        quality = f->Q;
+                        break;
                     case room_ew::LP:
                         type    = meta::para_equalizer_metadata::EQF_LOPASS;
                         break;
@@ -1656,6 +1669,10 @@ namespace lsp
                     case room_ew::AP:
                         type    = meta::para_equalizer_metadata::EQF_ALLPASS;
                         quality = 0.0;
+                        break;
+                    case room_ew::BP:
+                        type    = meta::para_equalizer_metadata::EQF_BANDPASS;
+                        quality = f->Q;
                         break;
                     default: // Skip other filter types
                         break;

@@ -1,7 +1,20 @@
 {
 	"para_equalizer": {
-		"name": "Parametric Equalizer",
-		"description": "This plugin allows to perform parametric equalization of input signal.\nUp to 16 or 32 different filters are simultaneously available for processing."
-	}
+		"description": "This plugin allows to perform parametric equalization of input signal.\nUp to 16 or 32 different filters are simultaneously available for processing.",
+		"name": "Parametric Equalizer"
+	},
+	"launcher": {
+		"para_equalizer_x16_lr": "LR x16",
+        "para_equalizer_x16_mono": "Mono x16",
+        "para_equalizer_x16_ms": "MS x16",
+        "para_equalizer_x16_stereo": "Stereo x16",
+        "para_equalizer_x32_lr": "LR x32",
+        "para_equalizer_x32_mono": "Mono x32",
+        "para_equalizer_x32_ms": "MS x32",
+        "para_equalizer_x32_stereo": "Stereo x32",
+        "para_equalizer_x8_lr": "LR x8",
+        "para_equalizer_x8_mono": "Mono x8",
+        "para_equalizer_x8_ms": "MS x8",
+        "para_equalizer_x8_stereo": "Stereo x8"
+    }
 }
-

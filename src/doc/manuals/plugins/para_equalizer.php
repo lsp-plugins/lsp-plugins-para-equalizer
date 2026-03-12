@@ -136,6 +136,10 @@ of so-called poles and zeros:<p>
 	The frequency control feature allows to detect the note and the note detune the filter is operating with at the top
 	of the graph area.
 </p>
+<p>This plugin also allows to apply decramping technique to the audible spectrum which allows to make bilinear transformed filters
+behave more like analog ones. The decramping parameter allows to select the desired processing sample rate by applying the multiplier
+to the frequency of 44100 Hz. If the desired sample rate is less than the actual sample rate, no oversampling is applied. If the desired
+sample rate is greater than the actual sample rate, the proper oversampling coefficient is computed and applied to the signal.</p> 
 <p>
 	Additionally, mouse double-click on the graph area allows to add a filter with desired frequency and gain
 	settings depending on the actual frequency value at the position of the mouse click:
@@ -183,6 +187,7 @@ of so-called poles and zeros:<p>
 		<li><b>FFT</b> - Fast Fourier Transform approximation of the frequency chart, linear phase. Adds noticeable latency to output signal.</li>
 		<li><b>SPM</b> - Spectral Processor Mode of equalizer, equalizer transforms the magnitude of signal spectrum instead of applying impulse response to the signal.</li>
 	</ul>
+	<li><b>Decramp</b> - Enables decramping of filter transfer functions inside of the audible frequency range by applying oversampling.</li>
 	<?php if ($m == 'ms') { ?>
 	<li><b>Mid</b> - button enables the frequency chart and FFT analysis for the middle channel, knob allows to adjust the level of the middle channel.</li>
 	<li><b>Side</b> - button enables the frequency chart and FFT analysis for the side channel, knob allows to adjust the level of the side channel.</li>

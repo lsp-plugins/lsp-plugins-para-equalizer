@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-para-equalizer
  * Created on: 2 авг. 2021 г.
@@ -28,6 +28,7 @@
 #include <lsp-plug.in/dsp-units/filters/Equalizer.h>
 #include <lsp-plug.in/dsp-units/util/Analyzer.h>
 #include <lsp-plug.in/dsp-units/util/Delay.h>
+#include <lsp-plug.in/dsp-units/util/Oversampler.h>
 
 #include <private/meta/para_equalizer.h>
 
@@ -87,6 +88,7 @@ namespace lsp
 
                 typedef struct eq_channel_t
                 {
+                    dspu::Oversampler   sOversampler;   // Oversampler
                     dspu::Equalizer     sEqualizer;     // Equalizer
                     dspu::Bypass        sBypass;        // Bypass
                     dspu::Delay         sDryDelay;      // Dry delay
@@ -134,8 +136,10 @@ namespace lsp
                 dspu::Analyzer      sAnalyzer;              // Analyzer
                 uint32_t            nFilters;               // Number of filters
                 uint32_t            nMode;                  // Operating mode
+                uint32_t            nDecramp;               // Decamping
                 eq_channel_t       *vChannels;              // List of channels
                 float              *vFreqs;                 // Frequency list
+                float              *vBuffer;                // Temporary buffer
                 uint32_t           *vIndexes;               // FFT indexes
                 float               fGainIn;                // Input gain
                 float               fZoom;                  // Zoom gain
@@ -151,6 +155,7 @@ namespace lsp
                 plug::IPort        *pShiftGain;             // Shift gain
                 plug::IPort        *pZoom;                  // Graph zoom
                 plug::IPort        *pEqMode;                // Equalizer mode
+                plug::IPort        *pEqDecramp;             // Equalizer decramping
                 plug::IPort        *pBalance;               // Output balance
                 plug::IPort        *pInspect;               // Inspected filter index
                 plug::IPort        *pInspectRange;          // Inspecting range
@@ -167,10 +172,12 @@ namespace lsp
                 void                mark_all_filters_for_update();
                 void                perform_analysis(size_t samples);
                 void                process_channel(eq_channel_t *c, size_t start, size_t samples, size_t total_samples);
+                uint32_t            calc_decramping();
 
                 void                dump_channel(dspu::IStateDumper *v, const eq_channel_t *c) const;
                 static void         dump_filter(dspu::IStateDumper *v, const eq_filter_t *f);
                 static void         dump_filter_params(dspu::IStateDumper *v, const char *id, const dspu::filter_params_t *fp);
+                static dspu::over_mode_t    calc_oversampler_mode(dspu::equalizer_mode_t eq_mode, size_t decramp);
 
             public:
                 explicit para_equalizer(const meta::plugin_t *metadata, size_t filters, size_t mode);
