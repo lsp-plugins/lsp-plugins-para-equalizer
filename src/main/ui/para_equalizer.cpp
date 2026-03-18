@@ -612,6 +612,25 @@ namespace lsp
             return dspu::midi_note_to_frequency(note.nNumber);
         }
 
+        float para_equalizer_ui::quantize_log_frequency(float value, bool write, void *context)
+        {
+            if (!write)
+                return value;
+
+            para_equalizer_ui *self = static_cast<para_equalizer_ui *>(context);
+            if (self == NULL)
+                return value;
+            const bool quantize     = (self->pQuantize != NULL) ? self->pQuantize->value() > 0.5f : false;
+            if (!quantize)
+                return value;
+
+            note_t note;
+            if (!quantize_note(&note, expf(value)))
+                return value;
+
+            return logf(dspu::midi_note_to_frequency(note.nNumber));
+        }
+
         void para_equalizer_ui::update_filter_note_text()
         {
             // Determine which frequency/note to show: of inspected filter or of selected filter
@@ -817,6 +836,8 @@ namespace lsp
                     bind_filter_edit(f.wGain);
                     bind_filter_edit(f.wFreq);
                     bind_filter_edit(f.wQuality);
+                    if (f.wFreq != NULL)
+                        f.wFreq->value()->set_transform(quantize_log_frequency, this);
 
                     if (f.pType != NULL)
                         f.pType->bind(this);
