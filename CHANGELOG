@@ -4,6 +4,7 @@
 
 === 1.0.36 ===
 * Frequency knob now also is affected by note quantization switch.
+* Updated build scripts and dependencies.
 
 === 1.0.35 ===
 * Better parsing APO filter files.
