@@ -181,7 +181,12 @@ namespace lsp
 
             public:
                 explicit para_equalizer(const meta::plugin_t *metadata, size_t filters, size_t mode);
+                para_equalizer(const para_equalizer &) = delete;
+                para_equalizer(para_equalizer &&) = delete;
                 virtual ~para_equalizer() override;
+
+                para_equalizer & operator = (const para_equalizer &) = delete;
+                para_equalizer & operator = (para_equalizer &&) = delete;
 
             public:
                 virtual void        init(plug::IWrapper *wrapper, plug::IPort **ports) override;

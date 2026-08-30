@@ -734,12 +734,14 @@ namespace lsp
 
         void para_equalizer::ui_activated()
         {
+            sAnalyzer.set_activity(true);
             mark_all_filters_for_update();
             pWrapper->request_settings_update();
         }
 
         void para_equalizer::ui_deactivated()
         {
+            sAnalyzer.set_activity(false);
             pWrapper->request_settings_update();
         }
 
@@ -937,25 +939,18 @@ namespace lsp
             size_t channels     = (nMode == EQ_MONO) ? 1 : 2;
 
             // Configure analyzer
-            size_t n_an_channels = 0;
             for (size_t i=0; i<channels; ++i)
             {
-                eq_channel_t *c     = &vChannels[i];
-                const bool in_fft   = c->pFftInSwitch->value() >= 0.5f;
-                const bool out_fft  = c->pFftOutSwitch->value() >= 0.5f;
-                const bool ext_fft  = c->pFftExtSwitch->value() >= 0.5f;
+                eq_channel_t * const c  = &vChannels[i];
 
                 // channel:        0     1     2      3     4     5
                 // designation: in_l out_l ext_l   in_r out_r ext_r
-                sAnalyzer.enable_channel(i*3, in_fft);
-                sAnalyzer.enable_channel(i*3+1, out_fft);
-                sAnalyzer.enable_channel(i*3+2, ext_fft);
-                if ((in_fft) || (out_fft) || (ext_fft))
-                    ++n_an_channels;
+                sAnalyzer.enable_channel(i*3, c->pFftInSwitch->value() >= 0.5f);
+                sAnalyzer.enable_channel(i*3+1, c->pFftOutSwitch->value() >= 0.5f);
+                sAnalyzer.enable_channel(i*3+2, c->pFftExtSwitch->value() >= 0.5f);
             }
 
             // Update reactivity
-            sAnalyzer.set_activity(n_an_channels > 0);
             sAnalyzer.set_reactivity(pReactivity->value());
 
             // Update shift gain
