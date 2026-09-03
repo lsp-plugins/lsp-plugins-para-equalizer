@@ -182,10 +182,12 @@ sample rate is greater than the actual sample rate, the proper oversampling coef
 	</li>
 	<li><b>Mode</b> - equalizer working mode, enables the following mode for all filters:</li>
 	<ul>
-		<li><b>IIR</b> - Infinite Impulse Response filters, nonlinear minimal phase. In most cases does not add noticeable latency to output signal.</li>
+		<li><b>Zero phase (IIR)</b> - Infinite Impulse Response filters, nonlinear minimal phase. In most cases does not add noticeable latency to output signal.</li>
 		<li><b>FIR</b> - Finite Impulse Response filters with linear phase, finite approximation of equalizer's impulse response. Adds noticeable latency to output signal.</li>
-		<li><b>FFT</b> - Fast Fourier Transform approximation of the frequency chart, linear phase. Adds noticeable latency to output signal.</li>
-		<li><b>SPM</b> - Spectral Processor Mode of equalizer, equalizer transforms the magnitude of signal spectrum instead of applying impulse response to the signal.</li>
+		<li><b>Linear phase (FFT)</b> - Fast Fourier Transform approximation of the frequency chart, linear phase. Adds noticeable latency to output signal.</li>
+		<li><b>Linear phase (SPM)</b> - Spectral Processor Mode, linear phase. Equalizer transforms the magnitude of signal spectrum instead of applying impulse response to the signal.</li>
+		<li><b>Minimum phase (FFT)</b> - Fast Fourier Transform approximation of the frequency chart, minimal phase. Adds noticeable latency to output signal.</li>
+		<li><b>Minimum phase (SPM)</b> - Spectral Processor Mode, minimum phase. Equalizer transforms the signal spectrum instead of applying impulse response to the signal.</li>
 	</ul>
 	<li><b>Decramp</b> - Enables decramping of filter transfer functions inside of the audible frequency range by applying oversampling.</li>
 	<?php if ($m == 'ms') { ?>

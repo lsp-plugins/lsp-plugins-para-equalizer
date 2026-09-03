@@ -435,8 +435,10 @@ namespace lsp
             {
                 case meta::para_equalizer_metadata::PEM_IIR: return dspu::EQM_IIR;
                 case meta::para_equalizer_metadata::PEM_FIR: return dspu::EQM_FIR;
-                case meta::para_equalizer_metadata::PEM_FFT: return dspu::EQM_FFT;
-                case meta::para_equalizer_metadata::PEM_SPM: return dspu::EQM_SPM;
+                case meta::para_equalizer_metadata::PEM_FFT_LP: return dspu::EQM_FFT_LP;
+                case meta::para_equalizer_metadata::PEM_SPM_LP: return dspu::EQM_SPM_LP;
+                case meta::para_equalizer_metadata::PEM_FFT_MP: return dspu::EQM_FFT_MP;
+                case meta::para_equalizer_metadata::PEM_SPM_MP: return dspu::EQM_SPM_MP;
                 default:
                     break;
             }

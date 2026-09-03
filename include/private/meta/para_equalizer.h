@@ -114,8 +114,10 @@ namespace lsp
             {
                 PEM_IIR,
                 PEM_FIR,
-                PEM_FFT,
-                PEM_SPM
+                PEM_FFT_LP,
+                PEM_SPM_LP,
+                PEM_FFT_MP,
+                PEM_SPM_MP,
             };
         };
 
