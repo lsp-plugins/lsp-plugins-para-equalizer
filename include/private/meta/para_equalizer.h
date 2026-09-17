@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-para-equalizer
  * Created on: 2 авг. 2021 г.
@@ -113,9 +113,10 @@ namespace lsp
             enum para_eq_mode_t
             {
                 PEM_IIR,
-                PEM_FIR,
+                PEM_FIR_LP,
                 PEM_FFT_LP,
                 PEM_SPM_LP,
+                PEM_FIR_MP,
                 PEM_FFT_MP,
                 PEM_SPM_MP,
             };

@@ -434,9 +434,10 @@ namespace lsp
             switch (mode)
             {
                 case meta::para_equalizer_metadata::PEM_IIR: return dspu::EQM_IIR;
-                case meta::para_equalizer_metadata::PEM_FIR: return dspu::EQM_FIR;
+                case meta::para_equalizer_metadata::PEM_FIR_LP: return dspu::EQM_FIR_LP;
                 case meta::para_equalizer_metadata::PEM_FFT_LP: return dspu::EQM_FFT_LP;
                 case meta::para_equalizer_metadata::PEM_SPM_LP: return dspu::EQM_SPM_LP;
+                case meta::para_equalizer_metadata::PEM_FIR_MP: return dspu::EQM_FIR_MP;
                 case meta::para_equalizer_metadata::PEM_FFT_MP: return dspu::EQM_FFT_MP;
                 case meta::para_equalizer_metadata::PEM_SPM_MP: return dspu::EQM_SPM_MP;
                 default:
@@ -487,7 +488,7 @@ namespace lsp
             // Initialize each channel
             for (size_t i=0; i<channels; ++i)
             {
-                eq_channel_t *c     = &vChannels[i];
+                eq_channel_t * const c  = &vChannels[i];
 
                 c->nLatency         = 0;
                 c->fInGain          = 1.0f;
@@ -532,7 +533,7 @@ namespace lsp
             for (size_t i=0; i<channels; ++i)
             {
                 // Allocate data
-                eq_channel_t *c     = &vChannels[i];
+                eq_channel_t * const c  = &vChannels[i];
                 c->nSync            = CS_UPDATE;
                 c->bHasSolo         = false;
                 c->vFilters         = new eq_filter_t[nFilters+1];
@@ -544,14 +545,14 @@ namespace lsp
                     return;
                 c->sOversampler.set_filtering(false);
 
-                c->sEqualizer.init(nFilters + 1, EQ_RANK);
+                c->sEqualizer.init(nFilters + 1, EQ_RANK, &c->sConvolver);
                 c->sEqualizer.set_smooth(true);
                 max_latency         = lsp_max(max_latency, c->sEqualizer.max_latency() + c->sOversampler.max_latency());
 
                 // Initialize filters
                 for (size_t j=0; j<=nFilters; ++j)
                 {
-                    eq_filter_t *f      = &c->vFilters[j];
+                    eq_filter_t * const f   = &c->vFilters[j];
 
                     // Filter characteristics
                     f->vTrRe            = advance_ptr<float>(abuf, meta::para_equalizer_metadata::MESH_POINTS);
@@ -590,7 +591,7 @@ namespace lsp
             // Initialize latency compensation delay
             for (size_t i=0; i<channels; ++i)
             {
-                eq_channel_t *c     = &vChannels[i];
+                eq_channel_t * const c  = &vChannels[i];
                 if (!c->sDryDelay.init(max_latency))
                     return;
             }
@@ -634,7 +635,7 @@ namespace lsp
             // Meters
             for (size_t i=0; i<channels; ++i)
             {
-                eq_channel_t *c     = &vChannels[i];
+                eq_channel_t * const c  = &vChannels[i];
 
                 BIND_PORT(c->pFftInSwitch);
                 BIND_PORT(c->pFftOutSwitch);
@@ -689,7 +690,7 @@ namespace lsp
                     if ((nMode == EQ_STEREO) && (j > 0))
                     {
                         // 1 port controls 2 filters
-                        eq_filter_t *sf     = &vChannels[0].vFilters[i];
+                        eq_filter_t * const sf  = &vChannels[0].vFilters[i];
                         f->pType            = sf->pType;
                         f->pMode            = sf->pMode;
                         f->pSlope           = sf->pSlope;
@@ -761,7 +762,7 @@ namespace lsp
             {
                 for (size_t i=0; i<channels; ++i)
                 {
-                    eq_channel_t *c     = &vChannels[i];
+                    eq_channel_t * const c  = &vChannels[i];
                     if (c->vFilters != NULL)
                     {
                         delete [] c->vFilters;
@@ -885,7 +886,9 @@ namespace lsp
 
         dspu::over_mode_t para_equalizer::calc_oversampler_mode(dspu::equalizer_mode_t eq_mode, size_t decramp)
         {
-            if ((eq_mode != dspu::EQM_IIR) && (eq_mode != dspu::EQM_FIR))
+            if ((eq_mode != dspu::EQM_IIR) &&
+                (eq_mode != dspu::EQM_FIR_LP) &&
+                (eq_mode != dspu::EQM_FIR_MP))
                 return dspu::over_mode_t::OM_NONE;
 
             switch (decramp)
@@ -1832,6 +1835,7 @@ namespace lsp
             {
                 v->write_object("sOversampler", &c->sOversampler);
                 v->write_object("sEqualizer", &c->sEqualizer);
+                v->write_object("sConvolver", &c->sConvolver);
                 v->write_object("sBypass", &c->sBypass);
                 v->write_object("sDryDelay", &c->sDryDelay);
 

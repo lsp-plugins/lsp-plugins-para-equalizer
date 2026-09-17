@@ -61,9 +61,10 @@ namespace lsp
         static const port_item_t equalizer_eq_modes[] =
         {
             { "IIR",                    "eq.type.iir",          },
-            { "FIR",                    "eq.type.fir",          },
+            { "Linear phase (FIR)",     "eq.type.fir_lp",       },
             { "Linear phase (FFT)",     "eq.type.fft_lp",       },
             { "Linear phase (SPM)",     "eq.type.spm_lp",       },
+            { "Minimum phase (FIR)",    "eq.type.fir_mp",       },
             { "Minimum phase (FFT)",    "eq.type.fft_mp",       },
             { "Minimum phase (SPM)",    "eq.type.spm_mp",       },
             { NULL, NULL }
