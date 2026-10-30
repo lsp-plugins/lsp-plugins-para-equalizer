@@ -2,6 +2,12 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.41 ===
+* Reduced latency for IIR filter modes using zero-latency convolver module.
+* Optimized CPU consumption: FFT analysis is not performed when UI is not active.
+* Added minimum phase filter support fo SPM and FFT modes.
+* Updated build scripts and dependencies.
+
 === 1.0.40 ===
 * Updated build scripts and dependencies.
 

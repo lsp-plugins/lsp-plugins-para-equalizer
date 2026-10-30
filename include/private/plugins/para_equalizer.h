@@ -27,6 +27,7 @@
 #include <lsp-plug.in/dsp-units/ctl/Bypass.h>
 #include <lsp-plug.in/dsp-units/filters/Equalizer.h>
 #include <lsp-plug.in/dsp-units/util/Analyzer.h>
+#include <lsp-plug.in/dsp-units/util/Convolver.h>
 #include <lsp-plug.in/dsp-units/util/Delay.h>
 #include <lsp-plug.in/dsp-units/util/Oversampler.h>
 
@@ -90,6 +91,7 @@ namespace lsp
                 {
                     dspu::Oversampler   sOversampler;   // Oversampler
                     dspu::Equalizer     sEqualizer;     // Equalizer
+                    dspu::Convolver     sConvolver;     // Convolver for FIR modes
                     dspu::Bypass        sBypass;        // Bypass
                     dspu::Delay         sDryDelay;      // Dry delay
 
@@ -181,7 +183,12 @@ namespace lsp
 
             public:
                 explicit para_equalizer(const meta::plugin_t *metadata, size_t filters, size_t mode);
+                para_equalizer(const para_equalizer &) = delete;
+                para_equalizer(para_equalizer &&) = delete;
                 virtual ~para_equalizer() override;
+
+                para_equalizer & operator = (const para_equalizer &) = delete;
+                para_equalizer & operator = (para_equalizer &&) = delete;
 
             public:
                 virtual void        init(plug::IWrapper *wrapper, plug::IPort **ports) override;

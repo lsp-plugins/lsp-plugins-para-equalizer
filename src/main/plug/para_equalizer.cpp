@@ -244,8 +244,8 @@ namespace lsp
                 {
                     switch (mode)
                     {
-                        EQS(RLC_BT, FLT_BT_RLC_ALLPASS, 1)
-                        EQS(RLC_MT, FLT_BT_RLC_ALLPASS, 1)
+                        EQS(RLC_BT, FLT_BT_RLC_ALLPASS, 2)
+                        EQS(RLC_MT, FLT_BT_RLC_ALLPASS, 2)
                         EQS(BWC_BT, FLT_BT_BWC_ALLPASS, 2)
                         EQS(BWC_MT, FLT_BT_BWC_ALLPASS, 2)
                         EQS(LRX_BT, FLT_BT_LRX_ALLPASS, 1)
@@ -434,9 +434,12 @@ namespace lsp
             switch (mode)
             {
                 case meta::para_equalizer_metadata::PEM_IIR: return dspu::EQM_IIR;
-                case meta::para_equalizer_metadata::PEM_FIR: return dspu::EQM_FIR;
-                case meta::para_equalizer_metadata::PEM_FFT: return dspu::EQM_FFT;
-                case meta::para_equalizer_metadata::PEM_SPM: return dspu::EQM_SPM;
+                case meta::para_equalizer_metadata::PEM_FIR_LP: return dspu::EQM_FIR_LP;
+                case meta::para_equalizer_metadata::PEM_FFT_LP: return dspu::EQM_FFT_LP;
+                case meta::para_equalizer_metadata::PEM_SPM_LP: return dspu::EQM_SPM_LP;
+                case meta::para_equalizer_metadata::PEM_FIR_MP: return dspu::EQM_FIR_MP;
+                case meta::para_equalizer_metadata::PEM_FFT_MP: return dspu::EQM_FFT_MP;
+                case meta::para_equalizer_metadata::PEM_SPM_MP: return dspu::EQM_SPM_MP;
                 default:
                     break;
             }
@@ -485,7 +488,7 @@ namespace lsp
             // Initialize each channel
             for (size_t i=0; i<channels; ++i)
             {
-                eq_channel_t *c     = &vChannels[i];
+                eq_channel_t * const c  = &vChannels[i];
 
                 c->nLatency         = 0;
                 c->fInGain          = 1.0f;
@@ -530,7 +533,7 @@ namespace lsp
             for (size_t i=0; i<channels; ++i)
             {
                 // Allocate data
-                eq_channel_t *c     = &vChannels[i];
+                eq_channel_t * const c  = &vChannels[i];
                 c->nSync            = CS_UPDATE;
                 c->bHasSolo         = false;
                 c->vFilters         = new eq_filter_t[nFilters+1];
@@ -542,14 +545,14 @@ namespace lsp
                     return;
                 c->sOversampler.set_filtering(false);
 
-                c->sEqualizer.init(nFilters + 1, EQ_RANK);
+                c->sEqualizer.init(nFilters + 1, EQ_RANK, &c->sConvolver);
                 c->sEqualizer.set_smooth(true);
                 max_latency         = lsp_max(max_latency, c->sEqualizer.max_latency() + c->sOversampler.max_latency());
 
                 // Initialize filters
                 for (size_t j=0; j<=nFilters; ++j)
                 {
-                    eq_filter_t *f      = &c->vFilters[j];
+                    eq_filter_t * const f   = &c->vFilters[j];
 
                     // Filter characteristics
                     f->vTrRe            = advance_ptr<float>(abuf, meta::para_equalizer_metadata::MESH_POINTS);
@@ -588,7 +591,7 @@ namespace lsp
             // Initialize latency compensation delay
             for (size_t i=0; i<channels; ++i)
             {
-                eq_channel_t *c     = &vChannels[i];
+                eq_channel_t * const c  = &vChannels[i];
                 if (!c->sDryDelay.init(max_latency))
                     return;
             }
@@ -632,7 +635,7 @@ namespace lsp
             // Meters
             for (size_t i=0; i<channels; ++i)
             {
-                eq_channel_t *c     = &vChannels[i];
+                eq_channel_t * const c  = &vChannels[i];
 
                 BIND_PORT(c->pFftInSwitch);
                 BIND_PORT(c->pFftOutSwitch);
@@ -687,7 +690,7 @@ namespace lsp
                     if ((nMode == EQ_STEREO) && (j > 0))
                     {
                         // 1 port controls 2 filters
-                        eq_filter_t *sf     = &vChannels[0].vFilters[i];
+                        eq_filter_t * const sf  = &vChannels[0].vFilters[i];
                         f->pType            = sf->pType;
                         f->pMode            = sf->pMode;
                         f->pSlope           = sf->pSlope;
@@ -734,12 +737,14 @@ namespace lsp
 
         void para_equalizer::ui_activated()
         {
+            sAnalyzer.set_activity(true);
             mark_all_filters_for_update();
             pWrapper->request_settings_update();
         }
 
         void para_equalizer::ui_deactivated()
         {
+            sAnalyzer.set_activity(false);
             pWrapper->request_settings_update();
         }
 
@@ -757,7 +762,7 @@ namespace lsp
             {
                 for (size_t i=0; i<channels; ++i)
                 {
-                    eq_channel_t *c     = &vChannels[i];
+                    eq_channel_t * const c  = &vChannels[i];
                     if (c->vFilters != NULL)
                     {
                         delete [] c->vFilters;
@@ -881,7 +886,9 @@ namespace lsp
 
         dspu::over_mode_t para_equalizer::calc_oversampler_mode(dspu::equalizer_mode_t eq_mode, size_t decramp)
         {
-            if ((eq_mode != dspu::EQM_IIR) && (eq_mode != dspu::EQM_FIR))
+            if ((eq_mode != dspu::EQM_IIR) &&
+                (eq_mode != dspu::EQM_FIR_LP) &&
+                (eq_mode != dspu::EQM_FIR_MP))
                 return dspu::over_mode_t::OM_NONE;
 
             switch (decramp)
@@ -937,25 +944,18 @@ namespace lsp
             size_t channels     = (nMode == EQ_MONO) ? 1 : 2;
 
             // Configure analyzer
-            size_t n_an_channels = 0;
             for (size_t i=0; i<channels; ++i)
             {
-                eq_channel_t *c     = &vChannels[i];
-                const bool in_fft   = c->pFftInSwitch->value() >= 0.5f;
-                const bool out_fft  = c->pFftOutSwitch->value() >= 0.5f;
-                const bool ext_fft  = c->pFftExtSwitch->value() >= 0.5f;
+                eq_channel_t * const c  = &vChannels[i];
 
                 // channel:        0     1     2      3     4     5
                 // designation: in_l out_l ext_l   in_r out_r ext_r
-                sAnalyzer.enable_channel(i*3, in_fft);
-                sAnalyzer.enable_channel(i*3+1, out_fft);
-                sAnalyzer.enable_channel(i*3+2, ext_fft);
-                if ((in_fft) || (out_fft) || (ext_fft))
-                    ++n_an_channels;
+                sAnalyzer.enable_channel(i*3, c->pFftInSwitch->value() >= 0.5f);
+                sAnalyzer.enable_channel(i*3+1, c->pFftOutSwitch->value() >= 0.5f);
+                sAnalyzer.enable_channel(i*3+2, c->pFftExtSwitch->value() >= 0.5f);
             }
 
             // Update reactivity
-            sAnalyzer.set_activity(n_an_channels > 0);
             sAnalyzer.set_reactivity(pReactivity->value());
 
             // Update shift gain
@@ -1835,6 +1835,7 @@ namespace lsp
             {
                 v->write_object("sOversampler", &c->sOversampler);
                 v->write_object("sEqualizer", &c->sEqualizer);
+                v->write_object("sConvolver", &c->sConvolver);
                 v->write_object("sBypass", &c->sBypass);
                 v->write_object("sDryDelay", &c->sDryDelay);
 

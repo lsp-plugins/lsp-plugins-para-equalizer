@@ -26,7 +26,7 @@
 
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MAJOR         1
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MINOR         0
-#define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MICRO         40
+#define LSP_PLUGINS_PARA_EQUALIZER_VERSION_MICRO         41
 
 #define LSP_PLUGINS_PARA_EQUALIZER_VERSION  \
     LSP_MODULE_VERSION( \
@@ -60,10 +60,13 @@ namespace lsp
 
         static const port_item_t equalizer_eq_modes[] =
         {
-            { "IIR",            "eq.type.iir" },
-            { "FIR",            "eq.type.fir" },
-            { "FFT",            "eq.type.fft" },
-            { "SPM",            "eq.type.spm" },
+            { "IIR",                    "eq.type.iir",          },
+            { "Linear phase (FIR)",     "eq.type.fir_lp",       },
+            { "Linear phase (FFT)",     "eq.type.fft_lp",       },
+            { "Linear phase (SPM)",     "eq.type.spm_lp",       },
+            { "Minimum phase (FIR)",    "eq.type.fir_mp",       },
+            { "Minimum phase (FFT)",    "eq.type.fft_mp",       },
+            { "Minimum phase (SPM)",    "eq.type.spm_mp",       },
             { NULL, NULL }
         };
 
